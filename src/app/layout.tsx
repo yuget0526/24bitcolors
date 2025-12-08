@@ -14,9 +14,44 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "24bitColors - あなたの好きな色を見つけよう",
+  title: {
+    template: "%s | 24bitColors",
+    default: "24bitColors - あなたの好きな色を見つけよう",
+  },
   description:
     "20の質問であなたの好きな色を1677万色の中から特定します。bit診断方式による色の好み診断。",
+  metadataBase: new URL("https://24bitcolors.com"),
+  keywords: [
+    "色診断",
+    "パーソナルカラー",
+    "色彩",
+    "デザイン",
+    "24bit",
+    "カラーテスト",
+  ],
+  authors: [{ name: "24bitColors Team" }],
+  openGraph: {
+    title: "24bitColors - あなたの好きな色を見つけよう",
+    description:
+      "20の質問であなたの好きな色を1677万色の中から特定します。bit診断方式による色の好み診断。",
+    url: "https://24bitcolors.com",
+    siteName: "24bitColors",
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "24bitColors",
+    description:
+      "あなたの好きな色を1677万色の中から特定します。bit診断方式による色の好み診断。",
+  },
+  alternates: {
+    canonical: "/",
+  },
+};
+
+export const viewport: { themeColor: string } = {
+  themeColor: "#E8E8E8",
 };
 
 export default function RootLayout({
