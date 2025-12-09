@@ -42,6 +42,7 @@
 
 - **Frontend**: Next.js (App Router), React, Tailwind CSS
 - **Design**: 美術館テーマ（モノトーン、Serif体、Invitation風）を維持する。
+- **Rule Compliance**: `docs/design-system.md` および `docs/` 内のその他のルールを厳守する。独自の判断でデザインを変更せず、常に定義されたシステムに従うこと。
 - **Global Style**: `globals.css` の変数（`--background: #E8E8E8` 等）を使用し、デザインの一貫性を保つ。
 
 ## 5. ドキュメント管理

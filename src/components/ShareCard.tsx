@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { OklchColor } from "@/lib/oklch";
+import { useTheme } from "./ThemeProvider";
 
 interface ShareCardProps {
   color: OklchColor;
@@ -9,13 +10,16 @@ interface ShareCardProps {
   onClose: () => void;
 }
 
+type CardTheme = "light" | "dark" | "color";
+
 /**
  * ギャラリー風シェアカード生成関数
  * Canvas APIで直接描画（Instagram Story サイズ 1080x1920）
  */
 function generateGalleryShareCard(
   colorHex: string,
-  oklchData: { l: number; c: number; h: number }
+  oklchData: { l: number; c: number; h: number },
+  theme: CardTheme
 ): string {
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
@@ -23,90 +27,152 @@ function generateGalleryShareCard(
   const ctx = canvas.getContext("2d");
   if (!ctx) return "";
 
+  // ベース定義 (Design System: Museum Palette)
+  const lightColors = {
+    bg: "#f9f9f9", // --background
+    frame: "#000000", // .color-frame
+    textMain: "#1a1a1a", // --foreground
+    textHex: "#1a1a1a",
+    textSub: "#666666", // --muted-foreground
+    textInfo: "#666666",
+    shadow: "rgba(0, 0, 0, 0.15)",
+    shadowBlur: 40,
+  };
+
+  const darkColors = {
+    bg: "#080808", // --background (Deep Ink)
+    frame: "#e5e5e5", // --foreground (Soft White)
+    textMain: "#e5e5e5",
+    textHex: "#e5e5e5",
+    textSub: "#808080", // --muted-foreground
+    textInfo: "#808080",
+    shadow: "rgba(0, 0, 0, 0.5)",
+    shadowBlur: 60,
+  };
+
+  // テーマ別カラー決定
+  let colors;
+
+  if (theme === "light") {
+    colors = lightColors;
+  } else if (theme === "dark") {
+    colors = darkColors;
+  } else {
+    // Color mode: 背景は色。
+    // 文字色・フレーム色は背景とのコントラスト確保のため、完全な単色（黒/白）に統一する。
+    // グレー（濃淡）を使用すると背景色と混ざって別の色に見える場合があるため、これを回避する。
+    const isBrightBackground = oklchData.l > 0.6;
+    const textColor = isBrightBackground ? "#000000" : "#FFFFFF";
+    const baseColors = isBrightBackground ? lightColors : darkColors;
+
+    colors = {
+      ...baseColors,
+      bg: colorHex,
+      // 背景色に応じた影の濃さ調整
+      shadow: isBrightBackground ? "rgba(0, 0, 0, 0.2)" : "rgba(0, 0, 0, 0.6)",
+
+      // 全要素の色を統一
+      frame: textColor,
+      textMain: textColor,
+      textHex: textColor,
+      textSub: textColor,
+      textInfo: textColor,
+    };
+  }
+
   // 背景
-  ctx.fillStyle = "#E8E8E8";
+  ctx.fillStyle = colors.bg;
   ctx.fillRect(0, 0, 1080, 1920);
 
-  // アートワーク配置（より大きく、上寄り）
-  const artX = 80;
-  const artY = 200;
-  const artWidth = 920;
-  const artHeight = 920; // 正方形に近い大きなサイズ
+  // アートワーク配置
+  const artSize = 900;
+  const artX = (1080 - artSize) / 2;
+  const artY = 250;
 
   // シャドウ
-  ctx.shadowColor = "rgba(0, 0, 0, 0.15)";
-  ctx.shadowBlur = 40;
+  ctx.shadowColor = colors.shadow;
+  ctx.shadowBlur = colors.shadowBlur;
   ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 15;
+  ctx.shadowOffsetY = 20;
 
-  // 黒フレーム
-  const frameThickness = 6;
-  ctx.fillStyle = "#000000";
+  // フレーム
+  const frameThickness = 24;
+  ctx.fillStyle = colors.frame;
   ctx.fillRect(
     artX - frameThickness,
     artY - frameThickness,
-    artWidth + frameThickness * 2,
-    artHeight + frameThickness * 2
+    artSize + frameThickness * 2,
+    artSize + frameThickness * 2
   );
 
   // 色の長方形
   ctx.fillStyle = colorHex;
-  ctx.fillRect(artX, artY, artWidth, artHeight);
+  ctx.fillRect(artX, artY, artSize, artSize);
 
   ctx.shadowColor = "transparent";
   ctx.shadowBlur = 0;
 
-  // ミュージアムラベル
-  const labelX = artX;
-  const labelBaseY = artY + artHeight + 80;
+  // ミュージアムラベル (テキストエリア)
+  const labelX = artX - frameThickness;
+  const labelBaseY = artY + artSize + frameThickness + 100;
 
-  // "Your Color"
-  ctx.fillStyle = "#2C2C2C";
-  ctx.font = '500 64px Georgia, "Times New Roman", serif';
+  // 1. ブランド名 (Main)
+  // テキスト位置は全テーマで labelX に統一
+  ctx.fillStyle = colors.textMain;
+  ctx.font = 'bold 80px Georgia, "Times New Roman", serif';
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText("Your Color", labelX, labelBaseY);
+  ctx.fillText("24bitColors", labelX, labelBaseY);
 
-  // HEXコード
-  ctx.font = '400 56px "SF Mono", "Courier New", Courier, monospace';
-  ctx.fillStyle = "#000000";
-  ctx.fillText(colorHex.toUpperCase(), labelX, labelBaseY + 90);
+  // 2. HEXコード
+  ctx.font = '400 64px "SF Mono", "Courier New", Courier, monospace';
+  ctx.fillStyle = colors.textHex;
+  ctx.fillText(colorHex.toUpperCase(), labelX, labelBaseY + 110);
 
-  // "24bitcolors.com 2025"
-  ctx.font = "300 42px Georgia, serif";
-  ctx.fillStyle = "#666666";
-  ctx.fillText("24bitcolors.com 2025", labelX, labelBaseY + 170);
+  // 3. サブタイトル
+  ctx.font = "italic 40px Georgia, serif";
+  ctx.fillStyle = colors.textSub;
+  ctx.fillText("Your Personal Color", labelX, labelBaseY + 210);
 
-  // OKLCH値
+  // 4. データ
   ctx.font = '300 36px "SF Mono", monospace';
-  ctx.fillStyle = "#999999";
+  ctx.fillStyle = colors.textInfo;
   const oklchText = `L:${Math.round(oklchData.l * 100)}  C:${Math.round(
     oklchData.c * 100
   )}  H:${Math.round(oklchData.h)}°`;
-  ctx.fillText(oklchText, labelX, labelBaseY + 235);
+  ctx.fillText(oklchText, labelX, labelBaseY + 280);
 
   return canvas.toDataURL("image/png");
 }
 
 export function ShareCard({ color, hex, onClose }: ShareCardProps) {
+  const { theme: systemTheme } = useTheme();
+  const isDark = systemTheme === "dark";
+
+  // systemThemeは"light"または"dark"なので、CardThemeにキャスト
+  const [cardTheme, setCardTheme] = useState<CardTheme>(systemTheme);
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // 初回レンダリング時にカード生成
+  // レンダリングと再生成
   useEffect(() => {
-    const dataUrl = generateGalleryShareCard(hex, {
-      l: color.lightness,
-      c: color.chroma,
-      h: color.hue,
-    });
+    const dataUrl = generateGalleryShareCard(
+      hex,
+      {
+        l: color.lightness,
+        c: color.chroma,
+        h: color.hue,
+      },
+      cardTheme
+    );
     setImageDataUrl(dataUrl);
-  }, [hex, color]);
+  }, [hex, color, cardTheme]);
 
   const handleDownload = () => {
     if (!imageDataUrl) return;
     const link = document.createElement("a");
     link.href = imageDataUrl;
-    link.download = `my-color-${hex.replace("#", "")}.png`;
+    link.download = `my-color-${hex.replace("#", "")}-${cardTheme}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -143,38 +209,120 @@ export function ShareCard({ color, hex, onClose }: ShareCardProps) {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-space-4"
-      style={{ backgroundColor: "rgba(0, 0, 0, 0.7)" }}
+      style={{
+        backgroundColor: isDark
+          ? "rgba(0, 0, 0, 0.85)"
+          : "rgba(255, 255, 255, 0.85)",
+        backdropFilter: "blur(12px)",
+      }}
       onClick={onClose}
     >
       <div
-        className="flex max-w-md flex-col items-center"
+        className="relative flex w-full max-w-md flex-col items-center"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* プレビュー */}
-        {imageDataUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={imageDataUrl}
-            alt="Share Card"
-            className="mb-space-6 max-h-[70vh] w-auto shadow-2xl"
-          />
-        ) : (
-          <div className="mb-space-6 flex h-96 w-64 items-center justify-center bg-[#E8E8E8]">
-            <span
-              className="text-[#666666]"
-              style={{ fontFamily: "Georgia, serif" }}
+        {/* プレビューエリア */}
+        <div className="relative mb-space-5 flex w-full items-center justify-center">
+          {imageDataUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={imageDataUrl}
+              alt="Share Card"
+              className="max-h-[50vh] w-auto transition-all duration-500 animate-fade-in floating-shadow"
+            />
+          ) : (
+            <div
+              className={`flex h-96 w-64 items-center justify-center ${
+                isDark ? "bg-[#1A1A1A]" : "bg-[#E8E8E8]"
+              }`}
             >
-              生成中...
-            </span>
+              <span
+                className={isDark ? "text-[#888888]" : "text-[#666666]"}
+                style={{ fontFamily: "Georgia, serif" }}
+              >
+                生成中...
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* スタイル選択 (Spotify Style Chips - Pure Minimal) */}
+        <div className="mb-space-6 flex flex-col items-center gap-4">
+          <div className="flex gap-space-4">
+            {/* Light Code */}
+            <button
+              onClick={() => setCardTheme("light")}
+              className={`h-10 w-10 rounded-full border bg-[#f9f9f9] transition-all focus:outline-none ${
+                isDark ? "border-white/20" : "border-black/10 shadow-sm"
+              } ${
+                cardTheme === "light"
+                  ? `scale-110 ring-1 ring-offset-4 ${
+                      isDark
+                        ? "ring-white ring-offset-black"
+                        : "ring-black ring-offset-white"
+                    }`
+                  : "opacity-60 hover:opacity-100"
+              }`}
+              aria-label="Select Light Theme"
+            />
+
+            {/* Dark Code */}
+            <button
+              onClick={() => setCardTheme("dark")}
+              className={`h-10 w-10 rounded-full border bg-[#080808] transition-all focus:outline-none ${
+                isDark ? "border-white/20" : "border-black/10"
+              } ${
+                cardTheme === "dark"
+                  ? `scale-110 ring-1 ring-offset-4 ${
+                      isDark
+                        ? "ring-white ring-offset-black"
+                        : "ring-black ring-offset-white"
+                    }`
+                  : "opacity-60 hover:opacity-100"
+              }`}
+              aria-label="Select Dark Theme"
+            />
+
+            {/* Color Code */}
+            <button
+              onClick={() => setCardTheme("color")}
+              className={`h-10 w-10 rounded-full border transition-all focus:outline-none ${
+                isDark ? "border-white/20" : "border-black/10 shadow-sm"
+              } ${
+                cardTheme === "color"
+                  ? `scale-110 ring-1 ring-offset-4 ${
+                      isDark
+                        ? "ring-white ring-offset-black"
+                        : "ring-black ring-offset-white"
+                    }`
+                  : "opacity-60 hover:opacity-100"
+              }`}
+              style={{ backgroundColor: hex }}
+              aria-label="Select Color Theme"
+            />
           </div>
-        )}
+
+          {/* Selected Theme Label */}
+          <p
+            className={`text-sm tracking-widest ${
+              isDark ? "text-[#E0E0E0]" : "text-[#1a1a1a]"
+            }`}
+            style={{ fontFamily: "Georgia, serif" }}
+          >
+            {cardTheme === "light" && "Gallery Light"}
+            {cardTheme === "dark" && "Gallery Dark"}
+            {cardTheme === "color" && "Personal Color"}
+          </p>
+        </div>
 
         {/* アクションボタン */}
         <div className="flex w-full gap-space-3">
           <button
             onClick={handleShare}
             disabled={isGenerating || !imageDataUrl}
-            className="flex-1 bg-white py-space-4 text-black shadow-lg transition-all hover:bg-gray-100 disabled:opacity-50"
+            className={`flex-1 py-space-4 shadow-lg transition-all hover:opacity-90 disabled:opacity-50 ${
+              isDark ? "bg-white text-black" : "bg-black text-white"
+            }`}
             style={{ fontFamily: "Georgia, serif" }}
           >
             {isGenerating ? "処理中..." : "シェア"}
@@ -182,7 +330,11 @@ export function ShareCard({ color, hex, onClose }: ShareCardProps) {
           <button
             onClick={handleDownload}
             disabled={!imageDataUrl}
-            className="flex-1 border border-white bg-transparent py-space-4 text-white shadow-lg transition-all hover:bg-white hover:text-black disabled:opacity-50"
+            className={`flex-1 border py-space-4 shadow-lg transition-all disabled:opacity-50 ${
+              isDark
+                ? "border-white bg-transparent text-white hover:bg-white hover:text-black"
+                : "border-black bg-transparent text-black hover:bg-black hover:text-white"
+            }`}
             style={{ fontFamily: "Georgia, serif" }}
           >
             保存
@@ -192,7 +344,11 @@ export function ShareCard({ color, hex, onClose }: ShareCardProps) {
         {/* SNS Links (Manual Attach) */}
         {imageDataUrl && (
           <div className="mt-space-5 flex flex-col items-center gap-space-3">
-            <p className="text-[length:var(--text-micro)] text-white/70">
+            <p
+              className={`text-[length:var(--text-micro)] ${
+                isDark ? "text-white/70" : "text-black/70"
+              }`}
+            >
               画像を保存して、SNSでシェアしよう
             </p>
             <div className="flex gap-space-4">
@@ -203,7 +359,9 @@ export function ShareCard({ color, hex, onClose }: ShareCardProps) {
                 )}&url=${encodeURIComponent("https://24bitcolors.com")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black transition-transform hover:scale-110"
+                className={`flex h-12 w-12 items-center justify-center rounded-full transition-transform hover:scale-110 ${
+                  isDark ? "bg-white text-black" : "bg-black text-white"
+                }`}
               >
                 <svg
                   width="20"
@@ -220,7 +378,9 @@ export function ShareCard({ color, hex, onClose }: ShareCardProps) {
                 href="https://www.instagram.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black transition-transform hover:scale-110"
+                className={`flex h-12 w-12 items-center justify-center rounded-full transition-transform hover:scale-110 ${
+                  isDark ? "bg-white text-black" : "bg-black text-white"
+                }`}
               >
                 <svg
                   width="20"

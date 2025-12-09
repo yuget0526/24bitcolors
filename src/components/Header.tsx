@@ -3,7 +3,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 export function Header() {
   return (
-    <header className="flex w-full items-center justify-between px-space-5 py-space-5">
+    <header className="flex w-full items-center justify-between px-space-5 py-space-3">
       <Link href="/" className="group">
         <h1
           className="text-[length:var(--text-medium)] font-normal tracking-wide text-[var(--accent)] transition-opacity group-hover:opacity-70"

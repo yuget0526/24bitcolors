@@ -110,9 +110,13 @@ Base Size: **16px (1rem)**
 - **Shape**: 角丸なし（Sharp）または完全な丸（Pill、コンパクトなアクション用）。
 - **Interaction**: ホバー時に不透明度変化 (`opacity-80`) や、反転 (`bg-black` -> `bg-white`) ではなく、背景色の微細な変化 (`zinc-800`) を基本とする。
 
-### Cards
+### Cards & Shadows
 
-- Shadow: `shadow-md` は控えめに。Dark モードでは `border` (`zinc-800`) で境界を表現し、フラットな質感を保つ。
+- **Floating Shadow** (`--shadow-floating`): `0 30px 60px -10px`
+  - 浮遊感を演出する広範囲のドロップシャドウ。
+  - **Light Mode**: `rgba(0, 0, 0, 0.2)` (Black Shadow)
+  - **Dark Mode**: `rgba(255, 255, 255, 0.15)` (White Glow) - 黒背景でも視認性を確保するため、白い光彩を使用する。
+- **Standard Card**: `shadow-md` は控えめに。Dark モードでは `border` (`zinc-800`) で境界を表現し、よりフラットな質感を保つ。
 
 ---
 

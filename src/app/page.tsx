@@ -1,99 +1,49 @@
-"use client";
+import Link from "next/link";
+import { Metadata } from "next";
 
-import { useState, useCallback } from "react";
-import { StartScreen } from "@/components/StartScreen";
-import { QuestionScreen } from "@/components/QuestionScreen";
-import { ResultScreen } from "@/components/ResultScreen";
-import {
-  DiagnosisState,
-  DiagnosisResult,
-  ColorPair,
-  createDiagnosisState,
-  selectOptimalColorPair,
-  processChoice,
-  getFinalResult,
-  isDiagnosisComplete,
-} from "@/lib/color-diagnosis";
-
-type Screen = "start" | "question" | "result";
-
-interface HistoryEntry {
-  state: DiagnosisState;
-  pair: ColorPair;
-}
+export const metadata: Metadata = {
+  title: "24bitColors - あなたの好きな色を見つけよう",
+  description:
+    "20の質問で、1677万色の中からあなたの「運命の色」を統計的に特定します。登録不要、無料で今すぐ診断。",
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function Home() {
-  const [screen, setScreen] = useState<Screen>("start");
-  const [diagnosisState, setDiagnosisState] = useState<DiagnosisState | null>(
-    null
-  );
-  const [colorPair, setColorPair] = useState<ColorPair | null>(null);
-  const [result, setResult] = useState<DiagnosisResult | null>(null);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
-
-  const handleStart = useCallback(() => {
-    const state = createDiagnosisState();
-    const pair = selectOptimalColorPair(state);
-    setDiagnosisState(state);
-    setColorPair(pair);
-    setHistory([]);
-    setScreen("question");
-  }, []);
-
-  const handleSelect = useCallback(
-    (choice: "A" | "B") => {
-      if (!diagnosisState || !colorPair) return;
-
-      // 現在の状態を履歴に追加
-      setHistory((prev) => [
-        ...prev,
-        { state: diagnosisState, pair: colorPair },
-      ]);
-
-      const newState = processChoice(diagnosisState, choice, colorPair);
-      setDiagnosisState(newState);
-
-      if (isDiagnosisComplete(newState)) {
-        const finalResult = getFinalResult(newState);
-        setResult(finalResult);
-        setScreen("result");
-      } else {
-        const newPair = selectOptimalColorPair(newState);
-        setColorPair(newPair);
-      }
-    },
-    [diagnosisState, colorPair]
-  );
-
-  const handleUndo = useCallback(() => {
-    if (history.length === 0) return;
-
-    const lastEntry = history[history.length - 1];
-    setDiagnosisState(lastEntry.state);
-    setColorPair(lastEntry.pair);
-    setHistory((prev) => prev.slice(0, -1));
-  }, [history]);
-
   return (
-    <div className="flex w-full flex-grow items-center justify-center p-space-4">
-      <main className="w-full max-w-md p-space-5">
-        {screen === "start" && <StartScreen onStart={handleStart} />}
+    <div className="flex w-full flex-grow items-center justify-center p-space-2">
+      <main className="flex w-full max-w-lg flex-col items-center text-center p-space-4">
+        {/* タイトル */}
+        <h1
+          className="mb-3 text-4xl font-normal tracking-wide animate-fade-in"
+          style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
+        >
+          24bitColors
+        </h1>
 
-        {screen === "question" && diagnosisState && colorPair && (
-          <QuestionScreen
-            questionNumber={diagnosisState.currentQuestion}
-            totalQuestions={diagnosisState.totalQuestions}
-            colorA={colorPair.colorA}
-            colorB={colorPair.colorB}
-            prediction={diagnosisState.currentPrediction}
-            confidence={diagnosisState.confidence}
-            onSelectA={() => handleSelect("A")}
-            onSelectB={() => handleSelect("B")}
-            onUndo={history.length > 0 ? handleUndo : undefined}
-          />
-        )}
+        {/* サブタイトル */}
+        <p
+          className="mb-space-5 text-[length:var(--text-medium)] text-[var(--muted-foreground)] animate-fade-in delay-100"
+          style={{ fontFamily: "Georgia, serif" }}
+        >
+          Discover Your Favorite Color
+        </p>
 
-        {screen === "result" && result && <ResultScreen result={result} />}
+        {/* 説明文 */}
+        <div
+          className="mb-space-6 max-w-md text-[length:var(--text-base)] leading-relaxed text-[var(--muted-foreground)] animate-fade-in delay-200"
+          style={{ fontFamily: "Georgia, serif" }}
+        >
+          20の質問への回答から、1677万色の中であなたが最も好む色を統計的に特定します。
+        </div>
+
+        {/* 開始ボタン (LP -> Diagnosis) */}
+        <div className="animate-fade-in delay-300">
+          <Link href="/diagnosis" className="btn-museum">
+            診断を開始する
+          </Link>
+        </div>
       </main>
     </div>
   );

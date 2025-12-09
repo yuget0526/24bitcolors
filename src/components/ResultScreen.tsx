@@ -18,6 +18,8 @@ const ratingLabels = [
   { value: 5, emoji: "5", label: "ピッタリ" },
 ];
 
+import { useTheme } from "./ThemeProvider";
+
 /**
  * ギャラリー風カードのプレビューコンポーネント
  */
@@ -32,18 +34,47 @@ function GalleryCardPreview({
   chroma: number;
   hue: number;
 }) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
+  const colors = isDark
+    ? {
+        bg: "#1A1A1A",
+        frame: "#E5E5E5",
+        textMain: "#E0E0E0",
+        textHex: "#FFFFFF",
+        textSub: "#AAAAAA",
+        textInfo: "#888888",
+        containerBg: "#1A1A1A", // カード外枠
+      }
+    : {
+        bg: "#E8E8E8",
+        frame: "#000000",
+        textMain: "#2C2C2C",
+        textHex: "#000000",
+        textSub: "#666666",
+        textInfo: "#999999",
+        containerBg: "#E8E8E8",
+      };
+
   return (
     <div
-      className="overflow-hidden bg-[#E8E8E8] p-6"
-      style={{ width: "220px" }}
+      className="mx-auto flex flex-col items-center p-6 shadow-xl transition-colors duration-500"
+      style={{
+        width: "240px",
+        backgroundColor: colors.containerBg,
+      }}
     >
-      {/* 色の絵（黒フレーム付き） */}
-      <div className="mb-5">
-        <div className="color-frame">
+      {/* 色の絵（フレーム付き） */}
+      <div className="mb-5 w-full">
+        <div
+          className="border-[6px] bg-white p-0 shadow-lg transition-colors duration-500"
+          style={{ borderColor: colors.frame }}
+        >
           <div
             style={{
               width: "100%",
-              aspectRatio: "720 / 480",
+              aspectRatio: "1 / 1",
               backgroundColor: hex,
             }}
           />
@@ -51,50 +82,46 @@ function GalleryCardPreview({
       </div>
 
       {/* キャプションカード */}
-      <div className="text-left">
+      <div className="w-full text-left">
+        {/* Brand Name - User Request: Main position */}
         <p
+          className="mb-1 text-lg font-bold transition-colors duration-500"
           style={{
             fontFamily: 'Georgia, "Times New Roman", serif',
-            fontSize: "16px",
-            fontWeight: 500,
-            color: "#2C2C2C",
-            lineHeight: 1.3,
+            color: colors.textMain,
           }}
         >
-          Your Color
+          24bitColors
         </p>
+
+        {/* HEX Code */}
         <p
+          className="mb-2 text-base font-normal transition-colors duration-500"
           style={{
             fontFamily: '"SF Mono", "Courier New", Courier, monospace',
-            fontSize: "14px",
-            fontWeight: 400,
-            color: "#000000",
-            marginTop: "6px",
-            lineHeight: 1.3,
+            color: colors.textHex,
           }}
         >
           {hex.toUpperCase()}
         </p>
+
+        {/* Sub Info */}
         <p
+          className="mb-1 text-xs transition-colors duration-500"
           style={{
             fontFamily: "Georgia, serif",
-            fontSize: "12px",
-            fontWeight: 300,
-            color: "#666666",
-            marginTop: "6px",
-            lineHeight: 1.3,
+            color: colors.textSub,
           }}
         >
-          24bitcolors.com 2025
+          Your Personal Color
         </p>
+
+        {/* LCH Data */}
         <p
+          className="text-[10px] font-light transition-colors duration-500"
           style={{
             fontFamily: '"SF Mono", monospace',
-            fontSize: "11px",
-            fontWeight: 300,
-            color: "#999999",
-            marginTop: "6px",
-            lineHeight: 1.3,
+            color: colors.textInfo,
           }}
         >
           L:{Math.round(lightness * 100)} C:{Math.round(chroma * 100)} H:
@@ -192,34 +219,37 @@ export function ResultScreen({ result }: ResultScreenProps) {
             </button>
           </div>
         ) : (
-          <div className="mb-space-6">
+          <div className="mb-space-6 w-full animate-fade-in">
             <p
-              className="text-[length:var(--text-base)] text-[var(--muted-foreground)]"
+              className="mb-space-4 text-[length:var(--text-base)] text-[var(--muted-foreground)]"
               style={{ fontFamily: "Georgia, serif" }}
             >
               ✓ フィードバックありがとうございます
             </p>
+
+            {/* URLシェア (Phase 1.5) */}
+            <ShareActions
+              url={`https://24bitcolors.com/${result.hex.replace("#", "")}`}
+              colors={{ name: result.hex.toUpperCase(), code: result.hex }}
+            />
+
+            {/* アクションボタン */}
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setShowShareCard(true)}
+                className="btn-museum"
+              >
+                画像でシェア
+              </button>
+              <a
+                href={`/${result.hex.replace("#", "")}`}
+                className="btn-museum-outline"
+              >
+                詳細を見る
+              </a>
+            </div>
           </div>
         )}
-
-        {/* URLシェア (Phase 1.5) */}
-        <ShareActions
-          url={`https://24bitcolors.com/${result.hex.replace("#", "")}`}
-          colors={{ name: result.hex.toUpperCase(), code: result.hex }}
-        />
-
-        {/* アクションボタン */}
-        <div className="flex gap-4">
-          <button onClick={() => setShowShareCard(true)} className="btn-museum">
-            画像でシェア
-          </button>
-          <a
-            href={`/${result.hex.replace("#", "")}`}
-            className="btn-museum-outline"
-          >
-            詳細を見る
-          </a>
-        </div>
       </div>
 
       {/* シェアカードモーダル */}

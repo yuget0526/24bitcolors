@@ -30,7 +30,7 @@ export function QuestionScreen({
   return (
     <div className="flex w-full flex-col items-center">
       {/* プログレスバー */}
-      <div className="mb-space-4 h-px w-full bg-gray-300 dark:bg-gray-700">
+      <div className="mb-space-2 h-px w-full bg-gray-300 dark:bg-gray-700">
         <div
           className="h-full bg-[var(--foreground)] transition-all duration-300"
           style={{ width: `${progress}%` }}
@@ -38,7 +38,7 @@ export function QuestionScreen({
       </div>
 
       {/* 質問カウント + 戻るボタン */}
-      <div className="mb-space-4 flex w-full items-center justify-between">
+      <div className="mb-space-2 flex w-full items-center justify-between">
         <div className="w-16">
           {onUndo && (
             <button
@@ -61,14 +61,14 @@ export function QuestionScreen({
 
       {/* 質問テキスト */}
       <h2
-        className="mb-space-5 text-[length:var(--text-medium)] font-normal text-[var(--foreground)]"
+        className="mb-space-3 text-[length:var(--text-medium)] font-normal text-[var(--foreground)]"
         style={{ fontFamily: "Georgia, serif" }}
       >
         どちらの色がお好みですか？
       </h2>
 
       {/* 色選択 */}
-      <div className="mb-8 grid w-full max-w-md grid-cols-2 gap-6">
+      <div className="mb-4 grid w-full max-w-md grid-cols-2 gap-6">
         <ColorButton color={colorA} onClick={onSelectA} />
         <ColorButton color={colorB} onClick={onSelectB} />
       </div>
