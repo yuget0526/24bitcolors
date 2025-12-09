@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+html {
+  scroll-behavior: smooth;
+  /* Header height offset for clean snapping */
+  scroll-padding-top: 4rem;
+}
+
 @layer base {
   :root {
     --background: 0 0% 97.6%; /* Neutral-50 #F9F9F9 */
