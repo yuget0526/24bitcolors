@@ -56,6 +56,11 @@ Z 世代視点の UX レビューに基づき、ユーザビリティと拡散�
   - **性格・印象分析**: 色彩心理学に基づいた簡単な性格診断コメント
 - [ ] **マイパレット機能**
   - 気に入った色を「保存」してコレクション化（Cookie/LocalStorage）
+- [ ] **Advanced SEO & Performance (Organic Growth)**
+  - **Sitemap & Robots.txt**: 検索エンジンへの適切なインデックス指示
+  - **Structured Data (JSON-LD)**: リッチリザルト対応で検索面有率を向上
+  - **Core Web Vitals**: LCP (読み込み速度) と CLS (視覚的安定性) の最適化
+  - **Dynamic OGP**: 色ごとの動的 OGP 画像生成による SNS 流入強化
 
 ---
 
