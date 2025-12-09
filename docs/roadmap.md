@@ -31,13 +31,13 @@
 
 Z 世代視点の UX レビューに基づき、ユーザビリティと拡散力を強化します。
 
-- [ ] **シェア導線の強化 ("Frictionless Share")**
+- [x] **シェア導線の強化 ("Frictionless Share")**
   - 画像生成を待たずに、URL だけで即座にシェアできるボタン（X, LINE）の追加
-  - Instagram Stories へのスムーズな連携（Web Share API）
-- [ ] **ダークモード ("Night Museum")**
+  - Instagram Stories へのスムーズな連携（Web Share API / Link fallback）
+- [x] **ダークモード ("Night Museum")**
   - 夜間の利用に配慮し、かつ高級感を損なわない「夜の美術館」テーマの実装
   - OS 設定に応じた自動切り替え
-- [ ] **診断プロセスの最適化**
+- [x] **診断プロセスの最適化**
   - 離脱率の計測強化（Google Analytics）
 
 ---

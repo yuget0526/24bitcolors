@@ -133,6 +133,8 @@ export function getHarmonies(hex: string) {
   return {
     complementary: rotateHue(180),
     analogous: [rotateHue(-30), rotateHue(30)],
+    rectangular: [rotateHue(60), rotateHue(180), rotateHue(240)],
+    analogousComplementary: [rotateHue(-30), rotateHue(30), rotateHue(180)],
     triadic: [rotateHue(120), rotateHue(240)],
     tetradic: [rotateHue(90), rotateHue(180), rotateHue(270)],
     splitComplementary: [rotateHue(150), rotateHue(210)],

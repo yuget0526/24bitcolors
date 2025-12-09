@@ -12,6 +12,7 @@ import {
 import { ShareActions } from "@/components/ShareActions";
 import { Button } from "@/components/ui/button";
 import { CopyableHex } from "@/components/CopyableHex";
+import { HarmonyGallery } from "@/components/HarmonyGallery";
 
 type Params = Promise<{ hex: string }>;
 
@@ -66,223 +67,194 @@ export default async function ColorDetailPage({ params }: PageProps) {
 
   return (
     <div className="flex min-h-[calc(100vh-80px)] w-full flex-col items-center bg-background py-12 md:py-20 animate-in fade-in duration-1000">
-      {/* 1. HERO: The "Museum Piece" Card */}
-      {/* 1. HERO: The "Museum Piece" Card */}
-      <div className="group/card relative mb-20 w-[90%] md:w-full md:max-w-[400px] bg-card shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] transition-all duration-700 hover:shadow-[0_45px_100px_-20px_rgba(0,0,0,0.4)] dark:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)] dark:hover:shadow-[0_45px_100px_-20px_rgba(255,255,255,0.05)]">
-        {/* Swatch (Top) */}
-        <CopyableHex
-          hex={colorInfo.hex}
-          className="relative aspect-[3/3.5] w-full overflow-hidden block"
-          style={{ backgroundColor: colorInfo.hex }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-tr from-black/5 to-transparent opacity-0 transition-opacity duration-500 group-hover/card:opacity-100 pointer-events-none" />
-          {/* Interactive Hint */}
-          <div
-            className={`flex h-full w-full items-center justify-center transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover/card:opacity-100 ${onColorText}`}
-          >
-            <span className="font-serif tracking-widest text-sm uppercase">
-              Pigment No. {colorInfo.hex.replace("#", "")}
-            </span>
+      {/* Shared Container for Vertical Flow */}
+      <div className="w-full max-w-3xl px-6 flex flex-col items-center">
+        {/* 1. HERO: The "Color Monolith" (Exhibition Poster) */}
+        <div className="relative mb-32 w-full perspective-1000">
+          {/* The Frame - Full Width of Container */}
+          <div className="relative mx-auto bg-white p-[15px] shadow-[var(--shadow-museum)] duration-700 ease-out hover:scale-[1.01] hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.4)] dark:bg-[#111] dark:hover:shadow-[0_40px_80px_-15px_rgba(255,255,255,0.1)]">
+            {/* The Matting (Passe-Partout) */}
+            <div className="flex aspect-[3/4] md:aspect-[4/3] w-full flex-col bg-white p-[40px] dark:bg-[#1a1a1a] sm:p-[60px]">
+              {/* The Artwork (Color) */}
+              <CopyableHex
+                hex={colorInfo.hex}
+                className="group/art relative flex-1 w-full overflow-hidden shadow-inner cursor-pointer"
+                style={{ backgroundColor: colorInfo.hex }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 transition-opacity duration-500 group-hover/art:opacity-100" />
+
+                {/* Overlay Text (Museum Label Style on Canvas) */}
+                <div
+                  className={`flex h-full w-full flex-col items-center justify-center text-center opacity-90 transition-all duration-500 hover:scale-105 ${onColorText}`}
+                >
+                  <span className="mb-4 font-serif text-sm font-light tracking-[0.3em] uppercase opacity-70">
+                    Pigment No.
+                  </span>
+                  <span
+                    className="font-serif text-5xl sm:text-7xl font-normal tracking-wider"
+                    style={{ fontFamily: '"Times New Roman", Times, serif' }}
+                  >
+                    {colorInfo.hex.replace("#", "")}
+                  </span>
+                </div>
+              </CopyableHex>
+
+              {/* The Caption (Bottom of Mat - integrated for simpler look in wider view) */}
+              <div className="mt-6 flex flex-col items-center space-y-4">
+                {/* Exhibition Notes (Tech Data) */}
+                <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] lg:gap-4 gap-y-8 pt-8 font-mono tracking-wider text-black/70 dark:text-white/70">
+                  {/* RGB */}
+                  <div className="flex justify-center lg:justify-between px-4 lg:px-0">
+                    <div className="flex gap-4 sm:gap-6 lg:gap-5 w-full justify-center lg:justify-around text-center">
+                      <div className="flex flex-col items-center min-w-[1.5rem]">
+                        <span className="mb-3 text-[10px] opacity-40">R</span>
+                        <span className="text-xs">{colorInfo.rgb.r}</span>
+                      </div>
+                      <div className="flex flex-col items-center min-w-[1.5rem]">
+                        <span className="mb-3 text-[10px] opacity-40">G</span>
+                        <span className="text-xs">{colorInfo.rgb.g}</span>
+                      </div>
+                      <div className="flex flex-col items-center min-w-[1.5rem]">
+                        <span className="mb-3 text-[10px] opacity-40">B</span>
+                        <span className="text-xs">{colorInfo.rgb.b}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CMYK */}
+                  <div className="flex justify-center lg:border-l lg:border-r border-black/5 dark:border-white/5 px-4 lg:px-6">
+                    <div className="flex gap-4 sm:gap-6 lg:gap-5 w-full justify-center lg:justify-around text-center">
+                      <div className="flex flex-col items-center min-w-[1.5rem]">
+                        <span className="mb-3 text-[10px] opacity-40">C</span>
+                        <span className="text-xs">{colorInfo.cmyk.c}</span>
+                      </div>
+                      <div className="flex flex-col items-center min-w-[1.5rem]">
+                        <span className="mb-3 text-[10px] opacity-40">M</span>
+                        <span className="text-xs">{colorInfo.cmyk.m}</span>
+                      </div>
+                      <div className="flex flex-col items-center min-w-[1.5rem]">
+                        <span className="mb-3 text-[10px] opacity-40">Y</span>
+                        <span className="text-xs">{colorInfo.cmyk.y}</span>
+                      </div>
+                      <div className="flex flex-col items-center min-w-[1.5rem]">
+                        <span className="mb-3 text-[10px] opacity-40">K</span>
+                        <span className="text-xs">{colorInfo.cmyk.k}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* OKLCH */}
+                  <div className="flex justify-center lg:justify-between px-4 lg:px-0">
+                    <div className="flex gap-4 sm:gap-6 lg:gap-5 w-full justify-center lg:justify-around text-center">
+                      <div className="flex flex-col items-center min-w-[1.5rem]">
+                        <span className="mb-3 text-[10px] opacity-40">L</span>
+                        <span className="text-xs">
+                          {Math.round(colorInfo.oklch.l * 100)}%
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center min-w-[1.5rem]">
+                        <span className="mb-3 text-[10px] opacity-40">C</span>
+                        <span className="text-xs">
+                          {colorInfo.oklch.c.toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center min-w-[1.5rem]">
+                        <span className="mb-3 text-[10px] opacity-40">H</span>
+                        <span className="text-xs">
+                          {Math.round(colorInfo.oklch.h)}°
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </CopyableHex>
 
-        {/* Label (Bottom) */}
-        <div className="flex flex-col items-center bg-card px-8 py-10 text-card-foreground">
-          <CopyableHex hex={colorInfo.hex} showIcon className="mb-8">
-            <h1
-              className="font-serif text-5xl font-normal tracking-wide text-foreground"
-              style={{ fontFamily: '"Times New Roman", Times, serif' }}
-            >
-              {colorInfo.hex}
-            </h1>
-          </CopyableHex>
-
-          <div className="w-full space-y-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            <div className="flex justify-between border-b border-border pb-2">
-              <span>RGB</span>
-              <span className="text-foreground text-xs tracking-widest">
-                {colorInfo.rgb.r}, {colorInfo.rgb.g}, {colorInfo.rgb.b}
-              </span>
-            </div>
-            <div className="flex justify-between border-b border-border pb-2">
-              <span>CMYK</span>
-              <span className="text-foreground text-xs tracking-widest">
-                {colorInfo.cmyk.c}, {colorInfo.cmyk.m}, {colorInfo.cmyk.y},{" "}
-                {colorInfo.cmyk.k}
-              </span>
-            </div>
-            <div className="flex justify-between border-b border-border pb-2">
-              <span>OKLCH</span>
-              <span className="text-foreground text-xs tracking-widest">
-                {Math.round(colorInfo.oklch.l * 100)}%,{" "}
-                {Math.round(colorInfo.oklch.c * 100)}%,{" "}
-                {Math.round(colorInfo.oklch.h)}°
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-8 w-full border-t border-transparent pt-2">
+          {/* Share Actions (Below the Frame) */}
+          <div className="mt-12 flex justify-center">
             <ShareActions
               url={`https://24bitcolors.com/${hex}`}
               colors={{ name: colorInfo.hex, code: colorInfo.hex }}
             />
           </div>
         </div>
-      </div>
 
-      {/* 2. SCIENTIFIC ANALYSIS (Content Richness) */}
-      <div className="container max-w-4xl px-4 space-y-24">
-        {/* Shades & Tints */}
-        {/* Tonal Variations (Gallery Style) */}
-        <section className="w-full max-w-6xl mx-auto">
-          <h2 className="mb-12 text-center font-serif text-2xl tracking-widest text-foreground">
-            TONAL VARIATIONS
-            <span className="mt-2 block font-sans text-sm tracking-normal text-muted-foreground">
-              トーンの変化（明度・彩度）
-            </span>
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                label: "明色",
-                sub: "TINTS",
-                data: [...tints].reverse().concat(colorInfo.hex),
-              },
-              {
-                label: "暗色",
-                sub: "SHADES",
-                data: [colorInfo.hex, ...shades],
-              },
-            ].map((set) => (
-              <div key={set.label} className="group flex flex-col space-y-6">
-                {/* The Art (Unified Aspect 16:10) */}
-                <div className="relative w-full floating-shadow overflow-hidden">
-                  <div className="flex aspect-[16/10] w-full">
-                    {set.data.map((c, i) => (
-                      <Link
-                        key={`${set.label}-${c}-${i}`}
-                        href={`/${c.replace("#", "")}`}
-                        className="group/swatch relative flex flex-1 items-end justify-center pb-0 z-0"
-                        style={{ backgroundColor: c }}
-                        title={`${c}`}
-                      >
-                        <span className="absolute bottom-0 left-0 right-0 flex items-center justify-center bg-white py-2 font-mono text-[10px] tracking-wider text-black opacity-0 transition-opacity duration-200 group-hover/swatch:opacity-100">
-                          {c}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-
-                {/* The Caption (Left Aligned) */}
-                <div className="px-1 text-left">
-                  <h3 className="font-serif text-base text-foreground tracking-wider">
-                    {set.label}
-                  </h3>
-                  <p className="mt-1 font-mono text-[10px] tracking-widest text-muted-foreground uppercase border-t border-border/40 pt-2 inline-block min-w-[100px]">
-                    {set.sub}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Harmonies (Chromatic Only) */}
-        {!isAchromatic(`#${hex}`) && harmonies && (
-          <section>
+        {/* 2. SCIENTIFIC ANALYSIS (Content Richness) */}
+        <div className="w-full space-y-32">
+          {/* Shades & Tints */}
+          {/* Tonal Variations (Gallery Style) */}
+          <section className="w-full">
             <h2 className="mb-12 text-center font-serif text-2xl tracking-widest text-foreground">
-              COLOR SCHEMES
+              TONAL VARIATIONS
               <span className="mt-2 block font-sans text-sm tracking-normal text-muted-foreground">
-                配色パターンギャラリー
+                トーンの変化（明度・彩度）
               </span>
             </h2>
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
-                  name: "補色",
-                  sub: "COMPLEMENTARY",
-                  colors: [colorInfo.hex, harmonies.complementary],
+                  label: "明色",
+                  sub: "TINTS",
+                  data: [...tints].reverse().concat(colorInfo.hex),
                 },
                 {
-                  name: "類似色",
-                  sub: "ANALOGOUS",
-                  colors: [
-                    harmonies.analogous[0],
-                    colorInfo.hex,
-                    harmonies.analogous[1],
-                  ],
+                  label: "暗色",
+                  sub: "SHADES",
+                  data: [colorInfo.hex, ...shades],
                 },
-                {
-                  name: "トライアド",
-                  sub: "TRIADIC",
-                  colors: [colorInfo.hex, ...harmonies.triadic],
-                },
-                {
-                  name: "分裂補色",
-                  sub: "SPLIT COMPLEMENTARY",
-                  colors: [colorInfo.hex, ...harmonies.splitComplementary],
-                },
-                {
-                  name: "テトラード",
-                  sub: "TETRADIC",
-                  colors: [colorInfo.hex, ...harmonies.tetradic],
-                },
-                {
-                  name: "ペンタード",
-                  sub: "PENTADIC",
-                  colors: [colorInfo.hex, ...harmonies.pentadic],
-                },
-                {
-                  name: "ヘキサード",
-                  sub: "HEXADIC",
-                  colors: [colorInfo.hex, ...harmonies.hexadic],
-                },
-              ].map((scheme) => (
-                <div key={scheme.sub} className="group flex flex-col space-y-6">
-                  {/* The Art (Palette) */}
-                  <div className="flex aspect-[16/10] w-full overflow-hidden floating-shadow">
-                    {scheme.colors.map((c, i) => (
-                      <Link
-                        key={`${scheme.sub}-${c}-${i}`}
-                        href={`/${c.replace("#", "")}`}
-                        className="group/swatch relative flex flex-1 items-end justify-center pb-0 shadow-sm z-0"
-                        style={{ backgroundColor: c }}
-                        title={`${c}`}
-                      >
-                        <span className="absolute bottom-0 left-0 right-0 flex items-center justify-center bg-white py-2 font-mono text-[10px] tracking-wider text-black opacity-0 transition-opacity duration-200 group-hover/swatch:opacity-100">
-                          {c}
-                        </span>
-                      </Link>
-                    ))}
+              ].map((set) => (
+                <div key={set.label} className="group flex flex-col space-y-6">
+                  {/* The Art (Unified Aspect 16:10) */}
+                  <div className="relative w-full floating-shadow overflow-hidden">
+                    <div className="flex aspect-[16/10] w-full">
+                      {set.data.map((c, i) => (
+                        <Link
+                          key={`${set.label}-${c}-${i}`}
+                          href={`/${c.replace("#", "")}`}
+                          className="group/swatch relative flex flex-1 items-end justify-center pb-0 z-0"
+                          style={{ backgroundColor: c }}
+                          title={`${c}`}
+                        >
+                          <span className="absolute bottom-0 left-0 right-0 flex items-center justify-center bg-white py-2 font-mono text-[10px] tracking-wider text-black opacity-0 transition-opacity duration-200 group-hover/swatch:opacity-100">
+                            {c}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* The Caption */}
+                  {/* The Caption (Left Aligned) */}
                   <div className="px-1 text-left">
                     <h3 className="font-serif text-base text-foreground tracking-wider">
-                      {scheme.name}
+                      {set.label}
                     </h3>
                     <p className="mt-1 font-mono text-[10px] tracking-widest text-muted-foreground uppercase border-t border-border/40 pt-2 inline-block min-w-[100px]">
-                      {scheme.sub}
+                      {set.sub}
                     </p>
                   </div>
                 </div>
               ))}
             </div>
           </section>
-        )}
-      </div>
 
-      {/* Navigation Footer */}
-      <div className="mt-32 opacity-50 transition-opacity hover:opacity-100">
-        <Button
-          variant="link"
-          asChild
-          className="text-muted-foreground font-serif tracking-widest hover:text-foreground hover:no-underline"
-        >
-          <Link href="/">← BACK TO COLLECTION</Link>
-        </Button>
+          {/* Harmonies (Chromatic Only) */}
+          {!isAchromatic(`#${hex}`) && harmonies && (
+            <HarmonyGallery hex={colorInfo.hex} harmonies={harmonies} />
+          )}
+        </div>
+
+        {/* Navigation Footer */}
+        <div className="mt-32 opacity-50 transition-opacity hover:opacity-100">
+          <Button
+            variant="link"
+            asChild
+            className="text-muted-foreground font-serif tracking-widest hover:text-foreground hover:no-underline"
+          >
+            <Link href="/">← BACK TO COLLECTION</Link>
+          </Button>
+        </div>
       </div>
     </div>
   );
