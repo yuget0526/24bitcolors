@@ -1,40 +1,52 @@
 import { converter } from "culori";
 
-// 1. Define Poetic Hues (32 steps ≈ 11.25 degrees each)
-// Aligned to match the intuitive color circle
+// 1. Define Poetic Hues based on OKLCH color wheel
+// OKLCH Hue Reference (measured from pure colors):
+// Red ~29°, Orange ~53°, Yellow ~110°, Green ~142°
+// Cyan ~195°, Blue ~264°, Magenta ~328°
 const POETIC_HUES = [
-  { name: "Rose", start: 0 },
-  { name: "Blush", start: 11 },
-  { name: "Coral", start: 22 },
-  { name: "Peach", start: 33 },
-  { name: "Sun", start: 45 },
-  { name: "Gold", start: 56 },
-  { name: "Olive", start: 67 },
-  { name: "Forest", start: 78 },
-  { name: "Moss", start: 90 },
-  { name: "Emerald", start: 101 },
-  { name: "Teal", start: 112 },
-  { name: "Cyan", start: 123 },
-  { name: "Sky", start: 135 },
-  { name: "Azure", start: 146 },
-  { name: "Ocean", start: 157 },
-  { name: "Indigo", start: 168 },
-  { name: "Midnight", start: 180 },
-  { name: "Violet", start: 191 },
-  { name: "Iris", start: 202 },
-  { name: "Lavender", start: 213 },
-  { name: "Orchid", start: 225 },
-  { name: "Magenta", start: 236 },
-  { name: "Berry", start: 247 },
-  { name: "Crimson", start: 258 },
-  { name: "Ruby", start: 270 },
-  { name: "Garnet", start: 281 },
-  { name: "Clay", start: 292 },
-  { name: "Sand", start: 303 },
-  { name: "Sepia", start: 315 },
-  { name: "Coffee", start: 326 },
-  { name: "Chocolate", start: 337 },
-  { name: "Rouge", start: 348 },
+  // Reds & Pinks (0° - 40°)
+  { name: "Crimson", start: 0 }, // Deep pink → Red
+  { name: "Rose", start: 15 }, // Rose pink
+  { name: "Scarlet", start: 25 }, // True red
+  { name: "Vermilion", start: 35 }, // Red-orange
+
+  // Oranges (40° - 70°)
+  { name: "Tangerine", start: 45 }, // Orange
+  { name: "Amber", start: 55 }, // Deep orange
+  { name: "Apricot", start: 65 }, // Yellow-orange
+
+  // Yellows & Golds (70° - 120°)
+  { name: "Honey", start: 75 }, // Golden yellow
+  { name: "Marigold", start: 90 }, // Yellow
+  { name: "Lemon", start: 105 }, // Bright yellow
+
+  // Greens (120° - 160°)
+  { name: "Lime", start: 120 }, // Yellow-green
+  { name: "Sprout", start: 135 }, // True green
+  { name: "Jade", start: 150 }, // Blue-green
+
+  // Teals & Cyans (160° - 210°)
+  { name: "Teal", start: 165 }, // Teal
+  { name: "Aqua", start: 180 }, // Cyan-like
+  { name: "Turquoise", start: 195 }, // True cyan
+
+  // Blues (210° - 280°)
+  { name: "Sky", start: 210 }, // Light blue
+  { name: "Azure", start: 225 }, // Sky blue
+  { name: "Cobalt", start: 240 }, // Medium blue
+  { name: "Sapphire", start: 255 }, // True blue
+  { name: "Indigo", start: 270 }, // Deep blue
+
+  // Violets & Purples (280° - 320°)
+  { name: "Violet", start: 280 }, // Blue-violet
+  { name: "Lavender", start: 290 }, // Light purple (ADA8F9 = 286°)
+  { name: "Amethyst", start: 305 }, // Purple
+
+  // Magentas & Pinks (320° - 360°)
+  { name: "Orchid", start: 320 }, // Magenta-purple
+  { name: "Fuchsia", start: 335 }, // True magenta
+  { name: "Cerise", start: 350 }, // Pink-magenta
 ];
 
 /**
