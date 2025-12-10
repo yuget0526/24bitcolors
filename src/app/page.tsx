@@ -33,26 +33,17 @@ export default function Home() {
         {/* Main Content Container */}
         <div className="z-10 flex max-w-3xl flex-col items-center text-center">
           {/* Main Title */}
-          <h1
-            className="mb-8 animate-fade-in text-6xl font-medium tracking-tight md:text-8xl"
-            style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
-          >
+          <h1 className="mb-8 animate-fade-in text-6xl font-medium tracking-tight md:text-8xl font-serif">
             24bitColors
           </h1>
 
           {/* Tagline */}
-          <p
-            className="mb-12 animate-fade-in text-sm font-light uppercase tracking-[0.25em] text-muted-foreground delay-100 md:text-base"
-            style={{ fontFamily: '"Inter", sans-serif' }}
-          >
+          <p className="mb-12 animate-fade-in text-sm font-light uppercase tracking-[0.25em] text-muted-foreground delay-100 md:text-base font-sans">
             Discover Your True Color
           </p>
 
           {/* Description */}
-          <p
-            className="mb-12 max-w-md animate-fade-in text-sm leading-relaxed text-muted-foreground delay-200 md:text-base"
-            style={{ fontFamily: "Georgia, serif" }}
-          >
+          <p className="mb-12 max-w-md animate-fade-in text-sm leading-relaxed text-muted-foreground delay-200 md:text-base font-serif">
             20の質問への回答から、
             <br className="md:hidden" />
             1677万色の中であなたが最も好む色を
@@ -74,7 +65,7 @@ export default function Home() {
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-12 animate-bounce opacity-50">
-          <p className="text-[10px] tracking-[0.3em] text-muted-foreground">
+          <p className="text-[10px] tracking-[0.3em] text-foreground/60">
             SCROLL
           </p>
         </div>
@@ -90,10 +81,7 @@ export default function Home() {
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
             The Concept
           </p>
-          <h2
-            className="text-3xl font-normal md:text-5xl"
-            style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
-          >
+          <h2 className="text-3xl font-normal md:text-5xl font-serif">
             Digital Color Museum
           </h2>
           <p className="leading-loose text-muted-foreground font-serif text-sm md:text-base">
@@ -132,10 +120,7 @@ export default function Home() {
           <p className="mb-6 text-xs font-bold uppercase tracking-widest text-muted-foreground">
             The Logic
           </p>
-          <h2
-            className="mb-8 text-3xl font-normal md:text-4xl"
-            style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
-          >
+          <h2 className="mb-8 text-3xl font-normal md:text-4xl font-serif">
             色彩の統計学
           </h2>
           <p className="mb-10 leading-loose text-muted-foreground">
