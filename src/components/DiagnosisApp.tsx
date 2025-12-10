@@ -11,7 +11,6 @@ import {
   getFinalResult,
   isDiagnosisComplete,
 } from "@/lib/color-diagnosis";
-import { saveDiagnosisAction } from "@/app/actions/saveDiagnosis";
 import { useTheme } from "./ThemeProvider";
 
 interface HistoryEntry {
@@ -101,29 +100,34 @@ export function DiagnosisApp() {
           localStorage.setItem("lastDiagnosisHex", finalResult.hex);
         }
 
-        // Navigate to Result Page FIRST (instant UX)
-        router.push(`/result/${groupSlug}?hex=${safeHex}`);
-
-        // Server Action Call - Fire-and-forget (background save)
-        saveDiagnosisAction({
-          hex: finalResult.hex,
-          hue: finalResult.color.hue,
-          lightness: finalResult.color.lightness,
-          chroma: finalResult.color.chroma,
-          theme: theme,
-          duration_seconds: durationSeconds,
-          algorithm_version: "v1.0.0",
-          locale: navigator.language,
-          anonymous_id: anonymousId || "unknown",
+        // API Call with keepalive - survives page navigation
+        // This allows immediate redirect while save continues in background
+        fetch("/api/diagnosis", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            hex: finalResult.hex,
+            hue: finalResult.color.hue,
+            lightness: finalResult.color.lightness,
+            chroma: finalResult.color.chroma,
+            theme: theme,
+            duration_seconds: durationSeconds,
+            algorithm_version: "v1.0.0",
+            locale: navigator.language,
+            anonymous_id: anonymousId || "unknown",
+          }),
+          keepalive: true, // Critical: keeps request alive after page unload
         })
-          .then((response) => {
-            if (response.success && response.id) {
-              localStorage.setItem("lastDiagnosisId", response.id);
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success && data.id) {
+              localStorage.setItem("lastDiagnosisId", data.id);
             }
           })
-          .catch((e) => {
-            console.error("Diagnosis save failed", e);
-          });
+          .catch((e) => console.error("Diagnosis save failed", e));
+
+        // Navigate to Result Page immediately
+        router.push(`/result/${groupSlug}?hex=${safeHex}`);
         // --- Data Collection v2 End ---
       } else {
         // Update state only if not complete (prevents "21/20" flash)
