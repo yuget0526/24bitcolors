@@ -35,6 +35,8 @@ docs/
 | [development_rules.md](./development/development_rules.md) | 開発ルール（バージョニング、ブランチ戦略、コミット規約、PR ルール） |
 | [tech-spec.md](./development/tech-spec.md)                 | 技術仕様（技術スタック、機能仕様、アルゴリズム）                    |
 | [release-guideline.md](./development/release-guideline.md) | リリース・デプロイガイドライン                                      |
+| [testing-guideline.md](./development/testing-guideline.md) | テストガイドライン（Vitest、API テスト）                            |
+| [backend-migration.md](./development/backend-migration.md) | バックエンド移行計画（Go/Gin への移行）                             |
 
 ---
 
