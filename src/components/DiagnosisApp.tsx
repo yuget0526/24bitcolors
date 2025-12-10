@@ -98,6 +98,8 @@ export function DiagnosisApp() {
           );
           // Save hex for header color indicator
           localStorage.setItem("lastDiagnosisHex", finalResult.hex);
+          // Dispatch custom event for same-tab updates
+          window.dispatchEvent(new Event("diagnosisColorUpdate"));
         }
 
         // API Route with keepalive - survives page navigation
