@@ -102,33 +102,33 @@ export function DiagnosisApp() {
           window.dispatchEvent(new Event("diagnosisColorUpdate"));
         }
 
-        // API Route with keepalive - survives page navigation
-        // Use SUPABASE_SERVICE_ROLE_KEY on server side
-        fetch("/api/diagnosis", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            hex: finalResult.hex,
-            hue: finalResult.color.hue,
-            lightness: finalResult.color.lightness,
-            chroma: finalResult.color.chroma,
-            theme: theme,
-            duration_seconds: durationSeconds,
-            algorithm_version: "v1.0.0",
-            locale: navigator.language,
-            anonymous_id: anonymousId || "unknown",
-          }),
-          keepalive: true,
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.success && data.id) {
-              localStorage.setItem("lastDiagnosisId", data.id);
-            }
-          })
-          .catch((e) => console.error("Diagnosis save failed", e));
+        // Save diagnosis and wait for ID before navigation
+        // This ensures feedback can be linked to diagnosis
+        try {
+          const res = await fetch("/api/diagnosis", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              hex: finalResult.hex,
+              hue: finalResult.color.hue,
+              lightness: finalResult.color.lightness,
+              chroma: finalResult.color.chroma,
+              theme: theme,
+              duration_seconds: durationSeconds,
+              algorithm_version: "v1.0.0",
+              locale: navigator.language,
+              anonymous_id: anonymousId || "unknown",
+            }),
+          });
+          const data = await res.json();
+          if (data.success && data.id) {
+            localStorage.setItem("lastDiagnosisId", data.id);
+          }
+        } catch (e) {
+          console.error("Diagnosis save failed", e);
+        }
 
-        // Navigate to Result Page immediately
+        // Navigate to Result Page after saving
         router.push(`/result/${groupSlug}?hex=${safeHex}`);
         // --- Data Collection v2 End ---
       } else {
