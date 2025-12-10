@@ -101,31 +101,30 @@ export function DiagnosisApp() {
           localStorage.setItem("lastDiagnosisHex", finalResult.hex);
         }
 
-        // Server Action Call - MUST complete BEFORE navigation
-        try {
-          const response = await saveDiagnosisAction({
-            hex: finalResult.hex,
-            hue: finalResult.color.hue,
-            lightness: finalResult.color.lightness,
-            chroma: finalResult.color.chroma,
-            theme: theme,
-            duration_seconds: durationSeconds,
-            algorithm_version: "v1.0.0",
-            locale: navigator.language,
-            anonymous_id: anonymousId || "unknown",
-          });
-
-          if (response.success && response.id) {
-            // Save Diagnosis ID for Feedback
-            localStorage.setItem("lastDiagnosisId", response.id);
-          }
-        } catch (e) {
-          console.error("Diagnosis save failed", e);
-        }
-        // --- Data Collection v2 End ---
-
-        // Navigate to Result Page AFTER saving data
+        // Navigate to Result Page FIRST (instant UX)
         router.push(`/result/${groupSlug}?hex=${safeHex}`);
+
+        // Server Action Call - Fire-and-forget (background save)
+        saveDiagnosisAction({
+          hex: finalResult.hex,
+          hue: finalResult.color.hue,
+          lightness: finalResult.color.lightness,
+          chroma: finalResult.color.chroma,
+          theme: theme,
+          duration_seconds: durationSeconds,
+          algorithm_version: "v1.0.0",
+          locale: navigator.language,
+          anonymous_id: anonymousId || "unknown",
+        })
+          .then((response) => {
+            if (response.success && response.id) {
+              localStorage.setItem("lastDiagnosisId", response.id);
+            }
+          })
+          .catch((e) => {
+            console.error("Diagnosis save failed", e);
+          });
+        // --- Data Collection v2 End ---
       } else {
         // Update state only if not complete (prevents "21/20" flash)
         setDiagnosisState(newState);
