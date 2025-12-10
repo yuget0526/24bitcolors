@@ -1,11 +1,10 @@
 /**
  * フィードバックデータの管理
- * Supabase に保存（設定されていない場合はlocalStorageにフォールバック）
+ * API Route経由でSupabaseに保存（失敗時はlocalStorageにフォールバック）
  */
-import { supabase, isSupabaseConfigured } from "./supabase";
 
 export interface FeedbackEntry {
-  diagnosis_id?: string; // New Link
+  diagnosis_id?: string; // Link to diagnosis
   hex: string;
   hue: number;
   lightness: number;
@@ -22,7 +21,7 @@ export interface FeedbackEntry {
 const STORAGE_KEY = "24bitcolors_feedback";
 
 /**
- * フィードバックを保存（Supabase優先、フォールバックでlocalStorage）
+ * フィードバックを保存（API Route経由、フォールバックでlocalStorage）
  */
 export async function saveFeedback(
   entry: Omit<FeedbackEntry, "timestamp" | "userAgent">
@@ -30,47 +29,40 @@ export async function saveFeedback(
   const userAgent =
     typeof navigator !== "undefined" ? navigator.userAgent : "unknown";
 
-  // Supabaseが設定されている場合はSupabaseに保存
-  if (isSupabaseConfigured() && supabase) {
-    try {
-      const { error } = await supabase.from("feedback").insert({
-        diagnosis_id: entry.diagnosis_id, // Link to diagnosis
+  try {
+    const res = await fetch("/api/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        diagnosis_id: entry.diagnosis_id,
         rating: entry.rating,
         agreement_score: entry.agreement_score,
         expected_color: entry.expected_color,
         actual_impression: entry.actual_impression,
         comment: entry.comment,
-      });
+      }),
+    });
 
-      // Note: hex/hue/etc are now in 'diagnoses' table, so 'feedback' doesn't need them,
-      // but for localStorage fallback we might still want them or for debugging.
-      // The SQL definition for 'feedback' REMOVED hex/hue columns.
-      // So I must NOT remove them from the Interface (used by UI to pass data),
-      // but I should NOT send them to Supabase 'feedback' table insert if they don't exist.
+    const data = await res.json();
 
-      if (error) {
-        console.error("Supabase error:", error);
-        saveToLocalStorage(entry, userAgent);
-        return {
-          success: true,
-          error: "Saved to localStorage (Supabase error)",
-        };
-      }
-
-      return { success: true };
-    } catch (err) {
-      console.error("Supabase connection error:", err);
+    if (!data.success) {
+      console.error("API error:", data.error);
       saveToLocalStorage(entry, userAgent);
       return {
         success: true,
-        error: "Saved to localStorage (connection error)",
+        error: "Saved to localStorage (API error)",
       };
     }
-  }
 
-  // Supabase未設定の場合はlocalStorageに保存
-  saveToLocalStorage(entry, userAgent);
-  return { success: true };
+    return { success: true };
+  } catch (err) {
+    console.error("API connection error:", err);
+    saveToLocalStorage(entry, userAgent);
+    return {
+      success: true,
+      error: "Saved to localStorage (connection error)",
+    };
+  }
 }
 
 /**

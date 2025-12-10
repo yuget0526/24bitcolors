@@ -11,7 +11,6 @@ import {
   getFinalResult,
   isDiagnosisComplete,
 } from "@/lib/color-diagnosis";
-import { saveDiagnosisAction } from "@/app/actions/saveDiagnosis";
 import { useTheme } from "./ThemeProvider";
 
 interface HistoryEntry {
@@ -46,6 +45,7 @@ export function DiagnosisApp() {
   );
   const [colorPair, setColorPair] = useState<ColorPair>(initialData.pair);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Initialize Anonymous ID
   useEffect(() => {
@@ -62,7 +62,11 @@ export function DiagnosisApp() {
 
   const handleSelect = useCallback(
     async (choice: "A" | "B") => {
+      // Prevent duplicate execution
+      if (isProcessing) return;
       if (!diagnosisState || !colorPair) return;
+
+      setIsProcessing(true);
 
       // 現在の状態を履歴に追加
       setHistory((prev) => [
@@ -71,8 +75,8 @@ export function DiagnosisApp() {
       ]);
 
       const newState = processChoice(diagnosisState, choice, colorPair);
-      setDiagnosisState(newState);
 
+      // Check completion BEFORE updating state to prevent "21/20" flash
       if (isDiagnosisComplete(newState)) {
         const finalResult = getFinalResult(newState);
 
@@ -82,55 +86,70 @@ export function DiagnosisApp() {
           (endTime - startTimeRef.current) / 1000
         );
 
-        // Client-side save for feedback form UI
+        // Calculate slug for SEO-friendly URL
+        const safeHex = finalResult.hex.replace("#", "");
+        const { groupSlug } = getNearestPoeticName(`#${safeHex}`);
+
+        // Client-side save for feedback form UI and LastDiagnosisLink
         if (typeof window !== "undefined") {
           localStorage.setItem(
             "lastDiagnosisResult",
             JSON.stringify(finalResult)
           );
+          // Save hex for header color indicator
+          localStorage.setItem("lastDiagnosisHex", finalResult.hex);
+          // Dispatch custom event for same-tab updates
+          window.dispatchEvent(new Event("diagnosisColorUpdate"));
         }
 
-        // setScreen("result"); // Old: Show local result
-        // New: Redirect to Sharable Result Page
-        // Calculate slug for SEO-friendly URL
-        const safeHex = finalResult.hex.replace("#", "");
-        const { groupSlug } = getNearestPoeticName(`#${safeHex}`);
+        // Generate UUID client-side for instant UX (no waiting for server)
+        const diagnosisId = crypto.randomUUID();
+        localStorage.setItem("lastDiagnosisId", diagnosisId);
 
-        // Redirect to /result/[group]?hex=[hex]
-        router.push(`/result/${groupSlug}?hex=${safeHex}`);
-
-        // Server Action Call (Background)
-        try {
-          const response = await saveDiagnosisAction({
+        // Fire-and-forget API call with client-provided ID
+        fetch("/api/diagnosis", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: diagnosisId, // Client-generated UUID
             hex: finalResult.hex,
             hue: finalResult.color.hue,
             lightness: finalResult.color.lightness,
             chroma: finalResult.color.chroma,
-            theme: theme, // from useTheme
+            theme: theme,
             duration_seconds: durationSeconds,
             algorithm_version: "v1.0.0",
             locale: navigator.language,
-            anonymous_id: anonymousId || "unknown", // Fallback if state not yet set (unlikely)
-          });
+            anonymous_id: anonymousId || "unknown",
+          }),
+          keepalive: true, // Survives page navigation
+        }).catch((e) => console.error("Diagnosis save failed", e));
 
-          if (response.success && response.id) {
-            // Save Diagnosis ID for Feedback
-            localStorage.setItem("lastDiagnosisId", response.id);
-          }
-        } catch (e) {
-          console.error("Auto-save failed", e);
-        }
+        // Navigate to Result Page immediately (no waiting)
+        router.push(`/result/${groupSlug}?hex=${safeHex}`);
         // --- Data Collection v2 End ---
       } else {
+        // Update state only if not complete (prevents "21/20" flash)
+        setDiagnosisState(newState);
+
         // 現在までの履歴ペア（今回答えたものも含む）を作成して渡す
         const pastPairs = history.map((h) => h.pair);
         const currentHistory = [...pastPairs, colorPair];
 
         const newPair = selectOptimalColorPair(newState, currentHistory);
         setColorPair(newPair);
+        setIsProcessing(false);
       }
     },
-    [diagnosisState, colorPair, history, theme, anonymousId, router]
+    [
+      diagnosisState,
+      colorPair,
+      history,
+      theme,
+      anonymousId,
+      router,
+      isProcessing,
+    ]
   );
 
   const handleUndo = useCallback(() => {
