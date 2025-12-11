@@ -218,8 +218,8 @@ export function FeedbackClient() {
                   <Slider
                     min={0}
                     max={100}
-                    value={[agreementScore]}
-                    onValueChange={(val) => setAgreementScore(val[0])}
+                    value={agreementScore}
+                    onChange={(e) => setAgreementScore(Number(e.target.value))}
                   />
                 </div>
                 <div className="flex justify-between text-xs font-mono text-muted-foreground">
