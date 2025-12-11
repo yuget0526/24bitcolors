@@ -5,6 +5,8 @@ import { OklchColor } from "@/lib/oklch";
 import { useTheme } from "./ThemeProvider";
 import { Button } from "@/components/ui/button";
 import { X } from "@phosphor-icons/react";
+import { getNearestPoeticName } from "@/lib/colorNaming";
+import { useTranslations } from "next-intl";
 
 interface ShareCardProps {
   color: OklchColor;
@@ -13,8 +15,6 @@ interface ShareCardProps {
 }
 
 type CardTheme = "light" | "dark" | "color";
-
-import { getNearestPoeticName } from "@/lib/colorNaming";
 
 /**
  * ギャラリー風シェアカード生成関数
@@ -163,6 +163,7 @@ function generateGalleryShareCard(
 }
 
 export function ShareCard({ color, hex, onClose }: ShareCardProps) {
+  const t = useTranslations("Share");
   const { theme: systemTheme } = useTheme();
   const isDark = systemTheme === "dark";
 
@@ -226,10 +227,11 @@ export function ShareCard({ color, hex, onClose }: ShareCardProps) {
       if (navigator.share && navigator.canShare({ files: [file] })) {
         await navigator.share({
           files: [file],
-          title: "My True Color | 24bitColors",
-          text: `私の色は「${
-            getNearestPoeticName(hex).groupName
-          }」(${hex}) でした。\n\n#24bitColors`,
+          title: t("shareTitle"),
+          text: `${t("shareText", {
+            name: getNearestPoeticName(hex).groupName,
+            hex: hex,
+          })}\n\n#24bitColors`,
         });
       } else {
         // Fallback if file share not supported but Web Share is (rare but possible) or just Desktop
@@ -279,7 +281,7 @@ export function ShareCard({ color, hex, onClose }: ShareCardProps) {
               }`}
             >
               <span className="animate-pulse font-serif text-muted-foreground">
-                Generating...
+                {t("generating")}
               </span>
             </div>
           )}
@@ -347,7 +349,7 @@ export function ShareCard({ color, hex, onClose }: ShareCardProps) {
             disabled={isGenerating || !imageDataUrl}
             className="h-12 w-full text-xs tracking-[0.2em] font-serif uppercase"
           >
-            {isGenerating ? "..." : "画像をシェア"}
+            {isGenerating ? "..." : t("shareImage")}
           </Button>
           <Button
             onClick={handleDownload}
@@ -355,7 +357,7 @@ export function ShareCard({ color, hex, onClose }: ShareCardProps) {
             variant="outline"
             className="h-12 w-full text-xs tracking-[0.2em] font-serif uppercase border-foreground/20"
           >
-            画像を保存
+            {t("saveImage")}
           </Button>
         </div>
       </div>

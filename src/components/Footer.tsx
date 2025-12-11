@@ -1,6 +1,8 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 export function Footer() {
+  const t = useTranslations("Footer");
   return (
     <footer className="w-full py-space-6 text-center text-[length:var(--text-micro)] text-[var(--muted-foreground)]">
       <div className="mb-space-4 flex justify-center gap-space-4">
@@ -8,28 +10,28 @@ export function Footer() {
           href="/about"
           className="hover:text-[var(--foreground)] transition-colors"
         >
-          ABOUT
+          {t("about")}
         </Link>
         <Link
           href="/terms"
           className="hover:text-[var(--foreground)] transition-colors"
         >
-          利用規約
+          {t("terms")}
         </Link>
         <Link
           href="/privacy"
           className="hover:text-[var(--foreground)] transition-colors"
         >
-          プライバシーポリシー
+          {t("privacy")}
         </Link>
         <Link
           href="/contact"
           className="hover:text-[var(--foreground)] transition-colors"
         >
-          お問い合わせ
+          {t("contact")}
         </Link>
       </div>
-      <p>&copy; 2025 24bitColors. All rights reserved.</p>
+      <p>{t("copyright")}</p>
     </footer>
   );
 }

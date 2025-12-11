@@ -1,15 +1,25 @@
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { ArticleJsonLd } from "@/components/ArticleJsonLd";
+import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-export const metadata: Metadata = {
-  title: "OKLCH色空間とは",
-  description:
-    "なぜHSLやRGBではなくOKLCHなのか。人間の知覚に忠実な最新の色空間がもたらす「正しい色診断」の科学的根拠。",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "LogicOklch" });
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 export default function OklchLogicPage() {
+  const t = useTranslations("LogicOklch");
   return (
     <div className="flex min-h-screen w-full flex-col items-center bg-background py-20 px-6">
       <div className="w-full max-w-3xl animate-in fade-in duration-700 space-y-24">
@@ -20,23 +30,22 @@ export default function OklchLogicPage() {
             asChild
             className="pl-0 text-muted-foreground font-serif tracking-widest hover:text-foreground hover:no-underline"
           >
-            <Link href="/diagnosis/logic">← BACK TO OVERVIEW</Link>
+            <Link href="/diagnosis/logic">{t("back")}</Link>
           </Button>
         </div>
 
         {/* Header */}
         <header className="space-y-8">
-          <h1 className="font-serif text-4xl md:text-5xl tracking-widest text-foreground">
-            THE SCIENCE OF <br /> OKLCH & OKLAB
-          </h1>
+          <h1
+            className="font-serif text-4xl md:text-5xl tracking-widest text-foreground"
+            dangerouslySetInnerHTML={{ __html: t.raw("heading") }}
+          />
           <div className="space-y-4 max-w-2xl">
             <p className="font-sans text-lg text-foreground/80 tracking-wide leading-relaxed font-light">
-              人間の「目」を、そのまま数式にする。
+              {t("introLarge")}
             </p>
-            <p className="font-sans text-sm text-muted-foreground tracking-wide leading-relaxed">
-              24bitColorsの心臓部で動いているのは、2020年に生まれた最新の色空間「OKLCH」と「OKLAB」です。
-              <br />
-              これは単なる新しいカラーピッカーではありません。コンピュータが初めて、人間と同じように色を感じられるようになった革命的な出来事なのです。
+            <p className="font-sans text-sm text-muted-foreground tracking-wide leading-relaxed whitespace-pre-wrap">
+              {t("introSmall")}
             </p>
           </div>
         </header>
@@ -45,25 +54,15 @@ export default function OklchLogicPage() {
         <section className="space-y-12">
           <div className="space-y-6">
             <span className="font-mono text-xs text-muted-foreground tracking-[0.2em] block">
-              01. PERCEPTION GAP
+              {t("sec1Label")}
             </span>
             <h2 className="font-serif text-2xl tracking-wide">
-              「黄色」は「青」より、ずっと明るい
+              {t("sec1Title")}
             </h2>
             <div className="space-y-6 text-foreground/90 leading-loose text-justify font-light">
-              <p>
-                従来のWebデザインで使われてきた「HSL色空間」には、致命的な欠陥がありました。それは
-                <strong>
-                  「数値上の明るさと、見た目の明るさが一致しない」
-                </strong>
-                ことです。
-              </p>
-              <p>
-                下の図を見てください。HSLの計算式では、濃い青も鮮やかな黄色も、同じ「明度50%」だと主張します。しかし、人間の目には明らかに黄色の方が眩しく見えますよね？
-              </p>
-              <p>
-                「数値は合っているのに、デザインがなんとなくチグハグになる」。そんなデザイナーたちの長年の悩みを、OKLCHは生物学的なアプローチで解決しました。眼球の網膜が受け取る刺激を計算式に組み込むことで、青も黄色も、人間が感じる通りの「正しい明るさ」で管理できるようになったのです。
-              </p>
+              <p dangerouslySetInnerHTML={{ __html: t.raw("sec1Body1") }} />
+              <p>{t("sec1Body2")}</p>
+              <p>{t("sec1Body3")}</p>
             </div>
           </div>
 
@@ -108,7 +107,7 @@ export default function OklchLogicPage() {
                 </div>
               </div>
               <p className="text-[10px] text-muted-foreground text-center pt-2">
-                ▲ HSLの「明度50%」における、実際の見た目の明るさの違い。
+                {t("graphLabel")}
               </p>
             </div>
           </div>
@@ -118,47 +117,36 @@ export default function OklchLogicPage() {
         <section className="space-y-12">
           <div className="space-y-6">
             <span className="font-mono text-xs text-muted-foreground tracking-[0.2em] block">
-              02. TWO FACES OF COLOR
+              {t("sec2Label")}
             </span>
             <h2 className="font-serif text-2xl tracking-wide">
-              地図で読むか、コンパスで読むか
+              {t("sec2Title")}
             </h2>
             <div className="space-y-6 text-foreground/90 leading-loose text-justify font-light">
-              <p>
-                このサイトでは、場面に応じて「OKLCH」と「OKLAB」という2つの言葉を使い分けていますが、実はこれらは
-                <strong>全く同じ色空間の「別の表現方法」</strong>
-                です。ちょうど、地図上の場所を「緯度経度」で表すか、「ここから北東に何キロ」で表すかの違いと同じです。
-              </p>
+              <p dangerouslySetInnerHTML={{ __html: t.raw("sec2Body1") }} />
 
               <div className="grid md:grid-cols-2 gap-8 my-8">
                 <div className="border border-border p-6 rounded-lg bg-card/30">
                   <h3 className="font-serif text-lg mb-2 text-foreground">
-                    OKLAB (Cartesian)
+                    {t("oklabTitle")}
                   </h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    L=明度, a=赤緑軸, b=青黄軸
+                    {t("oklabSub")}
                   </p>
-                  <p className="text-sm leading-relaxed">
-                    数学的なXY座標のようなもの。「色の距離」を計算するのに最適です。今回の診断でも、無彩色（グレー）の判定や、色同士の近さを計算する裏側ではこのOKLABが活躍しています。
-                  </p>
+                  <p className="text-sm leading-relaxed">{t("oklabDesc")}</p>
                 </div>
                 <div className="border border-border p-6 rounded-lg bg-card/30">
                   <h3 className="font-serif text-lg mb-2 text-foreground">
-                    OKLCH (Polar)
+                    {t("oklchTitle")}
                   </h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    L=明度, C=彩度, H=色相
+                    {t("oklchSub")}
                   </p>
-                  <p className="text-sm leading-relaxed">
-                    コンパスと距離のようなもの。「もっと鮮やかに」「もっと赤く」といった、人間の直感的な操作に適しています。診断結果の表示や、あなたの好みを分析する表側ではこちらを使っています。
-                  </p>
+                  <p className="text-sm leading-relaxed">{t("oklchDesc")}</p>
                 </div>
               </div>
 
-              <p>
-                この2つを自由に行き来することで、計算の「正確さ」と、人間の「直感」を両立させているのが24bitColorsの特徴です。特に無彩色（白黒）の扱いにおいて、OKLABは「a=0,
-                b=0」という完全な無を定義できるため、美しいグレーを表現するのに不可欠です。
-              </p>
+              <p>{t("sec2Body2")}</p>
             </div>
           </div>
         </section>
@@ -167,25 +155,15 @@ export default function OklchLogicPage() {
         <section className="space-y-12">
           <div className="space-y-6">
             <span className="font-mono text-xs text-muted-foreground tracking-[0.2em] block">
-              03. UNBOUNDED FUTURE
+              {t("sec3Label")}
             </span>
             <h2 className="font-serif text-2xl tracking-wide">
-              「sRGBの檻」からの脱出
+              {t("sec3Title")}
             </h2>
             <div className="space-y-6 text-foreground/90 leading-loose text-justify font-light">
-              <p>
-                これまでのWebデザインは「sRGB」という色の檻の中に閉じ込められていました。sRGBは20年以上前のブラウン管モニターを基準に作られた規格で、現実世界の鮮やかな色の半分も表現できません。
-              </p>
-              <p>
-                しかしOKLCHには、理論上の「彩度の上限」がありません。
-                今はまだ、多くのスマホやPCモニターがsRGBの範囲しか出せませんが、最新のiPhoneやMacBook（Display
-                P3対応）は既にその外側の色を表示し始めています。
-              </p>
-              <p>
-                私たちはアルゴリズムをOKLCHで構築することで、将来どのような高性能ディスプレイが登場しても、その性能をフルに活かせる
-                <strong>「未来互換性（Future-Proof）」</strong>
-                を確保しました。今日あなたが選んだその色は、10年後のディスプレイで見れば、もっと鮮やかに、もっと美しく輝くはずです。
-              </p>
+              <p>{t("sec3Body1")}</p>
+              <p>{t("sec3Body2")}</p>
+              <p dangerouslySetInnerHTML={{ __html: t.raw("sec3Body3") }} />
             </div>
           </div>
 
@@ -197,7 +175,7 @@ export default function OklchLogicPage() {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-[40%] h-4 border-2 border-foreground/30 bg-background/50 backdrop-blur-sm rounded flex items-center justify-center">
                 <span className="text-[10px] font-mono text-muted-foreground">
-                  Current Web (sRGB)
+                  {t("graphGamut")}
                 </span>
               </div>
             </div>
@@ -216,13 +194,13 @@ export default function OklchLogicPage() {
             asChild
             className="font-serif tracking-widest px-8"
           >
-            <Link href="/diagnosis/logic">BACK TO LOGIC OVERVIEW</Link>
+            <Link href="/diagnosis/logic">{t("back")}</Link>
           </Button>
         </div>
       </div>
       <ArticleJsonLd
-        title="OKLCH色空間とは"
-        description="なぜHSLやRGBではなくOKLCHなのか。人間の知覚に忠実な最新の色空間がもたらす「正しい色診断」の科学的根拠。"
+        title={t("title")}
+        description={t("description")}
         publishedTime="2025-12-01T00:00:00+09:00"
         url="https://24bitcolors.com/diagnosis/logic/oklch"
       />

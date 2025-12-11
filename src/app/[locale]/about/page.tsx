@@ -1,36 +1,49 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import Script from "next/script";
 import { ArrowLeft, ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-export const metadata: Metadata = {
-  title: "24bitColorsとは | 1677万色から運命の色を見つける色診断サービス",
-  description:
-    "24bitColorsは、高度な統計アルゴリズムとOKLCH色空間を用いて、1677万色の中からあなただけの「運命の色」を見つけるWebサービスです。科学と感性の融合。",
-  alternates: {
-    canonical: "/about",
-  },
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
-// Structured Data for AboutPage
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "AboutPage",
-  name: "24bitColorsについて",
-  description:
-    "24bitColorsは、高度な統計アルゴリズムとOKLCH色空間を用いて、1677万色の中からあなただけの運命の色を見つけるWebサービスです。",
-  url: "https://24bitcolors.com/about",
-  mainEntity: {
-    "@type": "Organization",
-    name: "24bitColors",
-    url: "https://24bitcolors.com",
-    logo: "https://24bitcolors.com/icon.png",
-    description:
-      "世界中の色嗜好データを収集し、人類の感性を可視化するプロジェクト",
-  },
-};
+export async function generateMetadata({ params }: Props) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "About" });
+
+  return {
+    title: t("title"),
+    description: t("description"),
+    alternates: {
+      canonical: "/about",
+    },
+  };
+}
+
+// Structured Data for AboutPage (kept partly static/partly dynamic if needed, but for now we keep it simple or localize if strict)
+// For simplicity, keeping JSON-LD static or minimally edited.
+// Ideally JSON-LD should also be localized but it's often acceptable to keep main language.
+// Let's keep it defined inside component or simplistic.
 
 export default function AboutPage() {
+  const t = useTranslations("About");
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    name: t("jsonLdName"),
+    description: t("jsonLdDescription"),
+    url: "https://24bitcolors.com/about",
+    mainEntity: {
+      "@type": "Organization",
+      name: "24bitColors",
+      url: "https://24bitcolors.com",
+      logo: "https://24bitcolors.com/icon.png",
+      description: t("organizationDescription"),
+    },
+  };
+
   return (
     <>
       {/* JSON-LD Structured Data */}
@@ -62,7 +75,7 @@ export default function AboutPage() {
                   "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
               }}
             >
-              PHILOSOPHY
+              {t("lblPhilosophy")}
             </span>
 
             {/* Main Title - Golden Ratio Large (68px) */}
@@ -70,8 +83,8 @@ export default function AboutPage() {
               className="mb-[34px] text-[42px] md:text-[68px] leading-[1.1] font-normal tracking-[-0.02em]"
               style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
             >
-              <span className="block">Universal Beauty &</span>
-              <span className="block">Intellectual Curiosity</span>
+              <span className="block">{t("heroTitle1")}</span>
+              <span className="block">{t("heroTitle2")}</span>
             </h1>
 
             {/* Decorative Line */}
@@ -82,7 +95,7 @@ export default function AboutPage() {
               className="text-[13px] md:text-[16px] tracking-[0.2em] text-muted-foreground/80 font-light"
               style={{ fontFamily: "Georgia, serif" }}
             >
-              普遍的な美と、知的好奇心のために。
+              {t("heroSubtitle")}
             </p>
           </div>
 
@@ -119,7 +132,7 @@ export default function AboutPage() {
               className="mb-[34px] text-[26px] md:text-[32px] leading-[1.2] font-normal tracking-[-0.01em]"
               style={{ fontFamily: "Georgia, serif" }}
             >
-              The Concept
+              {t("conceptTitle")}
             </h2>
 
             {/* Decorative Line */}
@@ -130,17 +143,8 @@ export default function AboutPage() {
               className="text-[15px] md:text-[16px] leading-[2] text-muted-foreground space-y-[21px]"
               style={{ fontFamily: "Georgia, serif" }}
             >
-              <p>
-                私たちの世界は、無限の色で溢れています。
-                デジタルスクリーンが表現できる「24bitカラー」は約1,677万通り。
-                その膨大な数の中に、他者の評価やトレンドに左右されない、
-                あなただけの「運命の色」が必ず存在します。
-              </p>
-              <p>
-                24bitColorsは、そんな色彩の海から、あなたの感性を頼りに
-                真実の色を見つけ出すための場所です。
-                ノイズのない静寂な空間で、直感と向き合う時間を提供します。
-              </p>
+              <p className="whitespace-pre-line">{t("conceptBody1")}</p>
+              <p className="whitespace-pre-line">{t("conceptBody2")}</p>
             </div>
           </section>
 
@@ -160,7 +164,7 @@ export default function AboutPage() {
               className="mb-[34px] text-[26px] md:text-[32px] leading-[1.2] font-normal tracking-[-0.01em]"
               style={{ fontFamily: "Georgia, serif" }}
             >
-              The Science
+              {t("scienceTitle")}
             </h2>
 
             <div className="mb-[34px] h-[1px] w-[34px] bg-foreground/15" />
@@ -169,17 +173,8 @@ export default function AboutPage() {
               className="text-[15px] md:text-[16px] leading-[2] text-muted-foreground space-y-[21px]"
               style={{ fontFamily: "Georgia, serif" }}
             >
-              <p>
-                「美しさ」という主観的な感覚を、私たちは科学の力で捉え直します。
-                人間の知覚特性に最も近い色空間「OKLCH」を採用し、
-                人が感じる「明るさ」や「鮮やかさ」を正確に数値化しました。
-              </p>
-              <p>
-                あなたの「好き」という感情は、
-                高度な統計アルゴリズムによって数学的に解釈され、
-                1,677万色の中から最適解へと収束していきます。
-                それは、アートとサイエンスが融合する瞬間です。
-              </p>
+              <p className="whitespace-pre-line">{t("scienceBody1")}</p>
+              <p className="whitespace-pre-line">{t("scienceBody2")}</p>
             </div>
 
             {/* Internal Link to Logic Page */}
@@ -192,7 +187,7 @@ export default function AboutPage() {
                     "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
                 }}
               >
-                <span>アルゴリズムの詳細を見る</span>
+                <span>{t("linkAlgorithm")}</span>
                 <ArrowRight
                   weight="light"
                   className="h-3 w-3 transition-transform group-hover:translate-x-1"
@@ -217,7 +212,7 @@ export default function AboutPage() {
               className="mb-[34px] text-[26px] md:text-[32px] leading-[1.2] font-normal tracking-[-0.01em]"
               style={{ fontFamily: "Georgia, serif" }}
             >
-              The Vision
+              {t("visionTitle")}
             </h2>
 
             <div className="mb-[34px] h-[1px] w-[34px] bg-foreground/15" />
@@ -226,17 +221,8 @@ export default function AboutPage() {
               className="text-[15px] md:text-[16px] leading-[2] text-muted-foreground space-y-[21px]"
               style={{ fontFamily: "Georgia, serif" }}
             >
-              <p>
-                このプロジェクトの目的は、単なる診断ツールに留まりません。
-                世界中の人々が選ぶ「色」のデータを集積し、
-                人類の色彩嗜好のデータベースを構築することを目指しています。
-              </p>
-              <p>
-                国境や言葉の壁を越えて、人々は何を美しいと感じるのか。
-                「色」という共通言語を通じて、
-                人間の感性の多様性と普遍性を可視化する。
-                それが私たちの描く未来図です。
-              </p>
+              <p className="whitespace-pre-line">{t("visionBody1")}</p>
+              <p className="whitespace-pre-line">{t("visionBody2")}</p>
             </div>
           </section>
         </div>
@@ -252,7 +238,7 @@ export default function AboutPage() {
                 "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
             }}
           >
-            <span>診断を開始する</span>
+            <span>{t("ctaStart")}</span>
             <ArrowRight
               weight="light"
               className="h-[13px] w-[13px] transition-transform duration-300 group-hover:translate-x-[5px]"
@@ -272,7 +258,7 @@ export default function AboutPage() {
               weight="light"
               className="h-[13px] w-[13px] transition-transform duration-300 group-hover:-translate-x-[5px]"
             />
-            <span>トップに戻る</span>
+            <span>{t("ctaBack")}</span>
           </Link>
         </section>
       </div>

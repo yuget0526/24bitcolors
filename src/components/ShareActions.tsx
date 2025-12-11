@@ -8,7 +8,10 @@ interface ShareActionsProps {
   onShare: () => void;
 }
 
+import { useTranslations } from "next-intl";
+
 export function ShareActions({ url, onShare }: ShareActionsProps) {
+  const t = useTranslations("Share");
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -34,7 +37,7 @@ export function ShareActions({ url, onShare }: ShareActionsProps) {
           className="h-5 w-5 transition-transform group-hover:scale-110"
         />
         <span className="ml-3 text-xs tracking-[0.2em] font-medium uppercase text-muted-foreground group-hover:text-background font-serif">
-          シェア
+          {t("share")}
         </span>
       </button>
 
@@ -56,7 +59,7 @@ export function ShareActions({ url, onShare }: ShareActionsProps) {
           />
         )}
         <span className="ml-3 text-xs tracking-[0.2em] font-medium uppercase text-muted-foreground group-hover:text-background whitespace-nowrap font-serif">
-          {copied ? "コピーしました" : "リンクをコピー"}
+          {copied ? t("copied") : t("copyLink")}
         </span>
       </button>
     </div>

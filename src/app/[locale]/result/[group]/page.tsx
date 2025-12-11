@@ -4,9 +4,10 @@ import { getNearestPoeticName, getColorFromSlug } from "@/lib/colorNaming";
 import { ResultInteraction } from "@/components/ResultInteraction";
 import { toOklch } from "@/lib/colorNaming";
 import { AmbientBackground } from "@/components/AmbientBackground";
+import { getTranslations } from "next-intl/server";
 
 interface Props {
-  params: Promise<{ group: string }>;
+  params: Promise<{ group: string; locale: string }>;
   searchParams: Promise<{ hex?: string; from_diagnosis?: string }>;
 }
 
@@ -14,8 +15,9 @@ export async function generateMetadata({
   params,
   searchParams,
 }: Props): Promise<Metadata> {
-  const { group } = await params;
+  const { group, locale } = await params;
   const { hex } = await searchParams;
+  const t = await getTranslations({ locale, namespace: "Result" });
 
   // Decoded group name from slug (approximate for display title)
   const readableGroup = group
@@ -31,10 +33,10 @@ export async function generateMetadata({
   if (targetHex) {
     return {
       title: `${readableGroup} | 24bitColors`,
-      description: `あなたの色彩嗜好は「${readableGroup}」(${targetHex})の傾向にあります。1677万色から好みの色を特定する統計的診断結果。`,
+      description: t("descBelongTo", { groupName: readableGroup }),
       openGraph: {
         title: `${readableGroup} | 24bitColors`,
-        description: `あなたの色彩嗜好は「${readableGroup}」の傾向にあります。`,
+        description: t("descBelongTo", { groupName: readableGroup }),
         images: [
           `/api/og?hex=${targetHex}&name=${encodeURIComponent(readableGroup)}`,
         ],
@@ -45,13 +47,14 @@ export async function generateMetadata({
   // Fallback if no valid color found
   return {
     title: `${readableGroup} | 24bitColors`,
-    description: `${readableGroup}の色域に関する診断結果ページ。`,
+    description: `${readableGroup}の色域に関する診断結果ページ。`, // Fallback
   };
 }
 
 export default async function ResultPage({ params, searchParams }: Props) {
-  const { group } = await params;
+  const { group, locale } = await params;
   const { hex, from_diagnosis } = await searchParams;
+  const t = await getTranslations({ locale, namespace: "Result" });
 
   let safeHex = "";
 
@@ -92,7 +95,7 @@ export default async function ResultPage({ params, searchParams }: Props) {
         {/* Text Content */}
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
           <p className="text-sm font-light tracking-[0.3em] uppercase text-muted-foreground">
-            {hex ? "Your True Color" : "Color Space"}
+            {hex ? t("labelYourTrueColor") : t("labelColorSpace")}
           </p>
           <h1 className="font-serif text-4xl md:text-6xl tracking-wide text-foreground">
             {groupName}
@@ -100,10 +103,8 @@ export default async function ResultPage({ params, searchParams }: Props) {
           <div className="pt-2 font-mono text-xl opacity-80 tracking-widest">
             {safeHex.toUpperCase()}
           </div>
-          <p className="pt-4 text-xs text-muted-foreground tracking-widest leading-loose">
-            あなたは「{groupName}」という
-            <br />
-            色の星雲に属しています。
+          <p className="pt-4 text-xs text-muted-foreground tracking-widest leading-loose whitespace-pre-line">
+            {t("descBelongTo", { groupName })}
           </p>
         </div>
 
