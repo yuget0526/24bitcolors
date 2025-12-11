@@ -30,16 +30,17 @@ export async function generateMetadata({
   if (!info) return {};
 
   return {
-    title: `${info.hex} - Color Analysis | 24bitColors`,
-    description: `Scientific color analysis of ${info.hex}. Harmonies, Shades, Tints, and Technical conversions (RGB, CMYK, OKLCH).`,
+    title: `${info.hex}の色見本・配色パターン・変換値 | 24bitColors`,
+    description: `${info.hex}のカラーコード情報。RGB/CMYK/OKLCHへの変換値、明度・彩度のバリエーション、相性の良い配色パターン一覧。Webデザインやグラフィック制作に役立つ${info.hex}の詳細分析。`,
     openGraph: {
-      title: `${info.hex} | 24bitColors`,
-      description: `Scientific Color Analysis: RGB, CMYK, OKLCH, Harmonies, Tints & Shades`,
+      title: `${info.hex}の色見本・配色・成分分析 | 24bitColors`,
+      description: `${info.hex}の配色、トーン、変換値を網羅した色彩詳細ページ。RGB: ${info.rgb.r},${info.rgb.g},${info.rgb.b} / OKLCH対応。`,
       images: [
         {
           url: `/api/og-hex?hex=${hex}`,
           width: 1200,
           height: 630,
+          alt: `${info.hex} Color Analysis`,
         },
       ],
     },

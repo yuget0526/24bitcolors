@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "お問い合わせ | 24bitColors",
+  description:
+    "24bitColorsに関するお問い合わせ、ご要望、バグ報告はこちらから。ユーザーの皆様からのフィードバックをお待ちしております。",
+  robots: {
+    index: false, // お問い合わせページは検索結果の優先度が低いため（必須ではないが、スパム除け等の意味でnoindexにすることも検討。一旦はクロールはさせるが重要なコンテンツではない）
+  },
+};
+
 export default function ContactPage() {
   return (
     <div className="container mx-auto max-w-3xl px-space-5 py-space-6 text-center font-serif">

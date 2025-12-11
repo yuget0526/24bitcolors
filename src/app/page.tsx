@@ -3,9 +3,9 @@ import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "24bitColors - あなたの好きな色を見つけよう",
+  title: "無料色彩診断テスト - 1677万色から運命の色を特定 | 24bitColors",
   description:
-    "20の質問で、1677万色の中からあなたの「運命の色」を統計的に特定します。登録不要、無料で今すぐ診断。",
+    "たった20問の無料色彩診断で、あなたが直感的に心地よいと感じる「運命の色」を統計的に特定します。登録不要、今すぐ始めましょう。",
   alternates: {
     canonical: "/",
   },
@@ -32,7 +32,7 @@ export default function Home() {
 
         {/* Main Content Container */}
         <div className="z-10 flex max-w-3xl flex-col items-center text-center">
-          {/* Main Title */}
+          {/* Main Title - Optimize for Brand but Keep SEO in mind via context */}
           <h1 className="mb-8 animate-fade-in text-6xl font-medium tracking-tight md:text-8xl font-serif">
             24bitColors
           </h1>
@@ -42,14 +42,19 @@ export default function Home() {
             Discover Your True Color
           </p>
 
-          {/* Description */}
-          <p className="mb-12 max-w-md animate-fade-in text-sm leading-relaxed text-muted-foreground delay-200 md:text-base font-serif">
-            20の質問への回答から、
-            <br className="md:hidden" />
-            1677万色の中であなたが最も好む色を
-            <br className="md:hidden" />
-            統計的に特定します。
-          </p>
+          {/* Description - SEO Optimized */}
+          <div className="mb-12 max-w-md animate-fade-in text-sm leading-relaxed text-muted-foreground delay-200 md:text-base font-serif">
+            <h2 className="sr-only">無料色彩診断テスト</h2>
+            <p>
+              深層心理に眠る、あなただけの色。
+              <br />
+              20の質問への回答から、
+              <br className="md:hidden" />
+              1677万色の中であなたが最も好む色を
+              <br className="md:hidden" />
+              統計的に特定する無料診断です。
+            </p>
+          </div>
 
           {/* CTA Button */}
           <div className="flex flex-col items-center gap-4 animate-fade-in delay-300">

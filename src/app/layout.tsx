@@ -23,35 +23,46 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | 24bitColors",
-    default: "24bitColors - あなたの好きな色を見つけよう",
+    template: "%s | 24bitColors - 無料色彩診断",
+    default: "無料色彩診断テスト、あなたの感性を可視化 | 24bitColors",
   },
   description:
-    "20の質問であなたの好きな色を1677万色の中から特定します。bit診断方式による色の好み診断。",
+    "たった20問の無料色彩診断で、あなたが直感的に心地よいと感じる「運命の色」を1677万色から特定します。登録不要、30秒で完了。自分の色彩感覚を知りたい方や、デザインのインスピレーションを得たい方におすすめ。",
   metadataBase: new URL("https://24bitcolors.com"),
   keywords: [
+    "色彩診断",
     "色診断",
+    "無料テスト",
+    "色彩感覚",
+    "好みの色",
     "パーソナルカラー",
-    "色彩",
     "デザイン",
-    "24bit",
-    "カラーテスト",
+    "1677万色",
+    "OKLCH",
   ],
   authors: [{ name: "24bitColors Team" }],
   openGraph: {
-    title: "24bitColors - あなたの好きな色を見つけよう",
+    title: "無料色彩診断テスト、あなたの感性を可視化 | 24bitColors",
     description:
-      "20の質問であなたの好きな色を1677万色の中から特定します。bit診断方式による色の好み診断。",
+      "20問の選択で、あなたが直感的に心地よいと感じる「運命の色」を1677万色から特定します。登録不要で今すぐ分析。",
     url: "https://24bitcolors.com",
     siteName: "24bitColors",
     locale: "ja_JP",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png", // Ensure this exists or use a default
+        width: 1200,
+        height: 630,
+        alt: "24bitColors Diagnosis",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "24bitColors",
+    title: "無料色彩診断テスト | 24bitColors",
     description:
-      "あなたの好きな色を1677万色の中から特定します。bit診断方式による色の好み診断。",
+      "あなたが直感的に心地よいと感じる「運命の色」を1677万色から特定します。登録不要の無料診断。",
   },
   verification: {
     google: "TaOm_LAGUp_4fRTmzV_USJgAIEUimwfCDb5l-Q-DsPY",
@@ -70,9 +81,16 @@ export const viewport: { themeColor: string } = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebSite",
+  "@type": "WebApplication",
   name: "24bitColors",
   url: "https://24bitcolors.com",
+  applicationCategory: "LifestyleApplication",
+  operatingSystem: "Web",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "JPY",
+  },
   description:
     "20の質問であなたの好きな色を1677万色の中から特定します。bit診断方式による色の好み診断。",
   publisher: {

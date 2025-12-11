@@ -31,8 +31,10 @@ export async function generateMetadata({
   if (targetHex) {
     return {
       title: `${readableGroup} | 24bitColors`,
-      description: `私の運命の色は ${readableGroup} (#${targetHex}) でした。| 1677万色から「あなたの色」を見つける統計的診断`,
+      description: `あなたの色彩嗜好は「${readableGroup}」(${targetHex})の傾向にあります。1677万色から好みの色を特定する統計的診断結果。`,
       openGraph: {
+        title: `${readableGroup} | 24bitColors`,
+        description: `あなたの色彩嗜好は「${readableGroup}」の傾向にあります。`,
         images: [
           `/api/og?hex=${targetHex}&name=${encodeURIComponent(readableGroup)}`,
         ],
@@ -40,8 +42,10 @@ export async function generateMetadata({
     };
   }
 
+  // Fallback if no valid color found
   return {
-    title: "Not Found | 24bitColors",
+    title: `${readableGroup} | 24bitColors`,
+    description: `${readableGroup}の色域に関する診断結果ページ。`,
   };
 }
 
