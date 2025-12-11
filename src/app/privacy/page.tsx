@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "プライバシーポリシー | 24bitColors",
+  description:
+    "24bitColorsにおける個人情報の取り扱い、Cookie（クッキー）、アクセス解析ツール、広告配信に関するポリシーについて説明します。",
+};
+
 export default function PrivacyPage() {
   return (
     <div className="container mx-auto max-w-3xl px-space-5 py-space-6 font-serif">

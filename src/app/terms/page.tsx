@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "利用規約 | 24bitColors",
+  description:
+    "24bitColorsの利用規約です。本サービスの利用条件、禁止事項、免責事項などについて定めています。",
+};
+
 export default function TermsPage() {
   return (
     <div className="container mx-auto max-w-3xl px-space-5 py-space-6 font-serif">

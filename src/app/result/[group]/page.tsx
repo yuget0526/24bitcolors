@@ -7,7 +7,7 @@ import { AmbientBackground } from "@/components/AmbientBackground";
 
 interface Props {
   params: Promise<{ group: string }>;
-  searchParams: Promise<{ hex?: string }>;
+  searchParams: Promise<{ hex?: string; from_diagnosis?: string }>;
 }
 
 export async function generateMetadata({
@@ -31,8 +31,10 @@ export async function generateMetadata({
   if (targetHex) {
     return {
       title: `${readableGroup} | 24bitColors`,
-      description: `私の運命の色は ${readableGroup} (#${targetHex}) でした。| 1677万色から「あなたの色」を見つける統計的診断`,
+      description: `あなたの色彩嗜好は「${readableGroup}」(${targetHex})の傾向にあります。1677万色から好みの色を特定する統計的診断結果。`,
       openGraph: {
+        title: `${readableGroup} | 24bitColors`,
+        description: `あなたの色彩嗜好は「${readableGroup}」の傾向にあります。`,
         images: [
           `/api/og?hex=${targetHex}&name=${encodeURIComponent(readableGroup)}`,
         ],
@@ -40,14 +42,16 @@ export async function generateMetadata({
     };
   }
 
+  // Fallback if no valid color found
   return {
-    title: "Not Found | 24bitColors",
+    title: `${readableGroup} | 24bitColors`,
+    description: `${readableGroup}の色域に関する診断結果ページ。`,
   };
 }
 
 export default async function ResultPage({ params, searchParams }: Props) {
   const { group } = await params;
-  const { hex } = await searchParams;
+  const { hex, from_diagnosis } = await searchParams;
 
   let safeHex = "";
 
@@ -71,7 +75,7 @@ export default async function ResultPage({ params, searchParams }: Props) {
   const { groupName, groupSlug } = getNearestPoeticName(safeHex);
 
   return (
-    <div className="min-h-screen w-full bg-background flex flex-col items-center justify-center relative overflow-hidden pt-16 md:pt-0">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden pt-16 md:pt-0">
       {/* Background Ambience - theme-aware for text readability */}
       <AmbientBackground hex={safeHex} />
 
@@ -125,6 +129,7 @@ export default async function ResultPage({ params, searchParams }: Props) {
                 hex={safeHex}
                 resultColor={colorObj}
                 groupSlug={groupSlug}
+                fromDiagnosis={from_diagnosis === "true"}
               />
             );
           })()}

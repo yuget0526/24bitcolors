@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { ArticleJsonLd } from "@/components/ArticleJsonLd";
 
 export const metadata: Metadata = {
-  title: "診断ロジックの裏側",
+  title: "診断ロジックの裏側 | 24bitColors",
   description:
-    "24bitColorsの診断精度を支える、科学と統計に基づいた「透明性」「OKLCH色空間」「対話アルゴリズム」について解説します。",
+    "24bitColorsの診断アルゴリズム解説。人間の知覚に近いOKLCH色空間と、統計的なアプローチで個人の色彩感覚を特定する仕組みについて。",
 };
 
 export default function DiagnosisLogicPage() {
