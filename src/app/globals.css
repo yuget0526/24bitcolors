@@ -32,6 +32,7 @@ html {
     /* Museum Custom */
     --shadow-floating: 0 30px 60px -10px rgba(0, 0, 0, 0.2);
     --shadow-museum: 0 20px 50px -10px rgba(0, 0, 0, 0.3);
+    --shadow-glow: 0 0 40px 5px rgba(0, 0, 0, 0.1);
   }
 
   .dark {
@@ -57,6 +58,7 @@ html {
 
     --shadow-floating: 0 30px 60px -10px rgba(255, 255, 255, 0.15);
     --shadow-museum: 0 20px 50px -10px rgba(255, 255, 255, 0.1);
+    --shadow-glow: 0 0 40px 5px rgba(255, 255, 255, 0.2);
   }
 }
 
@@ -204,4 +206,9 @@ body {
 /* 浮遊感のあるシャドウ (Light: Black / Dark: White) */
 .floating-shadow {
   box-shadow: var(--shadow-floating);
+}
+
+/* 全方向均等シャドウ */
+.glow-shadow {
+  box-shadow: var(--shadow-glow);
 }

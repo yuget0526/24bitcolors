@@ -63,21 +63,21 @@ export function QuestionScreen({
 
       {/* 質問テキスト */}
       <h2
-        className="mb-space-3 text-[length:var(--text-medium)] font-normal text-[var(--foreground)]"
+        className="mb-space-5 text-[length:var(--text-medium)] font-normal text-[var(--foreground)]"
         style={{ fontFamily: "Georgia, serif" }}
       >
         {t("questionLabel")}
       </h2>
 
       {/* 色選択 */}
-      <div className="mb-4 grid w-full max-w-md grid-cols-2 gap-6">
+      <div className="mb-space-5 grid w-full max-w-md grid-cols-2 gap-space-5">
         <ColorButton color={colorA} onClick={onSelectA} />
         <ColorButton color={colorB} onClick={onSelectB} />
       </div>
 
       {/* 予測表示 */}
       {prediction && (
-        <div className="flex items-center gap-space-3">
+        <div className="flex items-center gap-space-3 animate-fade-in">
           <div
             className="h-6 w-6 border border-[var(--foreground)]"
             style={{ backgroundColor: oklchToHex(prediction) }}
