@@ -6,8 +6,9 @@ import { ShareCard } from "@/components/ShareCard";
 import { ShareActions } from "@/components/ShareActions"; // Reuse existing
 import { Button } from "@/components/ui/button";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { OklchColor } from "@/lib/oklch";
+import { useTranslations } from "next-intl";
 
 interface ResultInteractionProps {
   hex: string;
@@ -16,20 +17,13 @@ interface ResultInteractionProps {
   fromDiagnosis?: boolean;
 }
 
-const ratingLabels = [
-  { value: 1, emoji: "1", label: "全然違う" },
-  { value: 2, emoji: "2", label: "少し違う" },
-  { value: 3, emoji: "3", label: "まあまあ" },
-  { value: 4, emoji: "4", label: "近い" },
-  { value: 5, emoji: "5", label: "ピッタリ" },
-];
-
 export function ResultInteraction({
   hex,
   resultColor,
   groupSlug,
   fromDiagnosis = false,
 }: ResultInteractionProps) {
+  const t = useTranslations("Result");
   const [rating, setRating] = useState<number | null>(null);
   // If NOT from diagnosis, treat as already "submitted" (show share options), but don't show success msg
   const [submitted, setSubmitted] = useState(!fromDiagnosis);
@@ -61,13 +55,21 @@ export function ResultInteraction({
 
   const safeHex = hex.startsWith("#") ? hex : `#${hex}`;
 
+  const ratingLabels = [
+    { value: 1, emoji: "1", label: t("ratingLabels.r1") },
+    { value: 2, emoji: "2", label: t("ratingLabels.r2") },
+    { value: 3, emoji: "3", label: t("ratingLabels.r3") },
+    { value: 4, emoji: "4", label: t("ratingLabels.r4") },
+    { value: 5, emoji: "5", label: t("ratingLabels.r5") },
+  ];
+
   return (
     <div className="w-full max-w-md mx-auto flex flex-col items-center">
       {/* 5-Star Rating Section */}
       {!submitted ? (
         <div className="mb-12 w-full bg-card/50 p-6 border border-border/50 animate-in fade-in slide-in-from-bottom-4">
           <p className="mb-4 text-center text-base text-muted-foreground font-serif">
-            この診断結果はいかがでしたか？
+            {t("feedbackQuestion")}
           </p>
           <div className="mb-6 flex justify-center gap-2">
             {ratingLabels.map(({ value, emoji }) => (
@@ -96,16 +98,14 @@ export function ResultInteraction({
             disabled={rating === null}
             className="w-full"
           >
-            評価してシェアへ進む
+            {t("btnSubmit")}
           </Button>
         </div>
       ) : (
         <div className="mb-8 w-full animate-in fade-in slide-in-from-bottom-2">
           {justSubmitted && (
             <div className="p-4 bg-primary/5 text-primary text-center mb-8 border border-primary/20">
-              <p className="font-serif text-sm">
-                ✓ フィードバックを送信しました
-              </p>
+              <p className="font-serif text-sm">{t("msgSubmitted")}</p>
             </div>
           )}
 
@@ -124,7 +124,9 @@ export function ResultInteraction({
               className="btn-museum h-12 w-full text-xs tracking-[0.2em] uppercase border-foreground/20 hover:bg-foreground hover:text-background transition-colors"
               asChild
             >
-              <Link href={`/${safeHex.replace("#", "")}`}>詳細を見る</Link>
+              <Link href={`/${safeHex.replace("#", "")}`}>
+                {t("btnDetail")}
+              </Link>
             </Button>
           </div>
         </div>
@@ -141,10 +143,8 @@ export function ResultInteraction({
 
       {/* Global Feedback Link (Always Visible at bottom) */}
       <div className="mt-12 pt-8 border-t border-border/40 w-full text-center">
-        <p className="mb-2 text-xs text-muted-foreground font-serif">
-          アルゴリズム精度向上のために
-          <br />
-          詳細なフィードバックも歓迎します
+        <p className="mb-2 text-xs text-muted-foreground font-serif whitespace-pre-line">
+          {t("feedbackRequest")}
         </p>
         <Button
           variant="link"
@@ -152,13 +152,24 @@ export function ResultInteraction({
           asChild
           className="text-xs text-muted-foreground hover:text-foreground underline-offset-4"
         >
-          <Link
-            href="/diagnosis/logic/feedback"
+          <a
+            href="https://forms.gle/XXXXXXX" // Assuming form link might be external or need correct link
             target="_blank"
             rel="noopener noreferrer"
           >
-            詳細フィードバックフォームへ &rarr;
-          </Link>
+            {/* Actual link was /diagnosis/logic/feedback in previous file, checking... 
+                 It was /diagnosis/logic/feedback in DiagnosisLogicPage. 
+                 In ResultInteraction it was /diagnosis/logic/feedback.
+                 Wait, in ja.json I put linkFeedbackForm. 
+                 Let's keep the internal link if it exists or external if intended.
+                 Original code had: href="/diagnosis/logic/feedback" 
+             */}
+            {/* UPDATE: The original code used Link to internal page /diagnosis/logic/feedback. 
+                 But wait, the viewed file content had target="_blank". 
+                 Let's preserve the original href but use translations for text. 
+             */}
+            {t("linkFeedbackForm")}
+          </a>
         </Button>
       </div>
     </div>

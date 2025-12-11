@@ -1,30 +1,37 @@
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-export const metadata: Metadata = {
-  title: "お問い合わせ | 24bitColors",
-  description:
-    "24bitColorsに関するお問い合わせ、ご要望、バグ報告はこちらから。ユーザーの皆様からのフィードバックをお待ちしております。",
-  robots: {
-    index: false, // お問い合わせページは検索結果の優先度が低いため（必須ではないが、スパム除け等の意味でnoindexにすることも検討。一旦はクロールはさせるが重要なコンテンツではない）
-  },
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
+export async function generateMetadata({ params }: Props) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Contact" });
+
+  return {
+    title: t("title"),
+    description: t("intro"), // Using intro as description for now or create specific key
+    robots: {
+      index: false,
+    },
+  };
+}
+
 export default function ContactPage() {
+  const t = useTranslations("Contact");
+
   return (
     <div className="container mx-auto max-w-3xl px-space-5 py-space-6 text-center font-serif">
       <h1
         className="mb-space-6 text-[length:var(--text-large)] font-normal tracking-wide text-foreground"
         style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
       >
-        Contact
+        {t("title")}
       </h1>
 
       <div className="mx-auto max-w-lg leading-relaxed text-foreground">
-        <p className="mb-space-6">
-          当サイトに関するお問い合わせ、ご意見、バグ報告等は、
-          <br />
-          以下のいずれかの方法でご連絡ください。
-        </p>
+        <p className="mb-space-6 whitespace-pre-line">{t("intro")}</p>
 
         <div className="space-y-space-5">
           {/* Email Card */}
@@ -56,7 +63,7 @@ export default function ContactPage() {
               </svg>
             </div>
             <span className="mb-space-1 text-[length:var(--text-base)] tracking-wider text-muted-foreground group-hover:text-background">
-              EMAIL
+              {t("emailLabel")}
             </span>
             <span
               className="text-[length:var(--text-medium)] font-medium tracking-wide"
@@ -97,9 +104,8 @@ export default function ContactPage() {
           </a> */}
         </div>
 
-        <p className="mt-space-6 text-[length:var(--text-micro)] text-muted-foreground">
-          ※
-          お問い合わせの内容によっては、返信にお時間をいただく場合や返信できない場合がございます。
+        <p className="mt-space-6 text-[length:var(--text-micro)] text-muted-foreground whitespace-pre-wrap">
+          {t("note")}
         </p>
       </div>
     </div>

@@ -1,15 +1,17 @@
 "use client";
 
-import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 import { LastDiagnosisLink } from "./LastDiagnosisLink";
 import { AppIcon } from "./AppIcon";
 import { Button } from "@/components/ui/button";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useTranslations } from "next-intl";
 
 export function Header() {
   const pathname = usePathname();
+  const t = useTranslations("Common");
   const isResultPage = pathname?.startsWith("/result/");
 
   return (
@@ -51,17 +53,19 @@ export function Header() {
       </div>
 
       {/* Right Side Actions */}
-      <div className="flex items-center gap-2 md:gap-4">
+      <div className="flex items-center gap-3 md:gap-5">
         <LastDiagnosisLink />
         <ThemeToggle />
+        <LanguageSwitcher />
+
         <Button
           variant="outline"
           className="h-10 px-6 md:h-11 md:px-8 active:scale-95 transition-transform ml-2"
           asChild
         >
           <Link href="/diagnosis" className="flex items-center justify-center">
-            <span className="md:hidden text-xs">診断</span>
-            <span className="hidden md:inline">診断を開始する</span>
+            <span className="md:hidden text-xs">{t("startDiagnosis")}</span>
+            <span className="hidden md:inline">{t("startDiagnosis")}</span>
           </Link>
         </Button>
       </div>

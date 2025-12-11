@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { ColorButton } from "./ColorButton";
 import { OklchColor, oklchToHex } from "@/lib/oklch";
 
@@ -25,6 +26,7 @@ export function QuestionScreen({
   onSelectB,
   onUndo,
 }: QuestionScreenProps) {
+  const t = useTranslations("Diagnosis");
   const progress = (questionNumber / totalQuestions) * 100;
 
   return (
@@ -46,7 +48,7 @@ export function QuestionScreen({
               className="text-[length:var(--text-base)] text-[var(--muted-foreground)] transition-colors hover:text-[var(--foreground)]"
               style={{ fontFamily: "Georgia, serif" }}
             >
-              ← 戻る
+              {t("back")}
             </button>
           )}
         </div>
@@ -64,7 +66,7 @@ export function QuestionScreen({
         className="mb-space-3 text-[length:var(--text-medium)] font-normal text-[var(--foreground)]"
         style={{ fontFamily: "Georgia, serif" }}
       >
-        どちらの色がお好みですか？
+        {t("questionLabel")}
       </h2>
 
       {/* 色選択 */}

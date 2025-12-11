@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { HexShareSection } from "./HexShareSection";
 import {
   getColorInfo,
@@ -13,8 +13,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { CopyableHex } from "@/components/CopyableHex";
 import { HarmonyGallery } from "@/components/HarmonyGallery";
+import { getTranslations } from "next-intl/server";
 
-type Params = Promise<{ hex: string }>;
+type Params = Promise<{ hex: string; locale: string }>;
 
 interface PageProps {
   params: Params;
@@ -23,18 +24,20 @@ interface PageProps {
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { hex } = await params;
+  const { hex, locale } = await params;
   if (!isValidHex(hex)) return {};
 
   const info = getColorInfo(`#${hex}`);
   if (!info) return {};
 
+  const t = await getTranslations({ locale, namespace: "ColorDetail" });
+
   return {
-    title: `${info.hex}の色見本・配色パターン・変換値 | 24bitColors`,
-    description: `${info.hex}のカラーコード情報。RGB/CMYK/OKLCHへの変換値、明度・彩度のバリエーション、相性の良い配色パターン一覧。Webデザインやグラフィック制作に役立つ${info.hex}の詳細分析。`,
+    title: `${t("title", { hex: info.hex })} | 24bitColors`,
+    description: t("description", { hex: info.hex }),
     openGraph: {
-      title: `${info.hex}の色見本・配色・成分分析 | 24bitColors`,
-      description: `${info.hex}の配色、トーン、変換値を網羅した色彩詳細ページ。RGB: ${info.rgb.r},${info.rgb.g},${info.rgb.b} / OKLCH対応。`,
+      title: `${t("title", { hex: info.hex })} | 24bitColors`,
+      description: t("description", { hex: info.hex }),
       images: [
         {
           url: `/api/og-hex?hex=${hex}`,
@@ -48,7 +51,7 @@ export async function generateMetadata({
 }
 
 export default async function ColorDetailPage({ params }: PageProps) {
-  const { hex } = await params;
+  const { hex, locale } = await params;
 
   if (!isValidHex(hex)) {
     notFound();
@@ -59,6 +62,7 @@ export default async function ColorDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const t = await getTranslations({ locale, namespace: "ColorDetail" });
   const harmonies = getHarmonies(`#${hex}`);
   const shades = getShades(`#${hex}`, 5);
   const tints = getTints(`#${hex}`, 5);
@@ -173,22 +177,22 @@ export default async function ColorDetailPage({ params }: PageProps) {
           {/* Tonal Variations (Gallery Style) */}
           <section className="w-full">
             <h2 className="mb-12 text-center font-serif text-2xl tracking-widest text-foreground">
-              TONAL VARIATIONS
+              {t("lblTonalVariations")}
               <span className="mt-2 block font-sans text-sm tracking-normal text-muted-foreground">
-                トーンの変化（明度・彩度）
+                {t("lblTonalSub")}
               </span>
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
                 {
-                  label: "明色",
-                  sub: "TINTS",
+                  label: t("lblTintsSub"),
+                  sub: t("lblTints"),
                   data: [...tints].reverse().concat(colorInfo.hex),
                 },
                 {
-                  label: "暗色",
-                  sub: "SHADES",
+                  label: t("lblShadesSub"),
+                  sub: t("lblShades"),
                   data: [colorInfo.hex, ...shades],
                 },
               ].map((set) => (
@@ -239,7 +243,7 @@ export default async function ColorDetailPage({ params }: PageProps) {
             asChild
             className="text-muted-foreground font-serif tracking-widest hover:text-foreground hover:no-underline"
           >
-            <Link href="/">← BACK TO COLLECTION</Link>
+            <Link href="/">{t("backToCollection")}</Link>
           </Button>
         </div>
       </div>

@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import { getNearestPoeticName } from "@/lib/colorNaming";
 
+import { useTranslations } from "next-intl";
+
 export function LastDiagnosisLink() {
+  const t = useTranslations("Common");
   const [lastHex, setLastHex] = useState<string | null>(null);
   const [groupSlug, setGroupSlug] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -73,12 +76,9 @@ export function LastDiagnosisLink() {
     <div className="flex items-center animate-in fade-in duration-500">
       <Link
         href={`/result/${groupSlug}?hex=${safeHex}`}
-        className="group flex items-center gap-2"
-        title="前回の診断結果へ"
+        className="group flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-muted/10"
+        title={t("lastDiagnosisTooltip")}
       >
-        <span className="hidden md:block text-[10px] tracking-widest text-muted-foreground font-serif uppercase">
-          LAST COLOR
-        </span>
         <div
           className="h-5 w-5 rounded-full shadow-sm ring-1 ring-black/5 transition-transform group-hover:scale-110"
           style={{ backgroundColor: lastHex }}

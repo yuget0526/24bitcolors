@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { ColorWheel } from "./ColorWheel";
 import { CopyableHex } from "./CopyableHex";
 import { X } from "@phosphor-icons/react";
+import { useTranslations } from "next-intl";
 
 interface HarmonyDetailModalProps {
   isOpen: boolean;
@@ -26,11 +27,15 @@ export function HarmonyDetailModal({
   mainColor,
   angles,
 }: HarmonyDetailModalProps) {
+  const t = useTranslations("Harmonies");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -102,8 +107,7 @@ export function HarmonyDetailModal({
         {/* Explanation */}
         <div className="mt-8 text-left">
           <p className="text-sm text-muted-foreground leading-relaxed">
-            {description ||
-              "OKLCH色空間の色相環（Hue Circle）上で、各色の位置関係を可視化しています。幾何学的なバランスが、美しい配色の根拠となっています。"}
+            {description || t("defaultDesc")}
           </p>
         </div>
       </div>

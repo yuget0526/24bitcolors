@@ -1,23 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/routing";
 import { Fragment } from "react";
-
-const PATH_MAP: Record<string, string> = {
-  diagnosis: "診断",
-  logic: "ロジック",
-  algorithm: "アルゴリズム解説",
-  oklch: "OKLCH色空間",
-  feedback: "フィードバック",
-  result: "診断結果",
-  about: "About",
-  contact: "お問い合わせ",
-  privacy: "プライバシーポリシー",
-  terms: "利用規約",
-};
+import { isValidHex } from "@/lib/color-utils";
 
 export function Breadcrumbs() {
+  const t = useTranslations("Breadcrumbs");
   const pathname = usePathname();
 
   // Root or 404 (pathname might be null in some edge cases)
@@ -25,14 +14,43 @@ export function Breadcrumbs() {
 
   const segments = pathname.split("/").filter(Boolean);
 
+  // Whitelist of keys that exist in en.json/ja.json under "Breadcrumbs"
+  const KNOWN_KEYS = [
+    "home",
+    "diagnosis",
+    "logic",
+    "algorithm",
+    "oklch",
+    "feedback",
+    "about",
+    "contact",
+    "privacy",
+    "terms",
+    "result",
+  ];
+
   const breadcrumbItems = segments.map((segment, index) => {
     const href = "/" + segments.slice(0, index + 1).join("/");
-    // Check map, or use segment directly (decodeURI for Japanese if needed)
-    let label = PATH_MAP[segment];
-    if (!label) {
-      // Decode URI component for Japanese slugs or hex codes
+    let label = "";
+
+    // 1. Check if it's a Hex code
+    if (isValidHex(segment) || /^[0-9a-fA-F]{6}$/.test(segment)) {
+      label = `#${segment.toUpperCase()}`;
+    }
+    // 2. Check whitelist for translation
+    else if (KNOWN_KEYS.includes(segment)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      label = t(segment as any);
+    }
+    // 3. Fallback for dynamic slugs (e.g. "dusty-lavender")
+    else {
       try {
-        label = decodeURIComponent(segment).toUpperCase();
+        const decoded = decodeURIComponent(segment);
+        // "dusty-lavender" -> "Dusty Lavender"
+        label = decoded
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
       } catch {
         label = segment.toUpperCase();
       }
@@ -42,7 +60,7 @@ export function Breadcrumbs() {
   });
 
   const fullList = [
-    { name: "Home", url: "https://24bitcolors.com/" },
+    { name: t("home"), url: "https://24bitcolors.com/" },
     ...breadcrumbItems,
   ];
 
@@ -65,7 +83,7 @@ export function Breadcrumbs() {
     >
       <div className="flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground font-serif tracking-wider">
         <Link href="/" className="hover:text-foreground transition-colors">
-          HOME
+          {t("home")}
         </Link>
         {breadcrumbItems.map((item, index) => (
           <Fragment key={item.path}>

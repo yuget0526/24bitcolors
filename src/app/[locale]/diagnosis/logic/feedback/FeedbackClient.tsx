@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +28,7 @@ interface StoredResult {
 }
 
 function DiagnosisResultSection({ result }: { result: StoredResult | null }) {
+  const t = useTranslations("LogicFeedback");
   if (!result) {
     return (
       <div className="rounded-none border border-dashed border-red-500/50 bg-red-500/5 p-8 text-center space-y-4">
@@ -34,15 +36,15 @@ function DiagnosisResultSection({ result }: { result: StoredResult | null }) {
           <WarningCircle weight="light" className="w-8 h-8" />
         </div>
         <h3 className="font-serif text-lg tracking-wide">
-          診断履歴が見つかりません
+          {t("resultNotFoundTitle")}
         </h3>
         <p className="text-sm text-muted-foreground">
-          フィードバックを送信するには、まずカラー診断を行ってください。
+          {t("resultNotFoundDesc")}
         </p>
         <div className="pt-4">
           <Button asChild variant="default">
             <Link href="/diagnosis">
-              診断を開始する <ArrowRight className="ml-2 w-4 h-4" />
+              {t("startDiagnosis")} <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </Button>
         </div>
@@ -59,13 +61,13 @@ function DiagnosisResultSection({ result }: { result: StoredResult | null }) {
         />
         <div className="text-center md:text-left space-y-2">
           <div className="text-xs font-mono text-muted-foreground tracking-widest uppercase">
-            Target Diagnosis
+            {t("targetDiagnosis")}
           </div>
           <div className="font-serif text-2xl tracking-wider">
             {result.hex.toUpperCase()}
           </div>
           <p className="text-xs text-muted-foreground">
-            あなたが最後に診断されたこの色についてのフィードバックを送信します。
+            {t("lastDiagnosisDesc")}
           </p>
         </div>
       </CardContent>
@@ -73,7 +75,8 @@ function DiagnosisResultSection({ result }: { result: StoredResult | null }) {
   );
 }
 
-export default function LogicFeedbackPage() {
+export function FeedbackClient() {
+  const t = useTranslations("LogicFeedback");
   const [submitted, setSubmitted] = useState(false);
   const [result, setResult] = useState<StoredResult | null>(null);
   const [diagnosisId, setDiagnosisId] = useState<string | undefined>(undefined);
@@ -152,12 +155,10 @@ export default function LogicFeedbackPage() {
             />
           </div>
           <h1 className="font-serif text-3xl tracking-widest text-foreground">
-            THANK YOU
+            {t("successTitle")}
           </h1>
-          <p className="text-muted-foreground leading-relaxed">
-            貴重なフィードバックをありがとうございます。
-            <br />
-            あなたのデータはアルゴリズムの精度向上に役立てられます。
+          <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+            {t("successDesc")}
           </p>
           <div className="pt-8">
             <Button
@@ -165,7 +166,7 @@ export default function LogicFeedbackPage() {
               asChild
               className="font-serif tracking-widest"
             >
-              <Link href="/diagnosis/logic">BACK TO LOGIC</Link>
+              <Link href="/diagnosis/logic">{t("backToLogic")}</Link>
             </Button>
           </div>
         </div>
@@ -177,7 +178,7 @@ export default function LogicFeedbackPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col items-center bg-background py-20 px-6">
-      <div className="w-full max-w-2xl animate-in fade-in duration-700 space-y-24">
+      <div className="w-full max-w-2xl animate-in fade-in duration-700 space-y-16">
         {/* Navigation */}
         <div className="flex justify-start">
           <Button
@@ -185,18 +186,20 @@ export default function LogicFeedbackPage() {
             asChild
             className="pl-0 text-muted-foreground font-serif tracking-widest hover:text-foreground hover:no-underline"
           >
-            <Link href="/diagnosis/logic">← BACK TO OVERVIEW</Link>
+            <Link href="/diagnosis/logic">{t("back")}</Link>
           </Button>
         </div>
 
         {/* Header */}
-        <header className="space-y-6">
-          <h1 className="font-serif text-4xl md:text-5xl tracking-widest text-foreground">
-            ALGORITHM <br /> FEEDBACK
+        <header className="space-y-6 text-center">
+          <p className="font-mono text-xs text-muted-foreground tracking-[0.3em] uppercase">
+            {t("heading")}
+          </p>
+          <h1 className="font-serif text-3xl md:text-4xl tracking-widest text-foreground">
+            {t("subHeading")}
           </h1>
-          <p className="font-sans text-base text-muted-foreground tracking-wide leading-relaxed max-w-xl">
-            精度向上のための詳細レポート。
-            エラーが発生しました。もう一度お試しください。
+          <p className="font-sans text-muted-foreground leading-loose pt-4 whitespace-pre-wrap">
+            {t("intro")}
           </p>
         </header>
 
@@ -207,23 +210,21 @@ export default function LogicFeedbackPage() {
             {/* Section 1: Accuracy Rating */}
             <section className="space-y-6">
               <h2 className="font-serif text-xl tracking-wide border-b border-border/40 pb-4">
-                1. 診断結果の納得度
+                {t("q1Title")}
               </h2>
               <div className="space-y-8 pt-4">
-                <p className="text-sm text-muted-foreground">
-                  提示された色は、あなたの感覚にフィットしましたか？
-                </p>
+                <p className="text-sm text-muted-foreground">{t("q1Desc")}</p>
                 <div className="px-2">
                   <Slider
                     min={0}
                     max={100}
-                    value={agreementScore}
-                    onChange={(e) => setAgreementScore(Number(e.target.value))}
+                    value={[agreementScore]}
+                    onValueChange={(val) => setAgreementScore(val[0])}
                   />
                 </div>
                 <div className="flex justify-between text-xs font-mono text-muted-foreground">
-                  <span>全く納得できない (0)</span>
-                  <span>完全に納得 (100)</span>
+                  <span>{t("labelTotallyDifferent")}</span>
+                  <span>{t("labelPerfect")}</span>
                 </div>
                 <div className="text-center font-mono text-lg font-bold">
                   {agreementScore}
@@ -234,54 +235,72 @@ export default function LogicFeedbackPage() {
             {/* Section 2: Expected vs Actual */}
             <section className="space-y-6">
               <h2 className="font-serif text-xl tracking-wide border-b border-border/40 pb-4">
-                2. 期待とのギャップ
+                {t("q2Title")}
               </h2>
               <div className="grid gap-8 md:grid-cols-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium opacity-80 font-serif">
-                    診断前に期待していた色系統
+                    {t("labelExpectedColor")}
                   </label>
                   <Select
                     value={expectedColor}
                     onValueChange={setExpectedColor}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="選択してください" />
+                      <SelectValue placeholder={t("placeholderSelect")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="red">赤・ピンク系</SelectItem>
-                      <SelectItem value="blue">青・水色系</SelectItem>
-                      <SelectItem value="green">緑・ライム系</SelectItem>
-                      <SelectItem value="yellow">黄・オレンジ系</SelectItem>
-                      <SelectItem value="purple">紫・ラベンダー系</SelectItem>
-                      <SelectItem value="mono">白・黒・グレー系</SelectItem>
+                      <SelectItem value="red">
+                        {t("optionsExpected.red")}
+                      </SelectItem>
+                      <SelectItem value="blue">
+                        {t("optionsExpected.blue")}
+                      </SelectItem>
+                      <SelectItem value="green">
+                        {t("optionsExpected.green")}
+                      </SelectItem>
+                      <SelectItem value="yellow">
+                        {t("optionsExpected.yellow")}
+                      </SelectItem>
+                      <SelectItem value="purple">
+                        {t("optionsExpected.purple")}
+                      </SelectItem>
+                      <SelectItem value="mono">
+                        {t("optionsExpected.mono")}
+                      </SelectItem>
                       <SelectItem value="neutral">
-                        ベージュ・ブラウン系
+                        {t("optionsExpected.neutral")}
                       </SelectItem>
                       <SelectItem value="other">
-                        特になし／わからない
+                        {t("optionsExpected.other")}
                       </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium opacity-80 font-serif">
-                    実際に出た結果の印象
+                    {t("labelActualImpression")}
                   </label>
                   <Select
                     value={actualImpression}
                     onValueChange={setActualImpression}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="選択してください" />
+                      <SelectValue placeholder={t("placeholderSelect")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="perfect">ドンピシャだった</SelectItem>
-                      <SelectItem value="close">近いが少し違う</SelectItem>
-                      <SelectItem value="surprising">
-                        意外だが気に入った
+                      <SelectItem value="perfect">
+                        {t("optionsActual.perfect")}
                       </SelectItem>
-                      <SelectItem value="far">全く好まない色だった</SelectItem>
+                      <SelectItem value="close">
+                        {t("optionsActual.close")}
+                      </SelectItem>
+                      <SelectItem value="surprising">
+                        {t("optionsActual.surprising")}
+                      </SelectItem>
+                      <SelectItem value="far">
+                        {t("optionsActual.far")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -291,15 +310,13 @@ export default function LogicFeedbackPage() {
             {/* Section 3: Detailed Feedback */}
             <section className="space-y-6">
               <h2 className="font-serif text-xl tracking-wide border-b border-border/40 pb-4">
-                3. ロジックへの具体的指摘
+                {t("q3Title")}
               </h2>
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  「質問が抽象的すぎた」「選択肢に欲しい色がなかった」など、アルゴリズムの挙動に関する感想を自由にお書きください。
-                </p>
+                <p className="text-sm text-muted-foreground">{t("q3Desc")}</p>
                 <Textarea
                   className="resize-none h-40 font-mono text-xs leading-relaxed"
-                  placeholder="例：無彩色の質問がもっと欲しかった。後半の2択がどちらも選びにくかった..."
+                  placeholder={t("placeholderComment")}
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                 />
@@ -314,7 +331,7 @@ export default function LogicFeedbackPage() {
                 disabled={isSubmitting}
                 className="w-full md:w-auto min-w-[200px] font-serif tracking-widest h-14 text-lg rounded-none"
               >
-                {isSubmitting ? "SENDING..." : "SEND FEEDBACK"}
+                {isSubmitting ? t("sending") : t("submit")}
               </Button>
             </div>
           </form>

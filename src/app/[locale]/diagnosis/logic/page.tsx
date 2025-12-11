@@ -1,27 +1,36 @@
-import Link from "next/link";
-import { Metadata } from "next";
+import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { ArticleJsonLd } from "@/components/ArticleJsonLd";
+import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
 
-export const metadata: Metadata = {
-  title: "診断ロジックの裏側 | 24bitColors",
-  description:
-    "24bitColorsの診断アルゴリズム解説。人間の知覚に近いOKLCH色空間と、統計的なアプローチで個人の色彩感覚を特定する仕組みについて。",
+type Props = {
+  params: Promise<{ locale: string }>;
 };
 
+export async function generateMetadata({ params }: Props) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "DiagnosisLogic" });
+
+  return {
+    title: `${t("title")} | 24bitColors`,
+    description: t("description"),
+  };
+}
+
 export default function DiagnosisLogicPage() {
+  const t = useTranslations("DiagnosisLogic");
+
   return (
     <div className="flex min-h-screen w-full flex-col items-center bg-background py-20 px-6">
       <div className="w-full max-w-2xl animate-in fade-in duration-700 space-y-24">
         {/* Header */}
         <header className="text-center space-y-6">
           <h1 className="font-serif text-3xl md:text-4xl tracking-widest text-foreground">
-            THE ALGORITHM
+            {t("lblAlgorithm")}
           </h1>
-          <p className="font-sans text-sm md:text-base text-muted-foreground tracking-wide leading-relaxed max-w-lg mx-auto">
-            24bitColorsの診断精度を支える、
-            <br className="hidden md:inline" />
-            科学と統計に基づいたロジックについて。
+          <p className="font-sans text-sm md:text-base text-muted-foreground tracking-wide leading-relaxed max-w-lg mx-auto whitespace-pre-line">
+            {t("intro")}
           </p>
         </header>
 
@@ -29,15 +38,13 @@ export default function DiagnosisLogicPage() {
         <section className="space-y-6">
           <div className="flex flex-col items-center">
             <span className="font-mono text-xs text-muted-foreground tracking-[0.2em] mb-4">
-              01. TRANSPARENCY
+              {t("lblTransparency")}
             </span>
             <h2 className="font-serif text-2xl tracking-wide text-center mb-6">
-              ブラックボックスにしない
+              {t("titleTransparency")}
             </h2>
             <p className="text-muted-foreground leading-loose text-justify font-light">
-              AIやアルゴリズムによる診断は、しばしば「なぜその結果になったのか」が不透明なブラックボックスになりがちです。
-              私たちは、色が持つ論理的な構造を可視化し、どのようなプロセスを経てあなただけの色が導き出されるのかを公開することで、
-              結果に対する納得感と信頼透明性を大切にしています。
+              {t("bodyTransparency")}
             </p>
           </div>
         </section>
@@ -46,15 +53,13 @@ export default function DiagnosisLogicPage() {
         <section className="space-y-6">
           <div className="flex flex-col items-center">
             <span className="font-mono text-xs text-muted-foreground tracking-[0.2em] mb-4">
-              02. COLOR SPACE
+              {t("lblColorSpace")}
             </span>
             <h2 className="font-serif text-2xl tracking-wide text-center mb-6">
-              人間の目に忠実な「OKLCH」
+              {t("titleColorSpace")}
             </h2>
             <p className="text-muted-foreground leading-loose text-justify font-light">
-              一般的なWebデザインで使われるRGB色空間は、実は人間の感覚とはズレがあります。
-              24bitColorsでは、人間の知覚特性に最も近い最新の色空間である「OKLCH」を採用しています。
-              これにより、「明るさ」や「鮮やかさ」を感覚通りに数値化し、従来の診断では捉えきれなかった繊細なニュアンスの違いまで分析することを可能にしました。
+              {t("bodyColorSpace")}
             </p>
             <div className="pt-6">
               <Button
@@ -62,7 +67,7 @@ export default function DiagnosisLogicPage() {
                 asChild
                 className="font-mono text-xs tracking-widest uppercase"
               >
-                <Link href="/diagnosis/logic/oklch">OKLCHの科学的背景</Link>
+                <Link href="/diagnosis/logic/oklch">{t("linkOklch")}</Link>
               </Button>
             </div>
           </div>
@@ -72,16 +77,13 @@ export default function DiagnosisLogicPage() {
         <section className="space-y-6">
           <div className="flex flex-col items-center">
             <span className="font-mono text-xs text-muted-foreground tracking-[0.2em] mb-4">
-              03. ADAPTIVE
+              {t("lblAdaptive")}
             </span>
             <h2 className="font-serif text-2xl tracking-wide text-center mb-6">
-              対話するアルゴリズム
+              {t("titleAdaptive")}
             </h2>
             <p className="text-muted-foreground leading-loose text-justify font-light">
-              あらかじめ決まった質問を順番にするだけではありません。
-              システムはあなたの回答をリアルタイムに解析し、「次にどの色を比較すれば最も好みが絞り込めるか」を瞬時に計算します。
-              1677万色の色空間に配置された数百の「観測点」を使ってあなたの好みの傾向を統計的に分析し、
-              選択のたびに最適な色領域へと適応的にアプローチしていきます。
+              {t("bodyAdaptive")}
             </p>
             <div className="pt-6">
               <Button
@@ -90,7 +92,7 @@ export default function DiagnosisLogicPage() {
                 className="font-mono text-xs tracking-widest uppercase"
               >
                 <Link href="/diagnosis/logic/algorithm">
-                  アルゴリズムの仕組み
+                  {t("linkAlgorithm")}
                 </Link>
               </Button>
             </div>
@@ -102,15 +104,13 @@ export default function DiagnosisLogicPage() {
           <div className="absolute -inset-x-8 -inset-y-8 bg-foreground/5 dark:bg-foreground/5 -z-10 rounded-3xl blur-2xl opacity-50" />
           <div className="flex flex-col items-center">
             <span className="font-mono text-xs text-muted-foreground tracking-[0.2em] mb-4">
-              04. EVOLUTION
+              {t("lblEvolution")}
             </span>
             <h2 className="font-serif text-2xl tracking-wide text-center mb-6">
-              フィードバックと共に進化する
+              {t("titleEvolution")}
             </h2>
             <p className="text-muted-foreground leading-loose text-justify font-light">
-              このアルゴリズムは完成形ではありません。
-              「もっと無彩色を選びたい」「質問が似すぎている」といったユーザーの皆様からのフィードバックを受けて、日々ロジックの調整を行っています。
-              あなたの診断結果や感想が、次の誰かのための精度向上に直接つながります。私たちの色の探求は、あなたと共に進化し続けます。
+              {t("bodyEvolution")}
             </p>
             <div className="pt-6">
               <Button
@@ -119,7 +119,7 @@ export default function DiagnosisLogicPage() {
                 className="font-mono text-xs tracking-widest uppercase px-8"
               >
                 <Link href="/diagnosis/logic/feedback">
-                  詳細なフィードバックを送る
+                  {t("linkFeedback")}
                 </Link>
               </Button>
             </div>
@@ -133,7 +133,7 @@ export default function DiagnosisLogicPage() {
             asChild
             className="text-muted-foreground font-serif tracking-widest hover:text-foreground hover:no-underline"
           >
-            <Link href="/diagnosis">← BACK TO DIAGNOSIS</Link>
+            <Link href="/diagnosis">{t("backData")}</Link>
           </Button>
         </div>
       </div>
