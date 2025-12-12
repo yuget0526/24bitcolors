@@ -11,8 +11,8 @@
 | **Phase 1**   | v1.0.0  | **Acquisition (MVP)**: 診断機能、PWA、シェア機能                         | ✅ 完了 |
 | **Phase 1.5** | v1.1.0~ | **UX Optimization**: Dark Mode (Museum Theme), URL シェア, データ構造 v2 | ✅ 完了 |
 | **Phase 2**   | v2.0.0~ | **Activation & Retention**: 統計ダッシュボード、コレクション機能         | 🚧 次期 |
-| **Phase 3**   | v3.0.0~ | **Global Expansion**: 多言語化、地域別トレンド                           | 予定    |
-| **Phase 4**   | v4.0.0~ | **Data Ecosystem**: API 公開、オープンデータ化                           | 予定    |
+| **Phase 3**   | v1.2.0  | **Global Expansion**: 多言語化対応 (i18n), 地域別メタデータ              | ✅ 完了 |
+| **Phase 4**   | v3.0.0~ | **Data Ecosystem**: API 公開、オープンデータ化                           | 予定    |
 | **Phase 5**   | v5.0.0~ | **AI Personalization**: 感性分析、レコメンド                             | 予定    |
 
 ## 直近のタスク (v1.2.0 以降)
