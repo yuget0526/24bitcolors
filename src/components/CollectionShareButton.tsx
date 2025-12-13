@@ -51,7 +51,7 @@ export function CollectionShareButton() {
       <DialogTrigger asChild>
         <Button
           onClick={handleCreateShare}
-          className="gap-2 rounded-full font-serif tracking-wider"
+          className="gap-2 rounded-none font-serif tracking-wider"
         >
           <ShareNetwork className="w-4 h-4" />
           {t("share")}

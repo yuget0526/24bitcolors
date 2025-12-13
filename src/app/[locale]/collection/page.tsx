@@ -1,12 +1,10 @@
 "use client";
 
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { getNearestPoeticName } from "@/lib/colorNaming";
 import { Calendar, Hash } from "lucide-react";
 import { CollectionShareButton } from "@/components/CollectionShareButton";
-import { Button } from "@/components/ui/button";
-import { Swatches } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 
 type HistoryItem = {
@@ -19,6 +17,7 @@ type HistoryItem = {
 
 export default function CollectionPage() {
   const t = useTranslations("CollectionPage");
+  const router = useRouter();
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -53,7 +52,13 @@ export default function CollectionPage() {
     fetchHistory();
   }, []);
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!isLoading && history.length === 0) {
+      router.push("/diagnosis");
+    }
+  }, [isLoading, history, router]);
+
+  if (isLoading || history.length === 0) {
     return (
       <div className="min-h-screen pt-32 pb-20 px-space-4 max-w-5xl mx-auto flex flex-col items-center justify-center">
         <div className="animate-pulse flex flex-col items-center gap-4">
@@ -64,27 +69,11 @@ export default function CollectionPage() {
     );
   }
 
-  if (history.length === 0) {
-    return (
-      <div className="min-h-screen pt-32 pb-20 px-space-4 max-w-5xl mx-auto flex flex-col items-center justify-center">
-        <h1 className="text-xl md:text-2xl font-serif text-muted-foreground mb-4">
-          {t("noHistory")}
-        </h1>
-        <Button asChild variant="outline">
-          <Link href="/diagnosis">{t("viewAllHistory")}</Link>
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen pt-32 pb-20 px-space-4 max-w-5xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-6 max-w-3xl">
-          <div className="inline-flex items-center justify-center p-3 rounded-none border border-border/50 bg-secondary/20">
-            <Swatches className="w-6 h-6 text-foreground/80" />
-          </div>
           <div className="space-y-4">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-foreground tracking-tight">
               {t("title")}
