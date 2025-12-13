@@ -10,7 +10,11 @@
     "lastDiagnosisTooltip": "前回の診断結果へ",
     "toggleThemeLight": "ライトモードに切り替え",
     "toggleThemeDark": "ダークモードに切り替え",
-    "toggleThemeLabel": "テーマを切り替える"
+    "toggleThemeLabel": "テーマを切り替える",
+    "history": "診断履歴",
+    "viewAll": "すべて見る",
+    "viewAllHistory": "履歴ページへ",
+    "noHistory": "履歴なし"
   },
   "Home": {
     "heroTitle": "24bitColors",
@@ -236,7 +240,11 @@
     "intro": "診断の結果は正確でしたか？ アルゴリズムに偏りはありましたか？\n詳細な検証結果をお聞かせください。",
     "resultNotFoundTitle": "診断履歴が見つかりません",
     "resultNotFoundDesc": "フィードバックを送信するには、まずカラー診断を行ってください。",
-    "startDiagnosis": "診断を開始する",
+    "startDiagnosis": "診断をはじめる",
+    "history": "診断履歴",
+    "viewAll": "すべて見る",
+    "viewAllHistory": "すべての履歴を見る",
+    "noHistory": "履歴がありません",
     "targetDiagnosis": "TARGET DIAGNOSIS",
     "lastDiagnosisDesc": "あなたが最後に診断されたこの色についてのフィードバックを送信します。",
     "q1Title": "1. 診断結果の納得度",

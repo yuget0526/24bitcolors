@@ -10,7 +10,11 @@
     "lastDiagnosisTooltip": "Go to last result",
     "toggleThemeLight": "Switch to Light Mode",
     "toggleThemeDark": "Switch to Dark Mode",
-    "toggleThemeLabel": "Toggle theme"
+    "toggleThemeLabel": "Toggle theme",
+    "history": "History",
+    "viewAll": "View All",
+    "viewAllHistory": "View Full History",
+    "noHistory": "No History"
   },
   "Home": {
     "heroTitle": "24bitColors",
