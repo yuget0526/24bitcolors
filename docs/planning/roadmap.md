@@ -21,9 +21,9 @@
 - [ ] **診断結果ページの強化**
   - "Why this color?" の解説コンテンツ
   - 統計データの可視化（「上位 X%の人が選びました」）
-- [ ] **診断ステートの永続化**
-  - リロードしても進捗を維持する (`localStorage`)
-- [ ] **パフォーマンス最適化**
-  - Core Web Vitals の計測と改善
+- [x] **没入感の向上 (Sensory UX)**
+  - Android 限定ハプティクス (Web Vibration API) の実装
+  - ※iOS は視覚的明快さを優先し、振動なしとする方針に決定
+- [ ] **堅牢性の向上 (Robustness)** - _Based on Tech Review_ Web Vitals の計測と改善
 
 **最終更新**: 2025 年 12 月 12 日
