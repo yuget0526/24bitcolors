@@ -24,7 +24,7 @@ export function LanguageSwitcher() {
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" aria-label="Switch Language">
-          <Globe className="h-5 w-5" />
+          <Globe weight="light" className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
