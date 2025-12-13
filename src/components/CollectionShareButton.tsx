@@ -51,21 +51,24 @@ export function CollectionShareButton() {
       <DialogTrigger asChild>
         <Button
           onClick={handleCreateShare}
-          className="gap-2 rounded-none font-serif tracking-wider"
+          className="gap-3 rounded-none font-serif tracking-widest px-8 py-6 text-base hover:bg-neutral-800 transition-colors duration-500"
         >
           <ShareNetwork className="w-4 h-4" />
           {t("share")}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="font-serif tracking-wide text-xl">
+      <DialogContent className="sm:max-w-lg p-12 gap-8 rounded-none border-neutral-100 dark:border-neutral-800 shadow-2xl">
+        <DialogHeader className="space-y-4">
+          <DialogTitle className="font-serif tracking-wide text-3xl text-center">
             {t("shareTitle")}
           </DialogTitle>
-          <DialogDescription>{t("shareDesc")}</DialogDescription>
+          <DialogDescription className="text-center font-serif leading-relaxed text-muted-foreground text-base">
+            {t("shareDesc")}
+          </DialogDescription>
         </DialogHeader>
-        <div className="flex items-center space-x-2 mt-4">
-          <div className="grid flex-1 gap-2">
+
+        <div className="flex flex-col gap-6 mt-4">
+          <div className="relative">
             <Label htmlFor="link" className="sr-only">
               Link
             </Label>
@@ -73,23 +76,29 @@ export function CollectionShareButton() {
               id="link"
               defaultValue={shareUrl}
               readOnly
-              className="font-mono text-sm"
+              className="font-mono text-sm h-14 px-6 rounded-none border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 focus-visible:ring-0 focus-visible:border-neutral-400 transition-colors text-center"
               placeholder={isLoading ? t("generating") : ""}
             />
           </div>
+
           <Button
             type="submit"
-            size="sm"
-            className="px-3"
+            size="lg"
+            className="w-full h-14 rounded-none font-serif tracking-wider text-base gap-2 bg-neutral-900 text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 transition-all duration-500"
             onClick={copyToClipboard}
             disabled={!shareUrl || isLoading}
           >
             {copied ? (
-              <Check className="h-4 w-4" />
+              <>
+                <Check className="h-4 w-4" />
+                <span>Copied</span>
+              </>
             ) : (
-              <Copy className="h-4 w-4" />
+              <>
+                <Copy className="h-4 w-4" />
+                <span>{t("copyLink")}</span>
+              </>
             )}
-            <span className="sr-only">{t("copyLink")}</span>
           </Button>
         </div>
       </DialogContent>
