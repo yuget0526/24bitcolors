@@ -86,6 +86,7 @@ export function DiagnosisApp() {
           localStorage.setItem("lastDiagnosisHex", finalResult.hex);
           // Dispatch custom event for same-tab updates
           window.dispatchEvent(new Event("diagnosisColorUpdate"));
+          window.dispatchEvent(new Event("diagnosisHistoryUpdate")); // Trigger history refresh
         }
 
         // Generate UUID client-side for instant UX (no waiting for server)

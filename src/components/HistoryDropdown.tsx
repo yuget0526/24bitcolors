@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import {
@@ -27,8 +27,8 @@ export function HistoryDropdown() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Dropdown is client-side, so we fetch from API which uses the cookie
+  const fetchHistory = useCallback(() => {
+    setIsLoading(true);
     fetch(`/api/history?limit=3`, { cache: "no-store" })
       .then((res) => {
         if (!res.ok) throw new Error("Failed");
@@ -54,6 +54,20 @@ export function HistoryDropdown() {
       })
       .finally(() => setIsLoading(false));
   }, []);
+
+  useEffect(() => {
+    fetchHistory();
+
+    const handleUpdate = () => {
+      // Small delay to ensure DB write is committed
+      setTimeout(fetchHistory, 500);
+    };
+
+    window.addEventListener("diagnosisHistoryUpdate", handleUpdate);
+    return () => {
+      window.removeEventListener("diagnosisHistoryUpdate", handleUpdate);
+    };
+  }, [fetchHistory]);
 
   // Only show top 3 in the menu
   const displayHistory = history.slice(0, 3);
