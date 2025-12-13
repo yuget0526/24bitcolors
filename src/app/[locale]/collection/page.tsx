@@ -48,15 +48,31 @@ export default async function HistoryPage({
     );
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  let historyData = null;
 
-  const { data: historyData } = await supabase
-    .from("diagnoses")
-    .select("id, hex, created_at")
-    .eq("anonymous_id", anonymousId)
-    .order("created_at", { ascending: false });
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    if (supabaseUrl && supabaseAnonKey) {
+      const supabase = createClient(supabaseUrl, supabaseAnonKey);
+      const { data, error } = await supabase
+        .from("diagnoses")
+        .select("id, hex, created_at")
+        .eq("anonymous_id", anonymousId)
+        .order("created_at", { ascending: false });
+
+      if (!error) {
+        historyData = data;
+      } else {
+        console.error("Supabase fetch error:", error);
+      }
+    } else {
+      console.error("Supabase environment variables missing");
+    }
+  } catch (err) {
+    console.error("Unexpected error in CollectionPage:", err);
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const history = (historyData || []).map((item: any) => {
