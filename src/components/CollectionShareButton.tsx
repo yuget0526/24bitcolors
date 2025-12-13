@@ -51,7 +51,7 @@ export function CollectionShareButton() {
       <DialogTrigger asChild>
         <Button
           onClick={handleCreateShare}
-          className="gap-3 rounded-none font-serif tracking-widest px-8 py-6 text-base hover:bg-neutral-800 transition-colors duration-500"
+          className="gap-2 rounded-none font-serif tracking-wider min-w-[140px]"
         >
           <ShareNetwork className="w-4 h-4" />
           {t("share")}
