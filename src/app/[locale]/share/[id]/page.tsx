@@ -76,35 +76,79 @@ export default async function SharePage({
   }
 
   return (
-    <div className="min-h-screen pt-40 pb-32 px-space-4 max-w-5xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="flex flex-col items-start text-left space-y-6 max-w-2xl">
-          <div className="space-y-4">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-foreground tracking-tight">
-              {t("shareTitle")}
-            </h1>
-            <p className="text-lg text-muted-foreground font-serif leading-relaxed max-w-lg text-left">
-              {t("collection", { count: history.length })}
-            </p>
+    <div className="min-h-screen w-full bg-background selection:bg-foreground selection:text-background">
+      <div className="mx-auto max-w-[1800px] px-4 md:px-12 lg:px-16 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+        {/* Sticky Sidebar (Left) */}
+        <aside className="lg:col-span-4 lg:sticky lg:top-0 lg:h-screen pt-40 lg:py-32 flex flex-col justify-between">
+          <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div>
+              <span className="block font-mono text-xs tracking-[0.3em] text-muted-foreground mb-6 uppercase">
+                Shared Collection
+              </span>
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-serif text-foreground tracking-tight leading-[0.9]">
+                {t("shareTitle")}
+              </h1>
+            </div>
+
+            <div className="space-y-8">
+              <p className="text-muted-foreground font-serif text-lg leading-relaxed max-w-md">
+                {t("collection", { count: history.length })}
+              </p>
+
+              {/* Metadata or additional info can go here */}
+              <div className="flex flex-col gap-2 font-mono text-xs text-muted-foreground/60">
+                <p>ID: {id.substring(0, 8)}...</p>
+                <p>ARCHIVED VIA 24BITCOLORS</p>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-col items-end gap-4 w-full md:w-auto">
-          {/* Actions removed as per user request (single bookmark focused) */}
-        </div>
-      </div>
+          <div className="hidden lg:block">
+            <Button
+              asChild
+              variant="outline"
+              className="rounded-none border-foreground/20 hover:bg-foreground hover:text-background transition-colors font-serif tracking-widest uppercase"
+            >
+              <Link href="/">Create Your Own</Link>
+            </Button>
+          </div>
+        </aside>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        {history.map((item, index) => (
-          <SharedColorCard
-            key={item.id}
-            item={item}
-            shareId={id}
-            index={index}
-          />
-        ))}
+        {/* Scrollable Gallery (Right) */}
+        <main className="lg:col-span-8 pt-0 lg:pt-32 pb-32">
+          {history.length > 0 && (
+            <div className="flex items-end justify-between border-b border-border/40 pb-6 mb-12">
+              <span className="font-mono text-xs tracking-widest text-muted-foreground">
+                CATALOG: {id.substring(0, 4)} — {history.length} ITEMS
+              </span>
+              <span className="font-serif text-sm italic text-muted-foreground">
+                Public Archive
+              </span>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-12 lg:gap-x-8 lg:gap-y-16">
+            {history.map((item, index) => (
+              <div
+                key={item.id}
+                className="animate-in fade-in duration-1000 fill-mode-both"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <SharedColorCard item={item} shareId={id} index={index} />
+              </div>
+            ))}
+          </div>
+
+          <div className="block lg:hidden mt-20 text-center">
+            <Button
+              asChild
+              variant="outline"
+              className="w-full h-14 rounded-none border-foreground/20 hover:bg-foreground hover:text-background transition-colors font-serif tracking-widest uppercase"
+            >
+              <Link href="/">Create Your Own</Link>
+            </Button>
+          </div>
+        </main>
       </div>
     </div>
   );
