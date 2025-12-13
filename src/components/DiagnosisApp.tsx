@@ -30,7 +30,6 @@ export function DiagnosisApp() {
   useEffect(() => {
     startTimeRef.current = Date.now();
   }, []);
-  const [anonymousId, setAnonymousId] = useState<string>("");
 
   // 初期化: ページロード時に同期的に診断を開始（Lazy initialization）
   const [initialData] = useState(() => {
@@ -46,19 +45,6 @@ export function DiagnosisApp() {
   const [colorPair, setColorPair] = useState<ColorPair>(initialData.pair);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-
-  // Initialize Anonymous ID
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      let id = localStorage.getItem("anonymous_id");
-      if (!id) {
-        id = crypto.randomUUID();
-        localStorage.setItem("anonymous_id", id);
-      }
-      setAnonymousId(id);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleSelect = useCallback(
     async (choice: "A" | "B") => {
@@ -100,12 +86,14 @@ export function DiagnosisApp() {
           localStorage.setItem("lastDiagnosisHex", finalResult.hex);
           // Dispatch custom event for same-tab updates
           window.dispatchEvent(new Event("diagnosisColorUpdate"));
+          window.dispatchEvent(new Event("diagnosisHistoryUpdate")); // Trigger history refresh
         }
 
         // Generate UUID client-side for instant UX (no waiting for server)
         const diagnosisId = crypto.randomUUID();
         localStorage.setItem("lastDiagnosisId", diagnosisId);
 
+        // Fire-and-forget API call with client-provided ID
         // Fire-and-forget API call with client-provided ID
         fetch("/api/diagnosis", {
           method: "POST",
@@ -120,10 +108,18 @@ export function DiagnosisApp() {
             duration_seconds: durationSeconds,
             algorithm_version: "v1.2.1",
             locale: navigator.language,
-            anonymous_id: anonymousId || "unknown",
           }),
           keepalive: true, // Survives page navigation
-        }).catch((e) => console.error("Diagnosis save failed", e));
+        })
+          .then(async (res) => {
+            if (!res.ok) {
+              const errorText = await res.text();
+              console.error("Diagnosis save failed:", res.status, errorText);
+            } else {
+              console.log("Diagnosis saved successfully");
+            }
+          })
+          .catch((e) => console.error("Diagnosis save network error", e));
 
         // Navigate to Result Page immediately (no waiting)
         router.push(`/result/${groupSlug}?hex=${safeHex}&from_diagnosis=true`);
@@ -141,15 +137,7 @@ export function DiagnosisApp() {
         setIsProcessing(false);
       }
     },
-    [
-      diagnosisState,
-      colorPair,
-      history,
-      theme,
-      anonymousId,
-      router,
-      isProcessing,
-    ]
+    [diagnosisState, colorPair, history, theme, router, isProcessing]
   );
 
   const handleUndo = useCallback(() => {

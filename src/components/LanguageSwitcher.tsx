@@ -21,24 +21,28 @@ export function LanguageSwitcher() {
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" aria-label="Switch Language">
-          <Globe className="h-5 w-5" />
+          <Globe weight="light" className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent
+        align="end"
+        sideOffset={20}
+        className="w-[144px] md:w-[160px]"
+      >
         <DropdownMenuItem
           onClick={() => handleLocaleChange("ja")}
           disabled={locale === "ja"}
-          className="font-serif tracking-widest"
+          className="font-serif tracking-widest min-w-[124px] justify-center"
         >
           日本語
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => handleLocaleChange("en")}
           disabled={locale === "en"}
-          className="font-serif tracking-widest"
+          className="font-serif tracking-widest min-w-[124px] justify-center"
         >
           English
         </DropdownMenuItem>

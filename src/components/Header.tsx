@@ -1,7 +1,7 @@
 "use client";
 
 import { ThemeToggle } from "./ThemeToggle";
-import { LastDiagnosisLink } from "./LastDiagnosisLink";
+import { HistoryDropdown } from "./HistoryDropdown";
 import { AppIcon } from "./AppIcon";
 import { Button } from "@/components/ui/button";
 import { Link, usePathname } from "@/i18n/routing";
@@ -54,7 +54,7 @@ export function Header() {
 
       {/* Right Side Actions */}
       <div className="flex items-center gap-3 md:gap-5">
-        <LastDiagnosisLink />
+        <HistoryDropdown />
         <ThemeToggle />
         <LanguageSwitcher />
 

@@ -86,26 +86,35 @@ export default async function ResultPage({ params, searchParams }: Props) {
         {/* Color Card */}
         <div className="relative group">
           <div
-            className="w-64 h-64 md:w-80 md:h-80 rounded-full shadow-2xl border-4 border-background transition-transform duration-700 hover:scale-105"
+            className="w-64 h-64 md:w-80 md:h-80 rounded-full shadow-2xl border-4 border-background transition-transform duration-700 hover:scale-105 dark:shadow-[var(--shadow-glow)]"
             style={{ backgroundColor: safeHex }}
           />
           <div className="absolute inset-0 rounded-full ring-1 ring-white/10" />
         </div>
 
         {/* Text Content */}
-        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-          <p className="text-sm font-light tracking-[0.3em] uppercase text-muted-foreground">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+          <p className="text-xs font-mono tracking-[0.4em] uppercase text-muted-foreground/60">
             {hex ? t("labelYourTrueColor") : t("labelColorSpace")}
           </p>
-          <h1 className="font-serif text-4xl md:text-6xl tracking-wide text-foreground">
-            {groupName}
-          </h1>
-          <div className="pt-2 font-mono text-xl opacity-80 tracking-widest">
+
+          <div className="relative inline-block">
+            <h1 className="font-serif text-5xl md:text-7xl tracking-wide text-foreground relative z-10">
+              {groupName}
+            </h1>
+            {/* Subtle decorative backing */}
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
+          </div>
+
+          <div className="pt-2 font-mono text-xl opacity-80 tracking-[0.2em] font-light">
             {safeHex.toUpperCase()}
           </div>
-          <p className="pt-4 text-xs text-muted-foreground tracking-widest leading-loose whitespace-pre-line">
-            {t("descBelongTo", { groupName })}
-          </p>
+
+          <div className="w-full flex justify-center pt-2">
+            <p className="max-w-md text-sm text-muted-foreground tracking-wider leading-loose whitespace-pre-line font-serif italic opacity-80">
+              {t("descBelongTo", { groupName })}
+            </p>
+          </div>
         </div>
 
         {/* Share Section and Buttons */}
