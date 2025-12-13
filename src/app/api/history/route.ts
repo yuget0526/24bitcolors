@@ -37,12 +37,18 @@ export async function GET(request: NextRequest) {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    console.log("[API] History GET. Cookie ID:", anonymousId);
+
     const { data, error } = await supabase
       .from("diagnoses")
       .select("id, hex, created_at")
       .eq("anonymous_id", anonymousId)
       .order("created_at", { ascending: false })
       .limit(limit);
+
+    if (data) {
+      console.log(`[API] History GET. Found ${data.length} records.`);
+    }
 
     if (error) {
       console.error("Supabase error fetching history:", error);
