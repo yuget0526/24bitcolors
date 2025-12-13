@@ -128,7 +128,7 @@ export async function POST(req: Request) {
     // HOWEVER, I don't want to break if libraries are missing.
     // Let's try to import culori as it is in package.json.
 
-    const { oklch, converter } = await import("culori");
+    const { converter } = await import("culori");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const toOklch = converter("oklch") as (color: string) => any;
 
