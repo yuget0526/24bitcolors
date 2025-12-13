@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
+import { ImportCollectionButton } from "@/components/ImportCollectionButton";
 import { Calendar, Hash } from "lucide-react";
 import { getNearestPoeticName } from "@/lib/colorNaming";
 import { Metadata } from "next";
@@ -91,6 +92,8 @@ export default async function SharePage({
         <Button asChild className="mt-4 rounded-full px-8">
           <Link href="/diagnosis">{tCommon("startDiagnosis")}</Link>
         </Button>
+
+        <ImportCollectionButton shareId={id} />
       </div>
 
       {/* Grid */}

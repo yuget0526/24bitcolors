@@ -22,6 +22,10 @@
   },
   "Home": {
     "heroTitle": "24bitColors",
+    "collection": "{count} Colors",
+    "saveToMyPalette": "Save to My Palette",
+    "saved": "Saved!",
+    "failed": "Failed to save",
     "heroTagline": "Discover Your True Color",
     "heroDescription": "The color lying deep within your subconscious.\nBased on your answers to 20 questions,\nwe statistically identify the color you prefer most\nfrom 16.77 million possibilities.",
     "srOnlyTitle": "Free Color Diagnosis Test",

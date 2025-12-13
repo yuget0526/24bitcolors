@@ -297,7 +297,10 @@
     "copyLink": "リンクをコピー",
     "copied": "コピーしました",
     "generating": "生成中...",
-    "collection": "{count}色のコレクション"
+    "collection": "{count}色のコレクション",
+    "saveToMyPalette": "自分のパレットに保存",
+    "saved": "保存しました！",
+    "failed": "保存に失敗しました"
   },
   "Harmonies": {
     "title": "COLOR SCHEMES",
