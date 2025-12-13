@@ -56,7 +56,7 @@ function DiagnosisResultSection({ result }: { result: StoredResult | null }) {
     <Card className="rounded-none">
       <CardContent className="p-6 flex flex-col md:flex-row items-center gap-6">
         <div
-          className="w-64 h-64 md:w-80 md:h-80 rounded-full shadow-2xl border-4 border-background transition-transform duration-700 hover:scale-105 dark:shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+          className="w-64 h-64 md:w-80 md:h-80 rounded-full shadow-2xl border-4 border-background transition-transform duration-700 hover:scale-105 dark:shadow-[var(--shadow-glow)]"
           style={{ backgroundColor: result.hex }}
         />
         <div className="text-center md:text-left space-y-2">
