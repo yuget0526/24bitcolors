@@ -11,17 +11,23 @@
     "toggleThemeLight": "Switch to Light Mode",
     "toggleThemeDark": "Switch to Dark Mode",
     "toggleThemeLabel": "Toggle theme",
-    "history": "History",
+    "history": "My Palette",
     "viewAll": "View All",
-    "viewAllHistory": "View Full History",
-    "noHistory": "No History"
+    "viewAllHistory": "View Collection",
+    "noHistory": "No Collection"
   },
-  "HistoryPage": {
-    "title": "Diagnosis History",
-    "description": "Your personal color journey. Discover the palette of your past choices."
+  "CollectionPage": {
+    "title": "My Palette",
+    "description": "Your color journey. View your personal collection of colors.",
+    "noHistory": "No collection yet",
+    "viewAllHistory": "View All Collections"
   },
   "Home": {
     "heroTitle": "24bitColors",
+    "collection": "{count} Colors",
+    "saveToMyPalette": "Save to My Palette",
+    "saved": "Saved!",
+    "failed": "Failed to save",
     "heroTagline": "Discover Your True Color",
     "heroDescription": "The color lying deep within your subconscious.\nBased on your answers to 20 questions,\nwe statistically identify the color you prefer most\nfrom 16.77 million possibilities.",
     "srOnlyTitle": "Free Color Diagnosis Test",
@@ -176,7 +182,8 @@
     "about": "About",
     "terms": "Terms",
     "privacy": "Privacy",
-    "contact": "Contact"
+    "contact": "Contact",
+    "history": "My Palette"
   },
   "LogicOklch": {
     "title": "What is OKLCH?",
@@ -287,13 +294,18 @@
   },
   "Share": {
     "share": "SHARE",
+    "shareTitle": "Share Palette",
+    "shareDesc": "Create a snapshot link of your current collection and share it perfectly.",
     "copyLink": "COPY LINK",
-    "shareImage": "Share Image",
-    "saveImage": "Save Image",
+    "copied": "COPIED",
     "generating": "Generating...",
-    "shareTitle": "My True Color | 24bitColors",
-    "shareText": "My color is '{name}' ({hex}).",
-    "copied": "COPIED"
+    "collection": "{count} Color Collection",
+    "saveToMyPalette": "Save to My Palette",
+    "bookmark": "Bookmark",
+    "saved": "Saved!",
+    "failed": "Failed to save",
+    "shareImage": "Share Image",
+    "saveImage": "Save Image"
   },
   "Harmonies": {
     "title": "COLOR SCHEMES",

@@ -11,14 +11,16 @@
     "toggleThemeLight": "ライトモードに切り替え",
     "toggleThemeDark": "ダークモードに切り替え",
     "toggleThemeLabel": "テーマを切り替える",
-    "history": "診断履歴",
+    "history": "My Palette",
     "viewAll": "すべて見る",
-    "viewAllHistory": "履歴ページへ",
-    "noHistory": "履歴なし"
+    "viewAllHistory": "コレクションを見る",
+    "noHistory": "コレクションなし"
   },
-  "HistoryPage": {
-    "title": "診断履歴",
-    "description": "あなたの色の旅路。過去に選ばれた色彩のパレットを確認できます。"
+  "CollectionPage": {
+    "title": "My Palette",
+    "description": "あなたの色の旅路。過去に選ばれた色彩のコレクションを確認できます。",
+    "noHistory": "コレクションなし",
+    "viewAllHistory": "コレクションを見る"
   },
   "Home": {
     "heroTitle": "24bitColors",
@@ -176,7 +178,8 @@
     "about": "About",
     "terms": "利用規約",
     "privacy": "プライバシー",
-    "contact": "お問い合わせ"
+    "contact": "お問い合わせ",
+    "history": "My Palette"
   },
   "LogicOklch": {
     "title": "OKLCH色空間とは",
@@ -291,13 +294,18 @@
   },
   "Share": {
     "share": "シェア",
+    "shareTitle": "Shared Palette",
+    "shareDesc": "現在のコレクションのスナップショットリンクを作成し、完全に共有します。",
     "copyLink": "リンクをコピー",
     "copied": "コピーしました",
-    "shareImage": "画像をシェア",
-    "saveImage": "画像を保存",
     "generating": "生成中...",
-    "shareTitle": "私の本当の色 | 24bitColors",
-    "shareText": "私の色は「{name}」({hex}) でした。"
+    "collection": "{count}色のコレクション",
+    "saveToMyPalette": "自分のパレットに保存",
+    "bookmark": "ブックマーク",
+    "saved": "保存しました！",
+    "failed": "保存に失敗しました",
+    "shareImage": "画像をシェア",
+    "saveImage": "画像を保存"
   },
   "Harmonies": {
     "title": "COLOR SCHEMES",

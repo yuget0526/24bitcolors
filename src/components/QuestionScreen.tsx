@@ -75,24 +75,31 @@ export function QuestionScreen({
         <ColorButton color={colorB} onClick={onSelectB} />
       </div>
 
-      {/* 予測表示 */}
-      {prediction && (
-        <div className="flex items-center gap-space-3 animate-fade-in">
+      {/* 予測表示 (Floating Pill) */}
+      <div className="mt-8 h-12 flex justify-center items-center">
+        <div
+          className={`flex items-center gap-3 rounded-full border border-border/50 bg-background/50 px-4 py-2 backdrop-blur-md glow-shadow transition-all duration-700 ease-out ${
+            prediction
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-4 pointer-events-none"
+          }`}
+        >
           <div
-            className="h-6 w-6 border border-[var(--foreground)]"
-            style={{ backgroundColor: oklchToHex(prediction) }}
+            className="h-4 w-4 rounded-full shadow-sm transition-colors duration-500"
+            style={{
+              backgroundColor: prediction
+                ? oklchToHex(prediction)
+                : "transparent",
+            }}
           />
-          <div
-            className="text-[length:var(--text-base)]"
+          <span
+            className="text-xs font-medium tracking-wider text-muted-foreground transition-colors duration-500"
             style={{ fontFamily: '"SF Mono", monospace' }}
           >
-            <span className="text-[var(--muted-foreground)]">Prediction: </span>
-            <span className="text-[var(--foreground)]">
-              {oklchToHex(prediction)}
-            </span>
-          </div>
+            {prediction ? oklchToHex(prediction) : "#000000"}
+          </span>
         </div>
-      )}
+      </div>
     </div>
   );
 }

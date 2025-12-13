@@ -1,6 +1,7 @@
 "use client";
 
 import { OklchColor, oklchToHex } from "@/lib/oklch";
+import { triggerAndroidHaptic } from "@/utils/haptics";
 
 interface ColorButtonProps {
   color: OklchColor;
@@ -10,10 +11,15 @@ interface ColorButtonProps {
 export function ColorButton({ color, onClick }: ColorButtonProps) {
   const hex = oklchToHex(color);
 
+  const handleClick = () => {
+    triggerAndroidHaptic();
+    onClick();
+  };
+
   return (
     <button
-      onClick={onClick}
-      className="group relative aspect-square w-full transition-transform hover:scale-[1.02] active:scale-[0.98] border border-border glow-shadow"
+      onClick={handleClick}
+      className="aspect-square w-full rounded-none border border-border shadow-sm transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       style={{ backgroundColor: hex }}
       aria-label={`色を選択: ${hex}`}
     />

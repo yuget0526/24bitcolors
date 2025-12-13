@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { getNearestPoeticName } from "@/lib/colorNaming";
-import { ClockCounterClockwise } from "@phosphor-icons/react";
+import { Swatches } from "@phosphor-icons/react";
 
 interface HistoryItem {
   id: string;
@@ -29,7 +29,7 @@ export function HistoryDropdown() {
 
   const fetchHistory = useCallback(() => {
     setIsLoading(true);
-    fetch(`/api/history?limit=3`, { cache: "no-store" })
+    fetch(`/api/collection?limit=3`, { cache: "no-store" })
       .then((res) => {
         if (!res.ok) throw new Error("Failed");
         return res.json();
@@ -56,15 +56,18 @@ export function HistoryDropdown() {
   }, []);
 
   useEffect(() => {
-    fetchHistory();
+    // Ensure fetch happens after mount/update, not synchronously blocking
+    const timer = setTimeout(() => {
+      fetchHistory();
+    }, 0);
 
     const handleUpdate = () => {
-      // Small delay to ensure DB write is committed
       setTimeout(fetchHistory, 500);
     };
 
     window.addEventListener("diagnosisHistoryUpdate", handleUpdate);
     return () => {
+      clearTimeout(timer);
       window.removeEventListener("diagnosisHistoryUpdate", handleUpdate);
     };
   }, [fetchHistory]);
@@ -76,10 +79,7 @@ export function HistoryDropdown() {
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen} modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" aria-label={t("history")}>
-          <ClockCounterClockwise
-            weight="light"
-            className="h-5 w-5 text-muted-foreground"
-          />
+          <Swatches weight="light" className="h-5 w-5 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -115,7 +115,7 @@ export function HistoryDropdown() {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link
-                href="/history"
+                href="/collection"
                 className="w-full justify-center text-xs text-muted-foreground font-serif tracking-widest cursor-pointer"
               >
                 {t("viewAll")}
