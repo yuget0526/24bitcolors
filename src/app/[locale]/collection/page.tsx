@@ -80,18 +80,22 @@ export default function CollectionPage() {
   return (
     <div className="min-h-screen pt-32 pb-20 px-space-4 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col items-center mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="inline-flex items-center justify-center p-3 rounded-full bg-secondary/50 mb-6">
-          <Swatches className="w-6 h-6 text-foreground/80" />
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-6 max-w-3xl">
+          <div className="inline-flex items-center justify-center p-3 rounded-none border border-border/50 bg-secondary/20">
+            <Swatches className="w-6 h-6 text-foreground/80" />
+          </div>
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif text-foreground tracking-tight">
+              {t("title")}
+            </h1>
+            <p className="text-muted-foreground font-serif leading-relaxed text-balance max-w-xl">
+              {t("description")}
+            </p>
+          </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-serif text-foreground tracking-wide text-center mb-4">
-          {t("title")}
-        </h1>
-        <p className="text-muted-foreground text-center max-w-md mx-auto mb-8 font-serif leading-relaxed">
-          {t("description")}
-        </p>
 
-        <div className="flex gap-4">
+        <div className="flex shrink-0 pb-2">
           <CollectionShareButton />
         </div>
       </div>
