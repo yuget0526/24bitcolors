@@ -8,9 +8,14 @@ import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
-export default async function HistoryPage() {
-  const t = await getTranslations("HistoryPage");
-  const tCommon = await getTranslations("Common");
+export default async function HistoryPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "HistoryPage" });
+  const tCommon = await getTranslations({ locale, namespace: "Common" });
   const cookieStore = await cookies();
   const anonymousId = cookieStore.get("anonymous_id")?.value;
 
@@ -50,7 +55,7 @@ export default async function HistoryPage() {
 
   // Redirect if no history found
   if (history.length === 0) {
-    redirect("/diagnosis");
+    redirect({ href: "/diagnosis", locale });
   }
 
   return (
