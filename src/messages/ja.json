@@ -303,7 +303,9 @@
     "saveToMyPalette": "自分のパレットに保存",
     "bookmark": "ブックマーク",
     "saved": "保存しました！",
-    "failed": "保存に失敗しました"
+    "failed": "保存に失敗しました",
+    "shareImage": "画像をシェア",
+    "saveImage": "画像を保存"
   },
   "Harmonies": {
     "title": "COLOR SCHEMES",

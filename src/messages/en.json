@@ -303,7 +303,9 @@
     "saveToMyPalette": "Save to My Palette",
     "bookmark": "Bookmark",
     "saved": "Saved!",
-    "failed": "Failed to save"
+    "failed": "Failed to save",
+    "shareImage": "Share Image",
+    "saveImage": "Save Image"
   },
   "Harmonies": {
     "title": "COLOR SCHEMES",

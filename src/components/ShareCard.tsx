@@ -347,7 +347,7 @@ export function ShareCard({ color, hex, onClose }: ShareCardProps) {
           <Button
             onClick={handleShare}
             disabled={isGenerating || !imageDataUrl}
-            className="h-12 w-full text-xs tracking-[0.2em] font-serif uppercase"
+            className="h-12 w-full text-xs tracking-[0.2em] font-serif uppercase rounded-none bg-foreground text-background hover:bg-foreground/90 transition-all border border-foreground"
           >
             {isGenerating ? "..." : t("shareImage")}
           </Button>
@@ -355,7 +355,7 @@ export function ShareCard({ color, hex, onClose }: ShareCardProps) {
             onClick={handleDownload}
             disabled={!imageDataUrl}
             variant="outline"
-            className="h-12 w-full text-xs tracking-[0.2em] font-serif uppercase border-foreground/20"
+            className="h-12 w-full text-xs tracking-[0.2em] font-serif uppercase rounded-none border-foreground/20 hover:bg-foreground hover:text-background transition-all"
           >
             {t("saveImage")}
           </Button>
