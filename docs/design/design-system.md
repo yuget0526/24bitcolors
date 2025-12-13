@@ -152,6 +152,40 @@ shadcn の標準スタイル（`default`）をそのまま使うのではなく�
 > [!NOTE] > **オンデマンド戦略**:
 > `Button` や `Card` 以外のコンポーネント（Dialog, Input, Select 等）が必要になった際は、shadcn のコードをコピーし、必ず **Museum Theme に適合するようにスタイルを書き換えてから** `src/components/ui/` に追加してください。生の shadcn コンポーネントをそのまま使用することは禁止です。
 
+- **Purpose**: Main call-to-action buttons.
+- **Style**: `rounded-none`, `bg-foreground`, `text-background`.
+- **Typography**: Serif or Mono, uppercase, tracking-widest.
+
+---
+
+## 5. Layout Patterns
+
+### Sticky Split Layout (The Curator's Catalog)
+
+Used for collection and archive pages to create an immersive, museum-catalog feel.
+
+- **Structure**:
+  - **Left Column (Sticky)**: Contains the page title ("My Palette"), description, and primary actions. Stays fixed while scrolling.
+  - **Right Column (Scrollable)**: Contains the grid of items ("Museum Cards"). Infinite scroll feel.
+- **Responsive**: Stacks vertically on mobile with massive typography.
+
+### Museum Card
+
+Used to display color items in a grid.
+
+- **Style**:
+  - **Container**: `rounded-none`, `bg-card/50`, `backdrop-blur-sm`, `border border-border/40`.
+  - **Swatch**: Circular (`rounded-full`), centered, with deep shadow (`shadow-2xl`).
+  - **Typography**: Serif for titles, Mono for technical data (HEX, Date).
+  - **Interaction**: Hover lifts the card (`-translate-y-1`) and intensifies the shadow.
+
+---
+
+## 6. Iconography
+
+- **Library**: `phosphor-icons` or `lucide-react`.
+- **Style**: Thin strokes to match the elegant serif typography.
+
 #### Buttons
 
 - **Shape**: `rounded-none` (Sharp)
