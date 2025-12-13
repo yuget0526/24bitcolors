@@ -11,14 +11,14 @@
     "toggleThemeLight": "ライトモードに切り替え",
     "toggleThemeDark": "ダークモードに切り替え",
     "toggleThemeLabel": "テーマを切り替える",
-    "history": "診断履歴",
+    "history": "My Palette",
     "viewAll": "すべて見る",
-    "viewAllHistory": "履歴ページへ",
-    "noHistory": "履歴なし"
+    "viewAllHistory": "コレクションを見る",
+    "noHistory": "コレクションなし"
   },
-  "HistoryPage": {
-    "title": "診断履歴",
-    "description": "あなたの色の旅路。過去に選ばれた色彩のパレットを確認できます。"
+  "MyPalettePage": {
+    "title": "My Palette",
+    "description": "あなたの色の旅路。過去に選ばれた色彩のコレクションを確認できます。"
   },
   "Home": {
     "heroTitle": "24bitColors",

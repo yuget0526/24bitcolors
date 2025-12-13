@@ -4,6 +4,7 @@ import { Link, redirect } from "@/i18n/routing"; // Use i18n redirect
 import { getTranslations } from "next-intl/server";
 import { getNearestPoeticName } from "@/lib/colorNaming";
 import { ArrowLeft, Calendar, Hash } from "lucide-react";
+import { Palette } from "@phosphor-icons/react/dist/ssr";
 import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +15,7 @@ export default async function HistoryPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "HistoryPage" });
+  const t = await getTranslations({ locale, namespace: "MyPalettePage" });
   const tCommon = await getTranslations({ locale, namespace: "Common" });
   const cookieStore = await cookies();
   const anonymousId = cookieStore.get("anonymous_id")?.value;
@@ -73,9 +74,10 @@ export default async function HistoryPage({
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
-          <span className="text-sm font-serif tracking-widest text-muted-foreground uppercase opacity-60">
-            {tCommon("history")}
-          </span>
+          <div className="flex items-center gap-2 text-sm font-serif tracking-widest text-muted-foreground uppercase opacity-60">
+            <Palette className="h-4 w-4" />
+            <span>{tCommon("history")}</span>
+          </div>
         </div>
         <h1 className="text-4xl md:text-5xl font-serif text-foreground tracking-wide">
           {t("title")}

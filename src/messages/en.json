@@ -11,14 +11,14 @@
     "toggleThemeLight": "Switch to Light Mode",
     "toggleThemeDark": "Switch to Dark Mode",
     "toggleThemeLabel": "Toggle theme",
-    "history": "History",
+    "history": "My Palette",
     "viewAll": "View All",
-    "viewAllHistory": "View Full History",
-    "noHistory": "No History"
+    "viewAllHistory": "View Collection",
+    "noHistory": "No Collection"
   },
-  "HistoryPage": {
-    "title": "Diagnosis History",
-    "description": "Your personal color journey. Discover the palette of your past choices."
+  "MyPalettePage": {
+    "title": "My Palette",
+    "description": "Your personal color journey. Discover the collection of your past choices."
   },
   "Home": {
     "heroTitle": "24bitColors",
