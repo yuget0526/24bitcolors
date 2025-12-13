@@ -125,34 +125,38 @@ export default function CollectionPage() {
                   "#",
                   ""
                 )}`}
-                className="group flex flex-col gap-4 animate-in fade-in duration-1000 fill-mode-both"
+                className="group relative flex flex-col items-center p-8 bg-card/50 backdrop-blur-sm border border-border/40 rounded-none overflow-hidden hover:border-foreground/20 hover:bg-card/80 transition-all duration-500 hover:shadow-[var(--shadow-museum)] hover:-translate-y-1 block"
                 style={{
                   animationDelay: `${index * 100}ms`,
                 }}
               >
-                {/* Artwork */}
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-secondary/10">
-                  <div
-                    className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
-                    style={{ backgroundColor: item.hex }}
-                  />
-                  {/* Overlay info on hover */}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+                {/* Color Circle */}
+                <div
+                  className="w-32 h-32 rounded-full shadow-2xl mb-6 border border-white/10 group-hover:scale-105 transition-transform duration-500"
+                  style={{ backgroundColor: item.hex }}
+                />
+
+                {/* Text Info */}
+                <div className="text-center space-y-2 w-full">
+                  <h3 className="text-xl font-serif tracking-wide text-foreground group-hover:text-primary transition-colors">
+                    {item.poeticName}
+                  </h3>
+                  <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground font-mono opacity-70">
+                    <span className="flex items-center gap-1">
+                      <Hash className="w-3 h-3" />
+                      {item.hex.replace("#", "")}
+                    </span>
+                    <span className="w-1 h-1 rounded-full bg-border" />
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Caption */}
-                <div className="flex justify-between items-start pt-2 border-t border-transparent group-hover:border-foreground/20 transition-colors duration-500">
-                  <div className="space-y-1">
-                    <h3 className="font-serif text-xl text-foreground">
-                      {item.poeticName}
-                    </h3>
-                    <p className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
-                      {item.hex.replace("#", "")}
-                    </p>
-                  </div>
-                  <span className="font-mono text-[10px] text-muted-foreground/50">
-                    NO. {(index + 1).toString().padStart(3, "0")}
-                  </span>
+                {/* Index Number (Optional subtle overlay) */}
+                <div className="absolute top-4 left-4 font-mono text-[10px] text-muted-foreground/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                  NO. {(index + 1).toString().padStart(3, "0")}
                 </div>
               </Link>
             ))}
