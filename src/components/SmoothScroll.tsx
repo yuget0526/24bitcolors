@@ -27,7 +27,8 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
         smoothWheel: true,
       }}
     >
-      {children}
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      {children as any}
     </ReactLenis>
   );
 }
