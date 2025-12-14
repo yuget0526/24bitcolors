@@ -16,15 +16,21 @@ import { GoogleAdsense } from "@/components/GoogleAdsense";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SmoothScroll } from "@/components/SmoothScroll";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
   variable: "--font-noto-sans-jp",
+  display: "swap",
 });
 const mPlusRounded1c = M_PLUS_Rounded_1c({
   weight: ["400", "500", "700"],
   subsets: ["latin"],
   variable: "--font-mplus",
+  display: "swap",
 });
 
 // Params type definition for dynamic route segment [locale]
