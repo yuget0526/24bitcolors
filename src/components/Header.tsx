@@ -25,7 +25,11 @@ export function Header() {
     >
       <div className="flex items-center gap-8">
         {/* Brand Logo Group */}
-        <Link href="/" className="group flex items-center gap-4">
+        <Link
+          href="/"
+          className="group flex items-center gap-4"
+          aria-label="24bitColors Home"
+        >
           <AppIcon className="h-6 w-auto transition-transform group-hover:scale-110" />
           <h1
             className="hidden md:block text-2xl font-normal tracking-wide text-foreground transition-opacity group-hover:opacity-70"

@@ -77,7 +77,7 @@ export default function Home() {
       */}
       <section className="w-full py-40 md:py-64 px-6 flex flex-col items-center justify-center text-center">
         <div className="max-w-2xl space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 view-timeline-name:--reveal">
-          <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground/60">
+          <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground">
             {t("conceptLabel")}
           </p>
           <h2 className="text-3xl md:text-5xl font-serif text-foreground leading-tight">
@@ -103,7 +103,7 @@ export default function Home() {
       */}
       <section className="w-full py-40 md:py-64 px-6 flex flex-col items-center justify-center bg-foreground/5">
         <div className="max-w-2xl text-center space-y-12">
-          <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground/60">
+          <p className="text-[10px] font-mono uppercase tracking-[0.4em] text-muted-foreground">
             {t("logicLabel")}
           </p>
           <h2 className="text-3xl md:text-4xl font-serif text-foreground">
