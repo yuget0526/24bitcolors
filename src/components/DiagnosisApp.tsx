@@ -44,6 +44,12 @@ export function DiagnosisApp() {
   const startTimeRef = useRef<number>(0);
   useEffect(() => {
     startTimeRef.current = Date.now();
+    // Send Start Event
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag("event", "diagnosis_start", {
+        event_category: "Diagnosis",
+      });
+    }
   }, []);
 
   // 初期化: ページロード時に同期的に診断を開始（Lazy initialization）
@@ -86,6 +92,15 @@ export function DiagnosisApp() {
         const durationSeconds = Math.round(
           (endTime - startTimeRef.current) / 1000
         );
+
+        // Send Completion Event (Before Save)
+        if (typeof window !== "undefined" && window.gtag) {
+          window.gtag("event", "diagnosis_complete", {
+            event_category: "Diagnosis",
+            event_label: finalResult.hex,
+            value: durationSeconds,
+          });
+        }
 
         // Calculate slug for SEO-friendly URL
         const safeHex = finalResult.hex.replace("#", "");
