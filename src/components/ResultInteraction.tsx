@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import { saveFeedback } from "@/lib/feedback";
 import { ShareCard } from "@/components/ShareCard";
-import { ShareActions } from "@/components/ShareActions"; // Reuse existing
+import { ShareActions } from "@/components/ShareActions";
 import { Button } from "@/components/ui/button";
-
 import { Link } from "@/i18n/routing";
 import { OklchColor } from "@/lib/oklch";
 import { useTranslations } from "next-intl";
+import { getNearestPoeticName } from "@/lib/colorNaming";
 
 interface ResultInteractionProps {
   hex: string;
@@ -25,7 +25,9 @@ export function ResultInteraction({
 }: ResultInteractionProps) {
   const t = useTranslations("Result");
   const [rating, setRating] = useState<number | null>(null);
-  // If NOT from diagnosis, treat as already "submitted" (show share options), but don't show success msg
+  // If NOT from diagnosis, treat as already "submitted" (show post-submit view), but allow re-rating or just sharing
+  // Actually, we want to show Share ALWAYS.
+  // The "submitted" state controls the Feedback form visibility.
   const [submitted, setSubmitted] = useState(!fromDiagnosis);
   const [justSubmitted, setJustSubmitted] = useState(false);
   const [showShareCard, setShowShareCard] = useState(false);
@@ -63,8 +65,27 @@ export function ResultInteraction({
     { value: 5, emoji: "5", label: t("ratingLabels.r5") },
   ];
 
+  const shareUrl = `https://24bitcolors.com/result/${groupSlug}?hex=${safeHex.replace(
+    "#",
+    ""
+  )}`;
+  const { groupName } = getNearestPoeticName(safeHex);
+  const shareText = t("shareText", { name: groupName, hex: safeHex });
+
   return (
     <div className="w-full max-w-md mx-auto flex flex-col items-center">
+      {/* Share Actions - ALWAYS VISIBLE & AT TOP */}
+      <div className="w-full mb-8">
+        <ShareActions
+          url={shareUrl}
+          text={shareText}
+          onShareImage={() => setShowShareCard(true)}
+        />
+        <p className="text-center text-xs text-muted-foreground font-serif tracking-widest opacity-60 mt-2">
+          SHARE YOUR COLOR
+        </p>
+      </div>
+
       {/* 5-Star Rating Section */}
       {!submitted ? (
         <div className="mb-12 w-full bg-card/50 p-6 border border-border/50 animate-in fade-in slide-in-from-bottom-4">
@@ -109,16 +130,8 @@ export function ResultInteraction({
             </div>
           )}
 
-          {/* Share Actions - Unlocked after Rating */}
+          {/* Additional Actions after submission */}
           <div className="flex flex-col gap-0 w-full">
-            <ShareActions
-              url={`https://24bitcolors.com/result/${groupSlug}?hex=${safeHex.replace(
-                "#",
-                ""
-              )}`}
-              onShare={() => setShowShareCard(true)}
-            />
-
             <Button
               variant="outline"
               className="btn-museum h-12 w-full text-xs tracking-[0.2em] uppercase border-foreground/20 hover:bg-foreground hover:text-background transition-colors"
@@ -153,7 +166,7 @@ export function ResultInteraction({
           className="rounded-none border-foreground/20 text-xs text-muted-foreground hover:bg-foreground hover:text-background transition-colors uppercase tracking-widest"
         >
           <a
-            href="https://google.com" // Placeholder, user mentioned existing link
+            href="https://docs.google.com/forms/d/e/1FAIpQLSfxxxxxx/viewform" // Using a dummy link pattern, but preserving the placeholder intent
             target="_blank"
             rel="noopener noreferrer"
           >

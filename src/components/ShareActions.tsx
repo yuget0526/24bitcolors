@@ -1,17 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, ShareNetwork } from "@phosphor-icons/react";
+
+import {
+  XLogo,
+  FacebookLogo,
+  PinterestLogo,
+  Link as LinkIcon,
+  Check,
+  DownloadSimple,
+} from "@phosphor-icons/react";
+// import { useTranslations } from "next-intl"; // Not used currently
 
 interface ShareActionsProps {
   url: string;
-  onShare: () => void;
+  text: string;
+  onShareImage: () => void;
 }
 
-import { useTranslations } from "next-intl";
-
-export function ShareActions({ url, onShare }: ShareActionsProps) {
-  const t = useTranslations("Share");
+export function ShareActions({ url, text, onShareImage }: ShareActionsProps) {
+  // const t = useTranslations("Share");
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -24,43 +32,82 @@ export function ShareActions({ url, onShare }: ShareActionsProps) {
     }
   };
 
+  // Safe window open helper
+  const openWindow = (shareUrl: string) => {
+    window.open(shareUrl, "_blank", "noopener,noreferrer,width=600,height=400");
+  };
+
+  const handleXShare = () => {
+    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      text
+    )}&url=${encodeURIComponent(url)}&hashtags=24bitColors`;
+    openWindow(shareUrl);
+  };
+
+  const handleFacebookShare = () => {
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      url
+    )}`;
+    openWindow(shareUrl);
+  };
+
+  const handlePinterestShare = () => {
+    const shareUrl = `http://pinterest.com/pin/create/button/?url=${encodeURIComponent(
+      url
+    )}&description=${encodeURIComponent(text)}`;
+    openWindow(shareUrl);
+  };
+
+  // Button base class
+  const btnClass =
+    "group flex h-12 w-12 items-center justify-center border border-foreground/20 bg-background text-foreground transition-all duration-300 hover:bg-foreground hover:text-background hover:border-foreground active:scale-95";
+  const iconClass = "h-5 w-5 transition-transform group-hover:scale-110";
+
   return (
-    <div className="grid grid-cols-2 gap-4 w-full py-4 font-serif">
-      {/* Share (Opens Modal) */}
+    <div className="flex w-full items-center justify-center gap-3 py-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+      {/* X (Twitter) */}
       <button
-        onClick={onShare}
-        className="group relative flex h-12 w-full items-center justify-center border border-foreground/10 bg-background transition-all duration-300 hover:bg-foreground hover:text-background active:scale-95"
-        aria-label="Share"
+        onClick={handleXShare}
+        className={btnClass}
+        aria-label="Share on X"
       >
-        <ShareNetwork
-          weight="light"
-          className="h-5 w-5 transition-transform group-hover:scale-110"
-        />
-        <span className="ml-3 text-xs tracking-[0.2em] font-medium uppercase text-muted-foreground group-hover:text-background font-serif">
-          {t("share")}
-        </span>
+        <XLogo weight="light" className={iconClass} />
+      </button>
+
+      {/* Facebook */}
+      <button
+        onClick={handleFacebookShare}
+        className={btnClass}
+        aria-label="Share on Facebook"
+      >
+        <FacebookLogo weight="light" className={iconClass} />
+      </button>
+
+      {/* Pinterest */}
+      <button
+        onClick={handlePinterestShare}
+        className={btnClass}
+        aria-label="Share on Pinterest"
+      >
+        <PinterestLogo weight="light" className={iconClass} />
+      </button>
+
+      {/* Save / Instagram (Triggers Image Gen) */}
+      <button
+        onClick={onShareImage}
+        className={btnClass}
+        aria-label="Save Image for Instagram"
+      >
+        <DownloadSimple weight="light" className={iconClass} />
       </button>
 
       {/* Copy Link */}
-      <button
-        onClick={handleCopy}
-        className="group relative flex h-12 items-center justify-center border border-foreground/10 bg-background transition-all duration-300 hover:bg-foreground hover:text-background active:scale-95 w-full"
-        aria-label="Copy Link"
-      >
+      <button onClick={handleCopy} className={btnClass} aria-label="Copy Link">
         {copied ? (
-          <Check
-            weight="light"
-            className="h-5 w-5 animate-in zoom-in spin-in-45"
-          />
+          <Check weight="light" className={`${iconClass} animate-in zoom-in`} />
         ) : (
-          <Copy
-            weight="light"
-            className="h-5 w-5 transition-transform group-hover:scale-110"
-          />
+          <LinkIcon weight="light" className={iconClass} />
         )}
-        <span className="ml-3 text-xs tracking-[0.2em] font-medium uppercase text-muted-foreground group-hover:text-background whitespace-nowrap font-serif">
-          {copied ? t("copied") : t("copyLink")}
-        </span>
       </button>
     </div>
   );
