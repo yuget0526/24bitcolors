@@ -20,46 +20,51 @@ type CardTheme = "light" | "dark" | "color";
  * ギャラリー風シェアカード生成関数
  * Canvas APIで直接描画（Instagram Story サイズ 1080x1920）
  */
+/**
+ * ギャラリー風シェアカード生成関数
+ * Canvas APIで直接描画（Resolution 1080x1920）
+ */
 function generateGalleryShareCard(
   colorHex: string,
   oklchData: { l: number; c: number; h: number },
   theme: CardTheme
 ): string {
   const canvas = document.createElement("canvas");
-  canvas.width = 1080;
-  canvas.height = 1920;
+  const width = 1080;
+  const height = 1920;
+  canvas.width = width;
+  canvas.height = height;
   const ctx = canvas.getContext("2d");
   if (!ctx) return "";
 
   // Color Name lookup
   const { groupName } = getNearestPoeticName(colorHex);
 
-  // ベース定義 (Design System: Museum Palette)
+  // Design System Colors
   const lightColors = {
-    bg: "#f9f9f9", // --background
-    frame: "#000000", // .color-frame
-    textMain: "#1a1a1a", // --foreground
-    textHex: "#1a1a1a",
-    textSub: "#666666", // --muted-foreground
-    textInfo: "#666666",
+    bg: "#F9F9F9", // Neutral-50
+    frame: "#E5E5E5", // Neutral-100
+    textMain: "#1A1A1A", // Neutral-800
+    textHex: "#1A1A1A",
+    textSub: "#808080", // Neutral-500
+    accent: "#000000",
     shadow: "rgba(0, 0, 0, 0.15)",
-    shadowBlur: 40,
+    shadowBlur: 50,
   };
 
   const darkColors = {
-    bg: "#080808", // --background (Deep Ink)
-    frame: "#e5e5e5", // --foreground (Soft White)
-    textMain: "#e5e5e5",
-    textHex: "#e5e5e5",
-    textSub: "#808080", // --muted-foreground
-    textInfo: "#808080",
-    shadow: "rgba(0, 0, 0, 0.5)",
+    bg: "#080808", // Neutral-900 (Deep Ink)
+    frame: "#2A2A2A", // Neutral-800
+    textMain: "#E5E5E5", // Neutral-100
+    textHex: "#E5E5E5",
+    textSub: "#808080", // Neutral-500
+    accent: "#FFFFFF",
+    shadow: "rgba(255, 255, 255, 0.1)",
     shadowBlur: 60,
   };
 
-  // テーマ別カラー決定
+  // Determine colors based on theme
   let colors;
-
   if (theme === "light") {
     colors = lightColors;
   } else if (theme === "dark") {
@@ -67,97 +72,158 @@ function generateGalleryShareCard(
   } else {
     // Color mode
     const isBrightBackground = oklchData.l > 0.6;
-    const textColor = isBrightBackground ? "#000000" : "#FFFFFF";
+    const textColor = isBrightBackground ? "#1A1A1A" : "#FFFFFF";
     const baseColors = isBrightBackground ? lightColors : darkColors;
-
     colors = {
       ...baseColors,
       bg: colorHex,
       shadow: isBrightBackground ? "rgba(0, 0, 0, 0.2)" : "rgba(0, 0, 0, 0.6)",
-      frame: textColor,
+      frame: isBrightBackground ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.2)",
       textMain: textColor,
       textHex: textColor,
-      textSub: textColor,
-      textInfo: textColor,
-      // Color Themeの場合はフレーム(リング)を少し透明にするなど調整
-      frameRing: isBrightBackground
-        ? "rgba(0,0,0,0.1)"
-        : "rgba(255,255,255,0.2)",
+      textSub: isBrightBackground ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.7)",
+      accent: textColor,
     };
   }
 
-  // 背景
+  // 1. Fill Background
   ctx.fillStyle = colors.bg;
-  ctx.fillRect(0, 0, 1080, 1920);
+  ctx.fillRect(0, 0, width, height);
 
-  // 円形アートワーク配置
-  const centerX = 1080 / 2;
-  const centerY = 700; // 少し上に配置
-  const radius = 400; // 直径800
+  // 2. Add Noise Texture (Film Grain Effect)
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+  // Light noise for texture
+  const noiseIntensity = theme === "dark" ? 10 : 6;
+  for (let i = 0; i < data.length; i += 4) {
+    const noise = (Math.random() - 0.5) * noiseIntensity;
+    data[i] += noise;
+    data[i + 1] += noise;
+    data[i + 2] += noise;
+  }
+  ctx.putImageData(imageData, 0, 0);
 
-  // シャドウ (円形)
-  ctx.shadowColor = colors.shadow;
-  ctx.shadowBlur = colors.shadowBlur;
-  ctx.shadowOffsetX = 0;
-  ctx.shadowOffsetY = 30;
+  // 3. Layout Constants (Fibonacci-ish)
+  const padding = 80;
+  const contentWidth = width - padding * 2;
+  // const centerY = height / 2; // Unused
+  const circleRadius = 340; // Slightly smaller for elegance
+  const circleY = 650;
 
+  // 4. Draw Frame (Museum Mat / Ticket Style)
+  ctx.strokeStyle = colors.frame;
+  ctx.lineWidth = 2;
+  // Outer Border
+  ctx.strokeRect(padding, padding, contentWidth, height - padding * 2);
+
+  // Cross marks at corners (Crop marks style)
+  const markLen = 20;
+  ctx.strokeStyle = colors.textSub;
+  ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-  ctx.fillStyle = colorHex;
-  ctx.fill();
-
-  // Shadow off for stroke/details
-  ctx.shadowColor = "transparent";
-  ctx.shadowBlur = 0;
-  ctx.shadowOffsetY = 0;
-
-  // リング (ResultPageの `ring-1 ring-white/10` や `border-4` を模倣)
-  // テーマに応じて色を変える
-  ctx.lineWidth = 4;
-  ctx.strokeStyle =
-    (colors as { frameRing?: string }).frameRing ||
-    (theme === "dark" ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.1)");
+  // Top-Left
+  ctx.moveTo(padding - markLen, padding);
+  ctx.lineTo(padding + markLen, padding);
+  ctx.moveTo(padding, padding - markLen);
+  ctx.lineTo(padding, padding + markLen);
+  // Top-Right
+  ctx.moveTo(width - padding - markLen, padding);
+  ctx.lineTo(width - padding + markLen, padding);
+  ctx.moveTo(width - padding, padding - markLen);
+  ctx.lineTo(width - padding, padding + markLen);
+  // Bottom-Left
+  ctx.moveTo(padding - markLen, height - padding);
+  ctx.lineTo(padding + markLen, height - padding);
+  ctx.moveTo(padding, height - padding - markLen);
+  ctx.lineTo(padding, height - padding + markLen);
+  // Bottom-Right
+  ctx.moveTo(width - padding - markLen, height - padding);
+  ctx.lineTo(width - padding + markLen, height - padding);
+  ctx.moveTo(width - padding, height - padding - markLen);
+  ctx.lineTo(width - padding, height - padding + markLen);
   ctx.stroke();
 
-  // テキストエリア
-  const textCenterY = centerY + radius + 180;
+  // 5. Draw Color Circle (The Exhibit)
+  ctx.save();
+  ctx.shadowColor = colors.shadow;
+  ctx.shadowBlur = colors.shadowBlur;
+  ctx.shadowOffsetY = 40;
 
+  ctx.beginPath();
+  ctx.arc(width / 2, circleY, circleRadius, 0, Math.PI * 2);
+  ctx.fillStyle = colorHex;
+  ctx.fill();
+  ctx.restore();
+
+  // Circle Ring (Subtle border for integration)
+  ctx.beginPath();
+  ctx.arc(width / 2, circleY, circleRadius, 0, Math.PI * 2);
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = colors.frame;
+  ctx.stroke();
+
+  // 6. Typography & Data
   ctx.textAlign = "center";
 
-  // 1. Group Name (Main Title) - Serif
+  // Group Name (Serif, Elegant)
+  const titleY = circleY + circleRadius + 140;
   ctx.fillStyle = colors.textMain;
-  ctx.font = '400 90px Georgia, "Times New Roman", serif';
-  // 少し文字間を広げる
-  ctx.fillText(groupName, centerX, textCenterY);
+  ctx.font = '400 96px Georgia, "Times New Roman", serif'; // Larger
+  ctx.fillText(groupName, width / 2, titleY);
 
-  // 2. HEX Code - Mono
+  // Hex Code (Monospace, Precise)
+  const hexY = titleY + 110;
   ctx.fillStyle = colors.textHex;
-  ctx.font = '400 50px "SF Mono", "Courier New", monospace';
-  ctx.fillText(colorHex.toUpperCase(), centerX, textCenterY + 120);
+  ctx.font = '400 42px "SF Mono", "Courier New", monospace';
+  ctx.letterSpacing = "0.1em"; // Tracking wide
+  const spacedHex = colorHex.toUpperCase().split("").join(" ");
+  ctx.fillText(spacedHex, width / 2, hexY);
+  ctx.letterSpacing = "0px"; // Reset
 
-  // 3. Tech Data (Moved up)
-  ctx.fillStyle = colors.textInfo;
-  ctx.font = '300 32px "SF Mono", monospace';
-  const oklchText = `L:${Math.round(oklchData.l * 100)}  C:${Math.round(
-    oklchData.c * 100
-  )}  H:${Math.round(oklchData.h)}°`;
-  ctx.fillText(oklchText, centerX, textCenterY + 220);
+  // Divider Line
+  const lineY = hexY + 80;
+  ctx.beginPath();
+  ctx.moveTo(width / 2 - 60, lineY);
+  ctx.lineTo(width / 2 + 60, lineY);
+  ctx.strokeStyle = colors.textSub;
+  ctx.lineWidth = 1;
+  ctx.stroke();
 
-  // 4. Footer Branding
-  const footerY = 1920 - 100;
-  const paddingX = 80;
+  // Data Block (OKLCH values)
+  const dataY = lineY + 80;
+  ctx.fillStyle = colors.textSub;
+  ctx.font = '300 28px "SF Mono", monospace';
 
-  // Left: Brand Name
+  const l = Math.round(oklchData.l * 100);
+  const c = oklchData.c.toFixed(3);
+  const h = Math.round(oklchData.h);
+  const dataText = `L: ${l}%   C: ${c}   H: ${h}°`;
+  ctx.fillText(dataText, width / 2, dataY);
+
+  // Date Stamp (Archival feel)
+  const today = new Date();
+  const dateStr = today.toISOString().split("T")[0].replace(/-/g, ".");
+  const dateY = dataY + 50;
+  ctx.font = '300 24px "SF Mono", monospace';
+  ctx.fillStyle = colors.textSub;
+  ctx.globalAlpha = 0.6;
+  ctx.fillText(`COLLECTED ON: ${dateStr}`, width / 2, dateY);
+  ctx.globalAlpha = 1.0;
+
+  // 7. Footer / Branding
+  const footerY = height - padding - 40;
+
+  // Left: Logo
   ctx.textAlign = "left";
   ctx.fillStyle = colors.textMain;
-  ctx.font = 'bold 48px Georgia, "Times New Roman", serif';
-  ctx.fillText("24bitColors", paddingX, footerY);
+  ctx.font = "700 48px Georgia, serif";
+  ctx.fillText("24bitColors", padding + 40, footerY);
 
-  // Right: Hashtag
+  // Right: Tagline or URL
   ctx.textAlign = "right";
-  ctx.fillStyle = colors.textMain; // Visible
-  ctx.font = 'bold 44px "SF Mono", monospace';
-  ctx.fillText("#24bitColors", 1080 - paddingX, footerY);
+  ctx.fillStyle = colors.textSub;
+  ctx.font = '300 32px "SF Mono", monospace';
+  ctx.fillText("digital color museum", width - padding - 40, footerY);
 
   return canvas.toDataURL("image/png");
 }
