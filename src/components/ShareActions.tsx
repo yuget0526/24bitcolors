@@ -106,7 +106,7 @@ export function ShareActions({ url, text, onShareImage }: ShareActionsProps) {
           className={btnClass}
           aria-label="Share via system"
         >
-          <ShareNetwork weight="bold" className={iconClass} />
+          <ShareNetwork weight="light" className={iconClass} />
         </button>
       )}
 
