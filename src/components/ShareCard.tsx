@@ -90,63 +90,17 @@ function generateGalleryShareCard(
   ctx.fillStyle = colors.bg;
   ctx.fillRect(0, 0, width, height);
 
-  // 2. Add Noise Texture (Film Grain Effect)
-  const imageData = ctx.getImageData(0, 0, width, height);
-  const data = imageData.data;
-  // Light noise for texture
-  const noiseIntensity = theme === "dark" ? 10 : 6;
-  for (let i = 0; i < data.length; i += 4) {
-    const noise = (Math.random() - 0.5) * noiseIntensity;
-    data[i] += noise;
-    data[i + 1] += noise;
-    data[i + 2] += noise;
-  }
-  ctx.putImageData(imageData, 0, 0);
+  // 2. (Visuals Removed) No Noise, No Frame
 
-  // 3. Layout Constants (Fibonacci-ish)
-  const padding = 60; // Narrower padding
-  const contentWidth = width - padding * 2;
-  const circleRadius = 380; // Larger circle (Diameter 760)
-  const circleY = 620; // Move up significantly
+  // 3. Layout Constants
+  const circleRadius = 380;
+  const circleY = 620;
 
-  // 4. Draw Frame (Museum Mat / Ticket Style)
-  ctx.strokeStyle = colors.frame;
-  ctx.lineWidth = 4; // Bolder frame
-  // Outer Border
-  ctx.strokeRect(padding, padding, contentWidth, height - padding * 2);
-
-  // Cross marks at corners (Crop marks style)
-  const markLen = 40; // Longer marks
-  ctx.strokeStyle = colors.textSub;
-  ctx.lineWidth = 2; // Bolder marks
-  ctx.beginPath();
-  // Top-Left
-  ctx.moveTo(padding - markLen, padding);
-  ctx.lineTo(padding + markLen, padding);
-  ctx.moveTo(padding, padding - markLen);
-  ctx.lineTo(padding, padding + markLen);
-  // Top-Right
-  ctx.moveTo(width - padding - markLen, padding);
-  ctx.lineTo(width - padding + markLen, padding);
-  ctx.moveTo(width - padding, padding - markLen);
-  ctx.lineTo(width - padding, padding + markLen);
-  // Bottom-Left
-  ctx.moveTo(padding - markLen, height - padding);
-  ctx.lineTo(padding + markLen, height - padding);
-  ctx.moveTo(padding, height - padding - markLen);
-  ctx.lineTo(padding, height - padding + markLen);
-  // Bottom-Right
-  ctx.moveTo(width - padding - markLen, height - padding);
-  ctx.lineTo(width - padding + markLen, height - padding);
-  ctx.moveTo(width - padding, height - padding - markLen);
-  ctx.lineTo(width - padding, height - padding + markLen);
-  ctx.stroke();
-
-  // 5. Draw Color Circle (The Exhibit)
+  // 4. Draw Color Circle (The Exhibit)
   ctx.save();
   ctx.shadowColor = colors.shadow;
   ctx.shadowBlur = colors.shadowBlur;
-  ctx.shadowOffsetY = 60; // Deeper shadow
+  ctx.shadowOffsetY = 50;
 
   ctx.beginPath();
   ctx.arc(width / 2, circleY, circleRadius, 0, Math.PI * 2);
@@ -154,44 +108,35 @@ function generateGalleryShareCard(
   ctx.fill();
   ctx.restore();
 
-  // Circle Ring (Subtle border for integration)
+  // Circle Ring (Subtle border for integration) - Kept for visual separation
   ctx.beginPath();
   ctx.arc(width / 2, circleY, circleRadius, 0, Math.PI * 2);
   ctx.lineWidth = 2;
   ctx.strokeStyle = colors.frame;
   ctx.stroke();
 
-  // 6. Typography & Data
+  // 5. Typography & Data
   ctx.textAlign = "center";
 
   // Group Name (Serif, Elegant)
-  const titleY = circleY + circleRadius + 180;
+  const titleY = circleY + circleRadius + 160;
   ctx.fillStyle = colors.textMain;
-  ctx.font = '400 130px Georgia, "Times New Roman", serif'; // Much Larger
+  ctx.font = '400 120px Georgia, "Times New Roman", serif';
   ctx.fillText(groupName, width / 2, titleY);
 
   // Hex Code (Monospace, Precise)
-  const hexY = titleY + 120;
+  const hexY = titleY + 110;
   ctx.fillStyle = colors.textHex;
-  ctx.font = '400 50px "SF Mono", "Courier New", monospace';
-  ctx.letterSpacing = "0.2em"; // Wider tracking
+  ctx.font = '400 48px "SF Mono", "Courier New", monospace';
+  ctx.letterSpacing = "0.15em";
   const spacedHex = colorHex.toUpperCase().split("").join(" ");
   ctx.fillText(spacedHex, width / 2, hexY);
-  ctx.letterSpacing = "0px"; // Reset
-
-  // Divider Line
-  const lineY = hexY + 90;
-  ctx.beginPath();
-  ctx.moveTo(width / 2 - 100, lineY); // Longer line
-  ctx.lineTo(width / 2 + 100, lineY);
-  ctx.strokeStyle = colors.textSub;
-  ctx.lineWidth = 2;
-  ctx.stroke();
+  ctx.letterSpacing = "0px";
 
   // Data Block (OKLCH values)
-  const dataY = lineY + 90;
+  const dataY = hexY + 100;
   ctx.fillStyle = colors.textSub;
-  ctx.font = '300 36px "SF Mono", monospace'; // Larger
+  ctx.font = '300 36px "SF Mono", monospace';
 
   const l = Math.round(oklchData.l * 100);
   const c = oklchData.c.toFixed(3);
@@ -199,30 +144,24 @@ function generateGalleryShareCard(
   const dataText = `L: ${l}%   C: ${c}   H: ${h}°`;
   ctx.fillText(dataText, width / 2, dataY);
 
-  // Date Stamp (Archival feel)
+  // Date Stamp (Minimal)
   const today = new Date();
   const dateStr = today.toISOString().split("T")[0].replace(/-/g, ".");
   const dateY = dataY + 60;
-  ctx.font = '300 28px "SF Mono", monospace';
+  ctx.font = '300 24px "SF Mono", monospace';
   ctx.fillStyle = colors.textSub;
-  ctx.globalAlpha = 0.6;
-  ctx.fillText(`COLLECTED ON: ${dateStr}`, width / 2, dateY);
+  ctx.globalAlpha = 0.5;
+  ctx.fillText(dateStr, width / 2, dateY);
   ctx.globalAlpha = 1.0;
 
-  // 7. Footer / Branding
-  const footerY = height - padding - 50;
+  // 6. Footer / Branding
+  const padding = 80;
+  const footerY = height - padding - 40;
 
-  // Left: Logo
-  ctx.textAlign = "left";
+  // Clean minimal branding
   ctx.fillStyle = colors.textMain;
-  ctx.font = 'bold 56px Georgia, "Times New Roman", serif';
-  ctx.fillText("24bitColors", padding + 40, footerY);
-
-  // Right: Tagline or URL
-  ctx.textAlign = "right";
-  ctx.fillStyle = colors.textSub;
-  ctx.font = '300 36px "SF Mono", monospace';
-  ctx.fillText("digital color museum", width - padding - 40, footerY);
+  ctx.font = 'bold 42px Georgia, "Times New Roman", serif';
+  ctx.fillText("24bitColors", width / 2, footerY);
 
   return canvas.toDataURL("image/png");
 }
