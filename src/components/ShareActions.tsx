@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   XLogo,
@@ -10,6 +10,7 @@ import {
   Link as LinkIcon,
   Check,
   DownloadSimple,
+  ShareNetwork,
 } from "@phosphor-icons/react";
 // import { useTranslations } from "next-intl"; // Not used currently
 
@@ -59,6 +60,38 @@ export function ShareActions({ url, text, onShareImage }: ShareActionsProps) {
     openWindow(shareUrl);
   };
 
+  // Web Share API Support
+  const [isWebShareSupported, setIsWebShareSupported] = useState(false);
+
+  useEffect(() => {
+    // Check if Web Share API is supported (client-side only)
+    // Defer check to avoid blocking/sync issues during hydration
+    const checkSupport = () => {
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.share &&
+        navigator.canShare
+      ) {
+        setIsWebShareSupported(true);
+      }
+    };
+    checkSupport();
+  }, []);
+
+  const handleWebShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "24bitColors",
+          text: text,
+          url: url,
+        });
+      } catch (error) {
+        console.error("Error sharing:", error);
+      }
+    }
+  };
+
   // Button base class
   const btnClass =
     "group flex h-10 w-10 items-center justify-center rounded-sm bg-foreground/5 text-foreground transition-all duration-300 hover:bg-foreground hover:text-background active:scale-95";
@@ -66,6 +99,17 @@ export function ShareActions({ url, text, onShareImage }: ShareActionsProps) {
 
   return (
     <div className="flex w-full items-center justify-center gap-2 py-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+      {/* Web Share (Mobile Native Share) */}
+      {isWebShareSupported && (
+        <button
+          onClick={handleWebShare}
+          className={btnClass}
+          aria-label="Share via system"
+        >
+          <ShareNetwork weight="bold" className={iconClass} />
+        </button>
+      )}
+
       {/* X (Twitter) */}
       <button
         onClick={handleXShare}
