@@ -44,12 +44,7 @@ export function ShareActions({ url, text, onShareImage }: ShareActionsProps) {
     openWindow(shareUrl);
   };
 
-  const handleFacebookShare = () => {
-    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-      url
-    )}`;
-    openWindow(shareUrl);
-  };
+  /* Removed handleFacebookShare as button is removed */
 
   const handlePinterestShare = () => {
     const shareUrl = `http://pinterest.com/pin/create/button/?url=${encodeURIComponent(
