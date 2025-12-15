@@ -6,6 +6,7 @@ import {
   XLogo,
   FacebookLogo,
   PinterestLogo,
+  InstagramLogo,
   Link as LinkIcon,
   Check,
   DownloadSimple,
@@ -92,11 +93,20 @@ export function ShareActions({ url, text, onShareImage }: ShareActionsProps) {
         <PinterestLogo weight="light" className={iconClass} />
       </button>
 
-      {/* Save / Instagram (Triggers Image Gen) */}
+      {/* Instagram (Triggers Save Image) */}
       <button
         onClick={onShareImage}
         className={btnClass}
-        aria-label="Save Image for Instagram"
+        aria-label="Share on Instagram"
+      >
+        <InstagramLogo weight="light" className={iconClass} />
+      </button>
+
+      {/* Save Image */}
+      <button
+        onClick={onShareImage}
+        className={btnClass}
+        aria-label="Save Image"
       >
         <DownloadSimple weight="light" className={iconClass} />
       </button>
