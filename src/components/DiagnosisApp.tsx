@@ -21,6 +21,21 @@ interface HistoryEntry {
 import { useRouter } from "@/i18n/routing";
 import { getNearestPoeticName } from "@/lib/colorNaming";
 
+declare global {
+  interface Window {
+    gtag?: (
+      command: string,
+      action: string,
+      params?: {
+        event_category?: string;
+        event_label?: string;
+        value?: number;
+        [key: string]: unknown;
+      }
+    ) => void;
+  }
+}
+
 export function DiagnosisApp() {
   const router = useRouter();
   const { theme } = useTheme();
@@ -115,11 +130,31 @@ export function DiagnosisApp() {
             if (!res.ok) {
               const errorText = await res.text();
               console.error("Diagnosis save failed:", res.status, errorText);
+              // Send error event to GA4
+              if (typeof window !== "undefined" && window.gtag) {
+                window.gtag("event", "diagnosis_save_error", {
+                  event_category: "Diagnosis",
+                  event_label: `Status: ${res.status}`,
+                  error_message: errorText,
+                  value: 0,
+                });
+              }
             } else {
               console.log("Diagnosis saved successfully");
             }
           })
-          .catch((e) => console.error("Diagnosis save network error", e));
+          .catch((e) => {
+            console.error("Diagnosis save network error", e);
+            // Send network error event to GA4
+            if (typeof window !== "undefined" && window.gtag) {
+              window.gtag("event", "diagnosis_save_error", {
+                event_category: "Diagnosis",
+                event_label: "Network Error",
+                error_message: String(e),
+                value: 0,
+              });
+            }
+          });
 
         // Navigate to Result Page immediately (no waiting)
         router.push(`/result/${groupSlug}?hex=${safeHex}&from_diagnosis=true`);
