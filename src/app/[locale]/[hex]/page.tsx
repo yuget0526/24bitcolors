@@ -33,10 +33,10 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "ColorDetail" });
 
   return {
-    title: `${t("title", { hex: info.hex })} | 24bitColors`,
+    title: t("title", { hex: info.hex }),
     description: t("description", { hex: info.hex }),
     openGraph: {
-      title: `${t("title", { hex: info.hex })} | 24bitColors`,
+      title: t("title", { hex: info.hex }),
       description: t("description", { hex: info.hex }),
       images: [
         {

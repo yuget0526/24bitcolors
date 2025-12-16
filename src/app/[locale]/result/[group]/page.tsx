@@ -32,10 +32,10 @@ export async function generateMetadata({
 
   if (targetHex) {
     return {
-      title: `${readableGroup} | 24bitColors`,
+      title: readableGroup,
       description: t("descBelongTo", { groupName: readableGroup }),
       openGraph: {
-        title: `${readableGroup} | 24bitColors`,
+        title: readableGroup,
         description: t("descBelongTo", { groupName: readableGroup }),
         images: [
           `/api/og?hex=${targetHex}&name=${encodeURIComponent(readableGroup)}`,
@@ -46,7 +46,7 @@ export async function generateMetadata({
 
   // Fallback if no valid color found
   return {
-    title: `${readableGroup} | 24bitColors`,
+    title: readableGroup,
     description: t("descBelongTo", { groupName: readableGroup }),
   };
 }
