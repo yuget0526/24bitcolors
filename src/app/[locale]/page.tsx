@@ -15,11 +15,11 @@ export default function Home() {
       */}
       <section className="relative min-h-[100dvh] w-full px-6 pt-32 pb-20 md:px-12 md:py-0 grid grid-cols-1 md:grid-cols-12 gap-y-12 md:gap-x-12 items-center">
         {/* Background Atmosphere */}
-        <div className="aurora-gradient absolute inset-0 -z-10 opacity-30 dark:opacity-20 pointer-events-none" />
+        <div className="absolute inset-0 -z-10 opacity-30 dark:opacity-20 pointer-events-none" />
 
         {/* LEFT: Massive Heading (The Exhibit) */}
         <div className="md:col-span-7 flex flex-col justify-center items-start z-10">
-          <h1 className="font-serif text-[15vw] md:text-[9vw] leading-[0.9] tracking-tighter text-foreground mix-blend-difference">
+          <h1 className="font-serif text-[15vw] md:text-[9vw] leading-[0.9] tracking-tighter text-foreground md:mix-blend-difference">
             FIND
             <br />
             YOUR
