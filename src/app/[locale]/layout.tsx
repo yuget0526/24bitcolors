@@ -9,7 +9,7 @@ import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 
-import { Inter, Noto_Sans_JP, M_PLUS_Rounded_1c } from "next/font/google";
+import { Inter, Noto_Sans_JP } from "next/font/google";
 import "@/app/globals.css";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { GoogleAdsense } from "@/components/GoogleAdsense";
@@ -23,12 +23,6 @@ const inter = Inter({
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
   variable: "--font-noto-sans-jp",
-  display: "swap",
-});
-const mPlusRounded1c = M_PLUS_Rounded_1c({
-  weight: ["400", "500", "700"],
-  subsets: ["latin"],
-  variable: "--font-mplus",
   display: "swap",
 });
 
@@ -105,7 +99,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html lang={locale}>
       <body
-        className={`${inter.variable} ${notoSansJP.variable} ${mPlusRounded1c.variable} font-sans antialiased min-h-screen flex flex-col`}
+        className={`${inter.variable} ${notoSansJP.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
