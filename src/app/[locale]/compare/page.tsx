@@ -150,11 +150,6 @@ export default function ComparePage() {
             </p>
           </div>
 
-          {/* Connection Line */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-20">
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
-          </div>
-
           {/* Target Color (Right) */}
           <div className="relative group flex flex-col items-center gap-8 transition-transform hover:scale-105 duration-700">
             <div className="relative">
@@ -172,7 +167,7 @@ export default function ComparePage() {
 
         {/* Harmony Type */}
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
-          <p className="font-mono text-xs tracking-[0.3em] uppercase text-muted-foreground/60">
+          <p className="font-mono text-sm tracking-[0.3em] uppercase text-foreground/70">
             {harmonyTitle}
           </p>
         </div>
