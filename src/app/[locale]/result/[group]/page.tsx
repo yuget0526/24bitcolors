@@ -6,7 +6,7 @@ import { toOklch } from "@/lib/colorNaming";
 import { AmbientBackground } from "@/components/AmbientBackground";
 import { getTranslations } from "next-intl/server";
 import { ColorInsightFetcher } from "@/components/ColorInsightFetcher";
-// import { AdUnit } from "@/components/ads/AdUnit";
+import { AdUnit } from "@/components/ads/AdUnit";
 
 // Force dynamic is NOT needed for the page itself anymore as we fetch client-side,
 // but keeping it 'auto' (default) is fine.
@@ -124,32 +124,6 @@ export default async function ResultPage({ params, searchParams }: Props) {
             </p>
           </div>
         </div>
-
-        {/* Share Section and Buttons */}
-        <div className="w-full max-w-md pt-8 space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500">
-          {(() => {
-            // Re-calculate OKLCH for the interaction component
-            const c = toOklch(safeHex);
-            // Convert to OklchColor interface format {hue, lightness, chroma, weight}
-            const colorObj = c
-              ? {
-                  hue: c.h ?? 0,
-                  lightness: c.l ?? 0,
-                  chroma: c.c ?? 0,
-                  weight: 1,
-                }
-              : null;
-
-            return (
-              <ResultInteraction
-                hex={safeHex}
-                resultColor={colorObj}
-                groupSlug={groupSlug}
-                fromDiagnosis={from_diagnosis === "true"}
-              />
-            );
-          })()}
-        </div>
       </main>
 
       {/* Dynamic AI Insights Section (Client Fetching) */}
@@ -158,6 +132,32 @@ export default async function ResultPage({ params, searchParams }: Props) {
         colorName={groupName}
         locale={locale}
       />
+
+      {/* Share Section and Buttons - Moved here */}
+      <div className="w-full max-w-md pt-16 pb-12 flex flex-col items-center space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500">
+        {(() => {
+          // Re-calculate OKLCH for the interaction component
+          const c = toOklch(safeHex);
+          // Convert to OklchColor interface format {hue, lightness, chroma, weight}
+          const colorObj = c
+            ? {
+                hue: c.h ?? 0,
+                lightness: c.l ?? 0,
+                chroma: c.c ?? 0,
+                weight: 1,
+              }
+            : null;
+
+          return (
+            <ResultInteraction
+              hex={safeHex}
+              resultColor={colorObj}
+              groupSlug={groupSlug}
+              fromDiagnosis={from_diagnosis === "true"}
+            />
+          );
+        })()}
+      </div>
 
       {/* Ad Placement: After content, before very bottom */}
       {/* Temporarily disabled pending AdSense approval
