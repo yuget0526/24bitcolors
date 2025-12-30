@@ -327,13 +327,13 @@
   },
   "Compare": {
     "harmonyTypes": {
-      "identity": "IDENTITY",
-      "complementary": "COMPLEMENTARY",
-      "analogous": "ANALOGOUS",
-      "triadic": "TRIADIC",
-      "vibrant": "VIBRANT",
-      "subtle": "SUBTLE",
-      "neutral": "NEUTRAL"
+      "identity": "同一色",
+      "complementary": "補色",
+      "analogous": "類似色",
+      "triadic": "三角配色",
+      "vibrant": "高コントラスト",
+      "subtle": "微細な調和",
+      "neutral": "中性的"
     },
     "harmonyDescriptions": {
       "identity": "まったく同じ色。完璧な調和を奏でます。",
