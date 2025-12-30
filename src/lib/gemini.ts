@@ -48,11 +48,22 @@ export async function generateColorInsight(
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const text = response.text();
+    let text = response.text();
 
-    return JSON.parse(text) as ColorInsight;
+    // Clean up potential markdown code blocks
+    text = text
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    try {
+      return JSON.parse(text) as ColorInsight;
+    } catch (parseError) {
+      console.error("Failed to parse Gemini JSON response:", text);
+      return null;
+    }
   } catch (error) {
-    console.error("Error generating color insight:", error);
+    console.error("Gemini API Error details:", error);
     return null;
   }
 }

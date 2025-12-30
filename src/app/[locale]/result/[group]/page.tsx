@@ -8,6 +8,8 @@ import { getTranslations } from "next-intl/server";
 import { generateColorInsight } from "@/lib/gemini";
 import { ColorInsightSection } from "@/components/ColorInsightSection";
 
+export const dynamic = "force-dynamic";
+
 interface Props {
   params: Promise<{ group: string; locale: string }>;
   searchParams: Promise<{ hex?: string; from_diagnosis?: string }>;
@@ -81,6 +83,12 @@ export default async function ResultPage({ params, searchParams }: Props) {
 
   // Fetch AI Insight
   const insight = await generateColorInsight(safeHex, groupName, locale);
+
+  if (!insight) {
+    console.log(
+      `[AI Insight] No insight generated for ${safeHex} (${groupName}). Check API key or Gemini status.`
+    );
+  }
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden pt-16 md:pt-0 pb-32">
