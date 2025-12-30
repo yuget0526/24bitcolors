@@ -33,7 +33,11 @@ export function ColorInsightFetcher({
         const res = await fetch(`/api/gemini?${params.toString()}`);
 
         if (!res.ok) {
-          throw new Error("API response not ok");
+          // Try to parse error message from server
+          const errorData = await res.json().catch(() => ({}));
+          const errorMessage = errorData.error || `Status: ${res.status}`;
+          console.error("[ColorInsightFetcher] Server Error:", errorMessage);
+          throw new Error(errorMessage);
         }
 
         const data = await res.json();
