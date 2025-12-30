@@ -199,7 +199,7 @@ export function ResultInteraction({
 
         <Button
           variant="outline"
-          className="btn-museum h-12 w-full text-xs tracking-[0.2em] uppercase border-foreground/20 hover:bg-foreground hover:text-background transition-colors"
+          className="h-12 w-full text-xs tracking-[0.2em] uppercase border-foreground/20 hover:bg-foreground hover:text-background transition-colors"
           asChild
         >
           <Link href={`/${safeHex.replace("#", "")}`}>{t("btnDetail")}</Link>
