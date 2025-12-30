@@ -5,9 +5,12 @@ import { ResultInteraction } from "@/components/ResultInteraction";
 import { toOklch } from "@/lib/colorNaming";
 import { AmbientBackground } from "@/components/AmbientBackground";
 import { getTranslations } from "next-intl/server";
-import { generateColorInsight } from "@/lib/gemini";
-import { ColorInsightSection } from "@/components/ColorInsightSection";
+import { ColorInsightFetcher } from "@/components/ColorInsightFetcher";
 
+// Force dynamic is NOT needed for the page itself anymore as we fetch client-side,
+// but keeping it 'auto' (default) is fine.
+// However, if we heavily rely on searchParams, 'force-dynamic' might prevent static generation issues.
+// Let's stick to default behavior or 'force-dynamic' if params vary widely.
 export const dynamic = "force-dynamic";
 
 interface Props {
@@ -81,15 +84,6 @@ export default async function ResultPage({ params, searchParams }: Props) {
 
   const { groupName, groupSlug } = getNearestPoeticName(safeHex);
 
-  // Fetch AI Insight
-  const insight = await generateColorInsight(safeHex, groupName, locale);
-
-  if (!insight) {
-    console.log(
-      `[AI Insight] No insight generated for ${safeHex} (${groupName}). Check API key or Gemini status.`
-    );
-  }
-
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden pt-16 md:pt-0 pb-32">
       {/* Background Ambience - theme-aware for text readability */}
@@ -157,12 +151,12 @@ export default async function ResultPage({ params, searchParams }: Props) {
         </div>
       </main>
 
-      {/* Dynamic AI Insights Section */}
-      {insight && (
-        <div className="w-full max-w-5xl px-6 animate-in fade-in duration-1000 delay-700">
-          <ColorInsightSection insight={insight} colorName={groupName} />
-        </div>
-      )}
+      {/* Dynamic AI Insights Section (Client Fetching) */}
+      <ColorInsightFetcher
+        hex={safeHex}
+        colorName={groupName}
+        locale={locale}
+      />
     </div>
   );
 }
