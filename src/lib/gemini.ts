@@ -40,12 +40,13 @@ export async function generateColorInsight(
     IMPORTANT: Return ONLY the JSON object. Do not include markdown formatting or code blocks.
   `;
 
-  // List of models to try in order of preference
+  // List of candidate models based on official documentation (as of late 2025)
+  // Prioritizing newer stable models while keeping older ones as fallbacks
   const candidateModels = [
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-001",
-    "gemini-pro",
-    "gemini-1.0-pro",
+    "gemini-2.5-flash", // Best balance, stable
+    "gemini-2.5-pro", // Higher quality, stable
+    "gemini-1.5-flash", // Previous standard (fallback)
+    "gemini-pro", // Legacy fallback
   ];
 
   let lastError: unknown = null;
@@ -77,17 +78,16 @@ export async function generateColorInsight(
             50
           )}...`
         );
-        // If JSON parse fails, we might want to try another model or just throw
-        // For now, let's treat it as a failure of this model and try next if implies bad output
+        // Use text as error message or retry
         throw new Error("Invalid JSON response");
       }
     } catch (error) {
-      console.warn(
-        `[Gemini] Failed with model ${modelName}:`,
-        error instanceof Error ? error.message : error
-      );
+      // Log warning but continue to next model
+      // 404 Not Found means model doesn't exist or isn't accessible
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      console.warn(`[Gemini] Failed with model ${modelName}:`, errorMessage);
       lastError = error;
-      // Continue to next model
     }
   }
 
