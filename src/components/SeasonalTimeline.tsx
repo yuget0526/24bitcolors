@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface HistoryItem {
   id: string;
@@ -16,6 +16,25 @@ interface SeasonalTimelineProps {
 export function SeasonalTimeline({ history }: SeasonalTimelineProps) {
   const t = useTranslations("CollectionPage");
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [displayCount, setDisplayCount] = useState(20); // Default to PC limit
+
+  // Update display count based on screen width
+  useEffect(() => {
+    const handleResize = () => {
+      // Mobile breakpoint (md: 768px)
+      if (window.innerWidth < 768) {
+        setDisplayCount(10);
+      } else {
+        setDisplayCount(20);
+      }
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -24,66 +43,116 @@ export function SeasonalTimeline({ history }: SeasonalTimelineProps) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Resize canvas to parent
-    const resize = () => {
+    const draw = () => {
+      // Setup canvas size
       const parent = canvas.parentElement;
       if (!parent) return;
-      canvas.width = parent.clientWidth * window.devicePixelRatio;
-      canvas.height = parent.clientHeight * window.devicePixelRatio;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-      draw();
-    };
 
-    const draw = () => {
-      const w = canvas.width / window.devicePixelRatio;
-      const h = canvas.height / window.devicePixelRatio;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = parent.getBoundingClientRect();
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+
       ctx.clearRect(0, 0, w, h);
 
-      // Create gradient from history (oldest to newest)
-      // history is usually [newest, ..., oldest] based on CollectionPageClient
-      const sortedHistory = [...history].reverse();
-      const gradient = ctx.createLinearGradient(0, 0, w, 0);
+      // 1. Filter and sort history
+      // Take recent items based on displayCount, then reverse to show Oldest -> Newest (Left -> Right)
+      const visibleData = [...history].slice(0, displayCount).reverse();
 
-      sortedHistory.forEach((item, index) => {
-        const offset = index / (sortedHistory.length - 1);
+      if (visibleData.length < 2) return;
+
+      // 2. Create Gradient
+      const gradient = ctx.createLinearGradient(0, 0, w, 0);
+      visibleData.forEach((item, index) => {
+        const offset = index / (visibleData.length - 1);
         gradient.addColorStop(offset, item.hex);
       });
 
-      // Draw flowing wave/river background
+      // 3. Draw Wave
       ctx.fillStyle = gradient;
-
-      // Draw a subtle organic shape
       ctx.beginPath();
-      ctx.moveTo(0, h * 0.5);
 
-      const segments = 50;
-      for (let i = 0; i <= segments; i++) {
-        const x = (i / segments) * w;
-        const yOffset = Math.sin(i * 0.2) * 10;
-        ctx.lineTo(x, h * 0.5 + yOffset);
+      // Start point (Bottom-Left)
+      ctx.moveTo(0, h);
+
+      // Points for wave top
+      const points = visibleData.map((item, index) => {
+        const x = (index / (visibleData.length - 1)) * w;
+
+        // Calculate Y based on Time of Day
+        // 12:00 (Noon) -> Highest (0% of height)
+        // 0:00 / 24:00 (Midnight) -> Lowest (100% of height)
+        const date = new Date(item.created_at);
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const totalMinutes = hours * 60 + minutes;
+
+        // Peak at 12:00 (720 min), Trough at 0:00 (0 min) & 24:00 (1440 min)
+        // Distance from noon in minutes (0 to 720)
+        const distFromNoon = Math.abs(totalMinutes - 720);
+
+        // Normalize 0-1 (0 = Noon/High, 1 = Midnight/Low)
+        const normalizedTime = distFromNoon / 720;
+
+        // Map to Canvas Height
+        // Keep within 10% to 90% range to avoid touching edges too much
+        const y = h * (0.1 + normalizedTime * 0.8);
+
+        return { x, y };
+      });
+
+      // Draw first point
+      ctx.lineTo(points[0].x, points[0].y);
+
+      // Bezier Curve through points
+      for (let i = 0; i < points.length - 1; i++) {
+        const current = points[i];
+        const next = points[i + 1];
+
+        // Control points for smooth curve (midpoint logic)
+        const xc = (current.x + next.x) / 2;
+        const yc = (current.y + next.y) / 2;
+
+        // For the first segment, just draw quadratic to midpoint
+        if (i === 0) {
+          ctx.lineTo(xc, yc);
+        } else {
+          ctx.quadraticCurveTo(current.x, current.y, xc, yc);
+        }
       }
 
+      // Connect to last point
+      const last = points[points.length - 1];
+      ctx.lineTo(last.x, last.y);
+
+      // Close path to bottom-right and back to start
       ctx.lineTo(w, h);
       ctx.lineTo(0, h);
       ctx.closePath();
+
       ctx.fill();
 
-      // Mask with soft top edge
-      const edgeGradient = ctx.createLinearGradient(0, 0, 0, h);
-      edgeGradient.addColorStop(0, "transparent");
-      edgeGradient.addColorStop(0.3, "white");
-
-      ctx.globalCompositeOperation = "destination-in";
-      ctx.fillStyle = edgeGradient;
-      ctx.fillRect(0, 0, w, h);
-      ctx.globalCompositeOperation = "source-over";
+      // 4. Subtle Time Guides (Optional)
+      // Noon (High) / Midnight (Low) indicators could be added here
     };
 
-    window.addEventListener("resize", resize);
-    resize();
+    // Initial draw
+    draw();
 
-    return () => window.removeEventListener("resize", resize);
-  }, [history]);
+    // Handle Resize redrawing
+    const handleResize = () => {
+      requestAnimationFrame(draw);
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [history, displayCount]);
 
   return (
     <div className="w-full space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
@@ -111,6 +180,14 @@ export function SeasonalTimeline({ history }: SeasonalTimelineProps) {
 
         {/* Overlay effect */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/5 to-transparent pointer-events-none" />
+
+        {/* Time Labels (Subtle) */}
+        <div className="absolute left-2 top-2 text-[9px] font-mono text-muted-foreground/30 pointer-events-none">
+          NOON
+        </div>
+        <div className="absolute left-2 bottom-2 text-[9px] font-mono text-muted-foreground/30 pointer-events-none">
+          MIDNIGHT
+        </div>
       </div>
     </div>
   );
