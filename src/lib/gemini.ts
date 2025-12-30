@@ -17,16 +17,13 @@ export async function generateColorInsight(
   const apiKey = process.env.GEMINI_API_KEY || "";
   if (!apiKey) {
     console.error("GEMINI_API_KEY is not set in environment variables");
-    // Throw error so API route can catch it and return 500 with message
     throw new Error("GEMINI_API_KEY is not configured on server");
   }
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
-      generationConfig: { responseMimeType: "application/json" },
-    });
+    // Use gemini-pro as 1.5-flash might not be available
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const prompt = `
       You are a world-class color theorist and poet. 
@@ -45,13 +42,14 @@ export async function generateColorInsight(
       }
       
       The tone should be sophisticated, minimal, and premium. Avoid generic descriptions.
+      IMPORTANT: Return ONLY the JSON object. Do not include markdown formatting or code blocks.
     `;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
     let text = response.text();
 
-    // Clean up potential markdown code blocks
+    // Clean up potential markdown code blocks provided by Gemini Pro
     text = text
       .replace(/```json/g, "")
       .replace(/```/g, "")
@@ -65,7 +63,6 @@ export async function generateColorInsight(
     }
   } catch (error) {
     console.error("Gemini API Error details:", error);
-    // Re-throw to be caught by API route
     throw error;
   }
 }
