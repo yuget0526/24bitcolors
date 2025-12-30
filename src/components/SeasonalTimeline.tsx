@@ -157,16 +157,16 @@ export function SeasonalTimeline({ history }: SeasonalTimelineProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-background/5 to-transparent pointer-events-none" />
 
         {/* Improved Label Functionality & Visibility */}
-        <div className="absolute left-3 top-3 flex items-center gap-2 opacity-50">
-          <span className="w-2 h-2 rounded-full border border-foreground/50"></span>
-          <span className="text-[10px] font-mono text-foreground/70 tracking-widest">
+        <div className="absolute left-3 top-3 flex items-center gap-2 z-10">
+          <span className="w-2 h-2 rounded-full border border-foreground/60"></span>
+          <span className="text-[10px] font-mono text-foreground/80 tracking-widest font-medium">
             NOON (12:00)
           </span>
         </div>
 
-        <div className="absolute left-3 bottom-3 flex items-center gap-2 opacity-50">
-          <span className="w-2 h-2 rounded-full bg-foreground/50"></span>
-          <span className="text-[10px] font-mono text-foreground/70 tracking-widest">
+        <div className="absolute left-3 bottom-3 flex items-center gap-2 z-10">
+          <span className="w-2 h-2 rounded-full bg-foreground/60"></span>
+          <span className="text-[10px] font-mono text-foreground/80 tracking-widest font-medium">
             MIDNIGHT (0:00)
           </span>
         </div>
