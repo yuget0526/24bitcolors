@@ -7,6 +7,7 @@ import { Calendar, Hash } from "lucide-react";
 import { CollectionShareButton } from "@/components/CollectionShareButton";
 import { SeasonalTimeline } from "@/components/SeasonalTimeline";
 import { useEffect, useState } from "react";
+import { AdUnit } from "@/components/ads/AdUnit";
 
 type HistoryItem = {
   id: string;
@@ -109,6 +110,15 @@ export function CollectionPageClient() {
         <main className="lg:col-span-8 pt-0 lg:pt-32 pb-32 space-y-24">
           {/* Seasonal Visualization */}
           {history.length >= 2 && <SeasonalTimeline history={history} />}
+
+          {/* Ad Placement: Between Seasonal and content, or at top if no seasonal */}
+          <div className="w-full flex justify-center py-4 animate-in fade-in duration-1000 delay-500">
+            <AdUnit
+              className="max-w-[728px] min-h-[90px]"
+              format="auto"
+              slotId="YOUR_ADSENSE_UNIT_ID" // Placeholder
+            />
+          </div>
 
           <div className="space-y-12">
             {history.length > 0 && (
