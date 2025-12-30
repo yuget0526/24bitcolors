@@ -29,28 +29,31 @@ export async function GET(request: NextRequest) {
     const safeHex = hex.startsWith("#") ? hex : `#${hex}`;
 
     // 1. Check Cache in Supabase
-    // We select 'data' column where NAME and locale match
-    // This allows sharing insights across the same color group (e.g., "Midnight Blue")
+    // We select 'data' column where HEX and locale match
+    // Reverting to HEX-based caching as 'name' column does not exist in DB yet.
     console.log(
-      `[Cache Lookup] Checking for name: "${name}", locale: "${locale}"`
+      `[Cache Lookup] Checking for hex: "${safeHex.toLowerCase()}", locale: "${locale}"`
     );
     const { data: cachedData, error: cacheError } = await supabase
       .from("ai_insights")
       .select("data")
-      .eq("name", name)
+      .eq("hex", safeHex.toLowerCase())
       .eq("locale", locale)
       .single();
 
     if (cacheError) {
-      console.log(
-        `[Cache Lookup Error] Code: ${cacheError.code}, Msg: ${cacheError.message}`
-      );
+      // PGRST116 is "The result contains 0 rows" (Not Found) - this is expected on cache miss
+      if (cacheError.code !== "PGRST116") {
+        console.log(
+          `[Cache Lookup Error] Code: ${cacheError.code}, Msg: ${cacheError.message}`
+        );
+      }
     }
 
     if (cachedData && !cacheError) {
       // Cache Hit! Return immediately
       console.log(
-        `[Cache Hit] Returning cached insight for name: "${name}" (${locale})`
+        `[Cache Hit] Returning cached insight for hex: "${safeHex}" (${locale})`
       );
       return NextResponse.json(cachedData.data);
     }
@@ -71,10 +74,9 @@ export async function GET(request: NextRequest) {
     }
 
     // 3. Save to Cache (Async)
-    // We store 'name' so future lookups can find it by group
+    // Using hex as the key.
     const { error: saveError } = await supabase.from("ai_insights").insert({
-      hex: safeHex,
-      name: name,
+      hex: safeHex.toLowerCase(),
       locale,
       data: insight,
     });
