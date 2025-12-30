@@ -68,6 +68,14 @@
     "visionBody2": "国境や言葉の壁を越えて、人々は何を美しいと感じるのか。\n「色」という共通言語を通じて、\n人間の感性の多様性と普遍性を可視化する。\nそれが私たちの描く未来図です。",
     "ctaStart": "診断を開始する",
     "ctaBack": "トップに戻る",
+    "lblTeam": "TEAM & CONTACT",
+    "teamTitle": "The Team",
+    "teamBody": "24bitColorsは、色彩科学と人間の感性の交差点を探求する個人プロジェクトです。デザイン、アルゴリズム、そしてユーザー体験のすべてに情熱を注いでいます。",
+    "contactTitle": "Get in Touch",
+    "contactBody": "ご質問、フィードバック、または単にご挨拶をしたい方は、お気軽にお問い合わせください。",
+    "ctaContact": "お問い合わせフォームへ",
+    "linkPrivacy": "プライバシーポリシー",
+    "linkTerms": "利用規約",
     "ogpSubtitle": "Find Your True Color"
   },
   "Contact": {
