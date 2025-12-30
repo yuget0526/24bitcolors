@@ -29,25 +29,26 @@ export async function GET(request: NextRequest) {
     const safeHex = hex.startsWith("#") ? hex : `#${hex}`;
 
     // 1. Check Cache in Supabase
-    // We select 'data' column where hex and locale match
+    // We select 'data' column where NAME and locale match
+    // This allows sharing insights across the same color group (e.g., "Midnight Blue")
     const { data: cachedData, error: cacheError } = await supabase
       .from("ai_insights")
       .select("data")
-      .eq("hex", safeHex)
+      .eq("name", name)
       .eq("locale", locale)
       .single();
 
     if (cachedData && !cacheError) {
       // Cache Hit! Return immediately
       console.log(
-        `[Cache Hit] Returning cached insight for ${safeHex} (${locale})`
+        `[Cache Hit] Returning cached insight for name: "${name}" (${locale})`
       );
       return NextResponse.json(cachedData.data);
     }
 
     // 2. Cache Miss: Generate Fresh Insight via Gemini
     console.log(
-      `[Cache Miss] Generating fresh insight for ${safeHex} (${locale})`
+      `[Cache Miss] Generating fresh insight for ${safeHex} / ${name} (${locale})`
     );
 
     // This will now throw specific errors if env var is missing or API fails
@@ -60,9 +61,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 3. Save to Cache (Async, non-blocking for response but good to await for reliability)
+    // 3. Save to Cache (Async)
+    // We store 'name' so future lookups can find it by group
     const { error: saveError } = await supabase.from("ai_insights").insert({
       hex: safeHex,
+      name: name,
       locale,
       data: insight,
     });
