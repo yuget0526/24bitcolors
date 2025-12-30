@@ -16,22 +16,17 @@ interface SeasonalTimelineProps {
 export function SeasonalTimeline({ history }: SeasonalTimelineProps) {
   const t = useTranslations("CollectionPage");
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [displayCount, setDisplayCount] = useState(20); // Default to PC limit
+  const [displayCount, setDisplayCount] = useState(20);
 
-  // Update display count based on screen width
   useEffect(() => {
     const handleResize = () => {
-      // Mobile breakpoint (md: 768px)
       if (window.innerWidth < 768) {
         setDisplayCount(10);
       } else {
         setDisplayCount(20);
       }
     };
-
-    // Initial check
     handleResize();
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -44,7 +39,6 @@ export function SeasonalTimeline({ history }: SeasonalTimelineProps) {
     if (!ctx) return;
 
     const draw = () => {
-      // Setup canvas size
       const parent = canvas.parentElement;
       if (!parent) return;
 
@@ -53,7 +47,6 @@ export function SeasonalTimeline({ history }: SeasonalTimelineProps) {
 
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
-
       ctx.scale(dpr, dpr);
 
       const w = rect.width;
@@ -61,65 +54,60 @@ export function SeasonalTimeline({ history }: SeasonalTimelineProps) {
 
       ctx.clearRect(0, 0, w, h);
 
-      // 1. Filter and sort history
-      // Take recent items based on displayCount, then reverse to show Oldest -> Newest (Left -> Right)
-      const visibleData = [...history].slice(0, displayCount).reverse();
+      // --- Draw Grid Lines for Visibility ---
+      ctx.strokeStyle = "rgba(100, 100, 100, 0.1)"; // Subtle grey
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]); // Dashed lines
 
+      // Noon Line (Top limit: 10% from top)
+      const noonY = h * 0.1;
+      ctx.beginPath();
+      ctx.moveTo(0, noonY);
+      ctx.lineTo(w, noonY);
+      ctx.stroke();
+
+      // Midnight Line (Bottom limit: 90% from top)
+      const midnightY = h * 0.9;
+      ctx.beginPath();
+      ctx.moveTo(0, midnightY);
+      ctx.lineTo(w, midnightY);
+      ctx.stroke();
+
+      // Reset dash for wave
+      ctx.setLineDash([]);
+
+      const visibleData = [...history].slice(0, displayCount).reverse();
       if (visibleData.length < 2) return;
 
-      // 2. Create Gradient
       const gradient = ctx.createLinearGradient(0, 0, w, 0);
       visibleData.forEach((item, index) => {
         const offset = index / (visibleData.length - 1);
         gradient.addColorStop(offset, item.hex);
       });
 
-      // 3. Draw Wave
       ctx.fillStyle = gradient;
       ctx.beginPath();
-
-      // Start point (Bottom-Left)
       ctx.moveTo(0, h);
 
-      // Points for wave top
       const points = visibleData.map((item, index) => {
         const x = (index / (visibleData.length - 1)) * w;
-
-        // Calculate Y based on Time of Day
-        // 12:00 (Noon) -> Highest (0% of height)
-        // 0:00 / 24:00 (Midnight) -> Lowest (100% of height)
         const date = new Date(item.created_at);
         const hours = date.getHours();
         const minutes = date.getMinutes();
         const totalMinutes = hours * 60 + minutes;
-
-        // Peak at 12:00 (720 min), Trough at 0:00 (0 min) & 24:00 (1440 min)
-        // Distance from noon in minutes (0 to 720)
         const distFromNoon = Math.abs(totalMinutes - 720);
-
-        // Normalize 0-1 (0 = Noon/High, 1 = Midnight/Low)
         const normalizedTime = distFromNoon / 720;
-
-        // Map to Canvas Height
-        // Keep within 10% to 90% range to avoid touching edges too much
         const y = h * (0.1 + normalizedTime * 0.8);
-
         return { x, y };
       });
 
-      // Draw first point
       ctx.lineTo(points[0].x, points[0].y);
 
-      // Bezier Curve through points
       for (let i = 0; i < points.length - 1; i++) {
         const current = points[i];
         const next = points[i + 1];
-
-        // Control points for smooth curve (midpoint logic)
         const xc = (current.x + next.x) / 2;
         const yc = (current.y + next.y) / 2;
-
-        // For the first segment, just draw quadratic to midpoint
         if (i === 0) {
           ctx.lineTo(xc, yc);
         } else {
@@ -127,30 +115,18 @@ export function SeasonalTimeline({ history }: SeasonalTimelineProps) {
         }
       }
 
-      // Connect to last point
       const last = points[points.length - 1];
       ctx.lineTo(last.x, last.y);
 
-      // Close path to bottom-right and back to start
       ctx.lineTo(w, h);
       ctx.lineTo(0, h);
       ctx.closePath();
-
       ctx.fill();
-
-      // 4. Subtle Time Guides (Optional)
-      // Noon (High) / Midnight (Low) indicators could be added here
     };
 
-    // Initial draw
     draw();
-
-    // Handle Resize redrawing
-    const handleResize = () => {
-      requestAnimationFrame(draw);
-    };
+    const handleResize = () => requestAnimationFrame(draw);
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, [history, displayCount]);
 
@@ -172,21 +148,27 @@ export function SeasonalTimeline({ history }: SeasonalTimelineProps) {
         </div>
       </div>
 
-      <div className="relative w-full h-48 md:h-64 bg-card/30 border border-border/40 overflow-hidden group">
+      <div className="relative w-full h-48 md:h-64 bg-card/30 border border-border/40 overflow-hidden group rounded-sm">
         <canvas
           ref={canvasRef}
           className="w-full h-full transition-transform duration-1000 ease-out group-hover:scale-[1.02]"
         />
 
-        {/* Overlay effect */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/5 to-transparent pointer-events-none" />
 
-        {/* Time Labels (Subtle) */}
-        <div className="absolute left-2 top-2 text-[9px] font-mono text-muted-foreground/30 pointer-events-none">
-          NOON
+        {/* Improved Label Functionality & Visibility */}
+        <div className="absolute left-3 top-3 flex items-center gap-2 opacity-50">
+          <span className="w-2 h-2 rounded-full border border-foreground/50"></span>
+          <span className="text-[10px] font-mono text-foreground/70 tracking-widest">
+            NOON (12:00)
+          </span>
         </div>
-        <div className="absolute left-2 bottom-2 text-[9px] font-mono text-muted-foreground/30 pointer-events-none">
-          MIDNIGHT
+
+        <div className="absolute left-3 bottom-3 flex items-center gap-2 opacity-50">
+          <span className="w-2 h-2 rounded-full bg-foreground/50"></span>
+          <span className="text-[10px] font-mono text-foreground/70 tracking-widest">
+            MIDNIGHT (0:00)
+          </span>
         </div>
       </div>
     </div>
