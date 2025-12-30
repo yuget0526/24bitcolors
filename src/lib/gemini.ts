@@ -15,8 +15,11 @@ export async function generateColorInsight(
   locale: string = "ja"
 ): Promise<ColorInsight | null> {
   const apiKey = process.env.GEMINI_API_KEY || "";
+
   if (!apiKey) {
-    console.warn("GEMINI_API_KEY is not set");
+    console.warn(
+      "[Gemini API] GEMINI_API_KEY is missing in environment variables."
+    );
     return null;
   }
 
@@ -24,7 +27,10 @@ export async function generateColorInsight(
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
-      generationConfig: { responseMimeType: "application/json" },
+      generationConfig: {
+        responseMimeType: "application/json",
+        temperature: 0.7,
+      },
     });
 
     const prompt = `
@@ -36,34 +42,54 @@ export async function generateColorInsight(
       Color HEX: ${hex}
       Color Name: ${colorName}
       
-      Provide the result in the following JSON format:
+      Provide the result STICTLY in the following JSON format:
       {
-        "psychology": "Detailed psychological meaning and emotional impact of this color (max 150 characters).",
-        "culture": "Cultural, historical, or symbolic background of this color (max 150 characters).",
-        "story": "A very short, poetic story or atmosphere inspired by this specific color (max 150 characters)."
+        "psychology": "Detailed psychological meaning (max 150 characters).",
+        "culture": "Cultural, historical, or symbolic background (max 150 characters).",
+        "story": "A very short, poetic story or atmosphere (max 150 characters)."
       }
-      
-      The tone should be sophisticated, minimal, and premium. Avoid generic descriptions.
     `;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    let text = response.text();
+    const text = response.text();
 
-    // Clean up potential markdown code blocks
-    text = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
+    console.log(`[Gemini API] Raw response length: ${text.length}`);
 
-    try {
-      return JSON.parse(text) as ColorInsight;
-    } catch (parseError) {
-      console.error("Failed to parse Gemini JSON response:", text);
+    // Robust JSON extraction: Find the first '{' and the last '}'
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error(
+        "[Gemini API] Failed to find JSON object in response:",
+        text
+      );
       return null;
     }
-  } catch (error) {
-    console.error("Gemini API Error details:", error);
+
+    try {
+      const parsed = JSON.parse(jsonMatch[0]);
+      // Verify structure
+      if (parsed.psychology && parsed.culture && parsed.story) {
+        return parsed as ColorInsight;
+      } else {
+        console.error(
+          "[Gemini API] Parsed JSON has invalid structure:",
+          parsed
+        );
+        return null;
+      }
+    } catch (parseError) {
+      console.error(
+        "[Gemini API] JSON Parse Error. Raw matched text:",
+        jsonMatch[0]
+      );
+      return null;
+    }
+  } catch (error: any) {
+    console.error(
+      "[Gemini API] Fatal Connection or API Error:",
+      error.message || error
+    );
     return null;
   }
 }
