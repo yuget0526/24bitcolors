@@ -54,27 +54,27 @@ export function SeasonalTimeline({ history }: SeasonalTimelineProps) {
 
       ctx.clearRect(0, 0, w, h);
 
-      // --- Draw Grid Lines for Visibility ---
-      ctx.strokeStyle = "rgba(100, 100, 100, 0.1)"; // Subtle grey
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 4]); // Dashed lines
+      // --- Draw Grid Lines for Visibility Removed ---
+      // ctx.strokeStyle = "rgba(100, 100, 100, 0.1)"; // Subtle grey
+      // ctx.lineWidth = 1;
+      // ctx.setLineDash([4, 4]); // Dashed lines
 
       // Noon Line (Top limit: 10% from top)
-      const noonY = h * 0.1;
-      ctx.beginPath();
-      ctx.moveTo(0, noonY);
-      ctx.lineTo(w, noonY);
-      ctx.stroke();
+      // const noonY = h * 0.1;
+      // ctx.beginPath();
+      // ctx.moveTo(0, noonY);
+      // ctx.lineTo(w, noonY);
+      // ctx.stroke();
 
       // Midnight Line (Bottom limit: 90% from top)
-      const midnightY = h * 0.9;
-      ctx.beginPath();
-      ctx.moveTo(0, midnightY);
-      ctx.lineTo(w, midnightY);
-      ctx.stroke();
+      // const midnightY = h * 0.9;
+      // ctx.beginPath();
+      // ctx.moveTo(0, midnightY);
+      // ctx.lineTo(w, midnightY);
+      // ctx.stroke();
 
       // Reset dash for wave
-      ctx.setLineDash([]);
+      // ctx.setLineDash([]);
 
       const visibleData = [...history].slice(0, displayCount).reverse();
       if (visibleData.length < 2) return;
