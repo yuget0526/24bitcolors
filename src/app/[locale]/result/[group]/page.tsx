@@ -86,7 +86,7 @@ export default async function ResultPage({ params, searchParams }: Props) {
   const { groupName, groupSlug } = getNearestPoeticName(safeHex);
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden pt-16 md:pt-0 pb-32">
+    <div className="min-h-screen w-full flex flex-col items-center justify-start relative pt-24 pb-32">
       {/* Background Ambience - theme-aware for text readability */}
       <AmbientBackground hex={safeHex} />
 
