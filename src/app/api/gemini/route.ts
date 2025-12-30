@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateColorInsight } from "@/lib/gemini";
+import { createClient } from "@supabase/supabase-js";
 
 // Force dynamic to prevent static generation issues with env vars
 export const dynamic = "force-dynamic";
+
+// Initialize Supabase Client for caching
+// Note: We use Service Role Key for secure server-side operations (write access)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -18,8 +25,30 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Add # prefix if missing
+    // Add # prefix if missing for consistency
     const safeHex = hex.startsWith("#") ? hex : `#${hex}`;
+
+    // 1. Check Cache in Supabase
+    // We select 'data' column where hex and locale match
+    const { data: cachedData, error: cacheError } = await supabase
+      .from("ai_insights")
+      .select("data")
+      .eq("hex", safeHex)
+      .eq("locale", locale)
+      .single();
+
+    if (cachedData && !cacheError) {
+      // Cache Hit! Return immediately
+      console.log(
+        `[Cache Hit] Returning cached insight for ${safeHex} (${locale})`
+      );
+      return NextResponse.json(cachedData.data);
+    }
+
+    // 2. Cache Miss: Generate Fresh Insight via Gemini
+    console.log(
+      `[Cache Miss] Generating fresh insight for ${safeHex} (${locale})`
+    );
 
     // This will now throw specific errors if env var is missing or API fails
     const insight = await generateColorInsight(safeHex, name, locale);
@@ -29,6 +58,19 @@ export async function GET(request: NextRequest) {
         { error: "Failed to generate insight (Empty response)" },
         { status: 500 }
       );
+    }
+
+    // 3. Save to Cache (Async, non-blocking for response but good to await for reliability)
+    const { error: saveError } = await supabase.from("ai_insights").insert({
+      hex: safeHex,
+      locale,
+      data: insight,
+    });
+
+    if (saveError) {
+      console.error("[Cache Save Error]", saveError);
+    } else {
+      console.log(`[Cache Saved] Insight for ${safeHex} stored successfully.`);
     }
 
     return NextResponse.json(insight);
