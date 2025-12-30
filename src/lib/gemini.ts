@@ -20,49 +20,78 @@ export async function generateColorInsight(
     throw new Error("GEMINI_API_KEY is not configured on server");
   }
 
-  try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    // Use gemini-pro as 1.5-flash might not be available
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-
-    const prompt = `
-      You are a world-class color theorist and poet. 
-      Analyze the following color and provide insights in ${
-        locale === "ja" ? "Japanese" : "English"
-      }.
-      
-      Color HEX: ${hex}
-      Color Name: ${colorName}
-      
-      Provide the result in the following JSON format:
-      {
-        "psychology": "Detailed psychological meaning and emotional impact of this color (max 150 characters).",
-        "culture": "Cultural, historical, or symbolic background of this color (max 150 characters).",
-        "story": "A very short, poetic story or atmosphere inspired by this specific color (max 150 characters)."
-      }
-      
-      The tone should be sophisticated, minimal, and premium. Avoid generic descriptions.
-      IMPORTANT: Return ONLY the JSON object. Do not include markdown formatting or code blocks.
-    `;
-
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    let text = response.text();
-
-    // Clean up potential markdown code blocks provided by Gemini Pro
-    text = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-
-    try {
-      return JSON.parse(text) as ColorInsight;
-    } catch {
-      console.error("Failed to parse Gemini JSON response:", text);
-      throw new Error("Failed to parse AI response as JSON");
+  const prompt = `
+    You are a world-class color theorist and poet. 
+    Analyze the following color and provide insights in ${
+      locale === "ja" ? "Japanese" : "English"
+    }.
+    
+    Color HEX: ${hex}
+    Color Name: ${colorName}
+    
+    Provide the result in the following JSON format:
+    {
+      "psychology": "Detailed psychological meaning and emotional impact of this color (max 150 characters).",
+      "culture": "Cultural, historical, or symbolic background of this color (max 150 characters).",
+      "story": "A very short, poetic story or atmosphere inspired by this specific color (max 150 characters)."
     }
-  } catch (error) {
-    console.error("Gemini API Error details:", error);
-    throw error;
+    
+    The tone should be sophisticated, minimal, and premium. Avoid generic descriptions.
+    IMPORTANT: Return ONLY the JSON object. Do not include markdown formatting or code blocks.
+  `;
+
+  // List of models to try in order of preference
+  const candidateModels = [
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-001",
+    "gemini-pro",
+    "gemini-1.0-pro",
+  ];
+
+  let lastError: unknown = null;
+  const genAI = new GoogleGenerativeAI(apiKey);
+
+  for (const modelName of candidateModels) {
+    try {
+      // Intentionally avoiding responseMimeType: "application/json" to maximize compatibility across models
+      const model = genAI.getGenerativeModel({ model: modelName });
+
+      console.log(`[Gemini] Attempting to generate with model: ${modelName}`);
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      let text = response.text();
+
+      // Clean up potential markdown code blocks provided by Gemini
+      text = text
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+
+      try {
+        return JSON.parse(text) as ColorInsight;
+      } catch {
+        console.warn(
+          `[Gemini] Failed to parse JSON from ${modelName}. Response: ${text.substring(
+            0,
+            50
+          )}...`
+        );
+        // If JSON parse fails, we might want to try another model or just throw
+        // For now, let's treat it as a failure of this model and try next if implies bad output
+        throw new Error("Invalid JSON response");
+      }
+    } catch (error) {
+      console.warn(
+        `[Gemini] Failed with model ${modelName}:`,
+        error instanceof Error ? error.message : error
+      );
+      lastError = error;
+      // Continue to next model
+    }
   }
+
+  // If we exhaust all models
+  console.error("[Gemini] All models failed.");
+  throw lastError || new Error("All Gemini models failed to generate content");
 }
