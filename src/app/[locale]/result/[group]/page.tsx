@@ -6,7 +6,7 @@ import { toOklch } from "@/lib/colorNaming";
 import { AmbientBackground } from "@/components/AmbientBackground";
 import { getTranslations } from "next-intl/server";
 // import { ColorInsightFetcher } from "@/components/ColorInsightFetcher";
-import { AdUnit } from "@/components/ads/AdUnit";
+// import { AdUnit } from "@/components/ads/AdUnit";
 
 // Force dynamic is NOT needed for the page itself anymore as we fetch client-side,
 // but keeping it 'auto' (default) is fine.
@@ -162,6 +162,7 @@ export default async function ResultPage({ params, searchParams }: Props) {
       */}
 
       {/* Ad Placement: After content, before very bottom */}
+      {/* Temporarily disabled pending AdSense approval
       <div className="w-full max-w-5xl px-6 pb-24 flex justify-center animate-in fade-in duration-1000 delay-1000">
         <AdUnit
           className="max-w-[728px] min-h-[90px]"
@@ -169,6 +170,7 @@ export default async function ResultPage({ params, searchParams }: Props) {
           slotId="YOUR_ADSENSE_UNIT_ID"
         />
       </div>
+      */}
     </div>
   );
 }
