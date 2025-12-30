@@ -20,6 +20,9 @@ export function ColorInsightFetcher({
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Keep track if we have ANY data to show
+  const hasData = insight !== null;
+
   useEffect(() => {
     let isMounted = true;
 
@@ -68,14 +71,14 @@ export function ColorInsightFetcher({
     };
   }, [hex, colorName, locale]);
 
-  if (error) {
+  if (error && !hasData) {
+    // Only show error UI if we have no data to show
     // Check if it's a quota error (429) or related to billing
     const isQuotaError =
       errorMessage.includes("429") ||
       errorMessage.includes("quota") ||
       errorMessage.includes("Too Many Requests");
 
-    // Only show error UI if it's a quota limit, otherwise hide silently
     if (isQuotaError) {
       return (
         <div className="w-full max-w-5xl px-6 py-12 flex justify-center opacity-70">
@@ -89,11 +92,11 @@ export function ColorInsightFetcher({
         </div>
       );
     }
-
     return null;
   }
 
-  if (loading) {
+  // Initial Loading State (No data yet)
+  if (loading && !hasData) {
     return (
       <div className="w-full max-w-5xl px-6 py-24 flex justify-center opacity-50">
         <div className="animate-pulse flex flex-col items-center gap-4">
@@ -106,11 +109,13 @@ export function ColorInsightFetcher({
     );
   }
 
-  if (!insight) return null;
+  if (!hasData) return null;
 
   return (
-    <div className="w-full max-w-5xl px-6 animate-in fade-in duration-1000">
-      <ColorInsightSection insight={insight} colorName={colorName} />
+    <div className="w-full max-w-5xl px-6 relative">
+      {/* If validating/re-fetching but we have stale data, optionally show a small indicator or nothing */}
+      {/* {loading && <div className="absolute inset-0 bg-background/50 z-10" />} */}
+      <ColorInsightSection insight={insight!} colorName={colorName} />
     </div>
   );
 }
