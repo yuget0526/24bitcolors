@@ -328,21 +328,27 @@
   "Compare": {
     "harmonyTypes": {
       "identity": "IDENTITY",
-      "complementary": "COMPLEMENTARY",
+      "monochromatic": "MONOCHROMATIC",
       "analogous": "ANALOGOUS",
+      "dyadic": "DYADIC",
       "triadic": "TRIADIC",
+      "split_complementary": "SPLIT COMPLEMENTARY",
+      "complementary": "COMPLEMENTARY",
+      "tonal": "TONAL",
       "vibrant": "VIBRANT",
-      "subtle": "SUBTLE",
       "neutral": "NEUTRAL"
     },
     "harmonyDescriptions": {
-      "identity": "A destined match with the exact same sensibility.",
-      "complementary": "Opposites attract, creating a powerful resonance.",
-      "analogous": "Close wavelengths create a calm and unspoken understanding.",
-      "triadic": "Unique individualities maintaining an exquisite balance.",
-      "vibrant": "Strong contrast creates new energy and excitement.",
-      "subtle": "Similar yet distinct. Enjoy the delicate resonance.",
-      "neutral": "Independent and flat relationship, neither too close nor too far."
+      "identity": "A perfect match with the exact same color.",
+      "monochromatic": "A sophisticated harmony where lightness and chroma resonate delicately within the same hue.",
+      "analogous": "A calm and comfortable harmony that resonates naturally.",
+      "dyadic": "Two colors at a right angle create a dynamic and active energy.",
+      "triadic": "Unique individualities resonate to create a balanced beauty.",
+      "split_complementary": "A dramatic relationship where contrast and harmony blend exquisitely.",
+      "complementary": "Located opposite each other, these colors brilliantly enhance one another.",
+      "tonal": "A gentle harmony where colors resonate beautifully by sharing similar lightness and chroma.",
+      "vibrant": "High contrast creates a fresh impression and vitality.",
+      "neutral": "A natural resonance that maintains each color's unique individuality."
     }
   },
   "Harmonies": {

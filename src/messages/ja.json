@@ -328,20 +328,26 @@
   "Compare": {
     "harmonyTypes": {
       "identity": "同一色",
-      "complementary": "補色",
+      "monochromatic": "モノクロマチック",
       "analogous": "類似色",
+      "dyadic": "ダイアディック",
       "triadic": "三角配色",
+      "split_complementary": "分立補色",
+      "complementary": "補色",
+      "tonal": "トナール",
       "vibrant": "高コントラスト",
-      "subtle": "微細な調和",
       "neutral": "中性的"
     },
     "harmonyDescriptions": {
       "identity": "まったく同じ色。完璧な調和を奏でます。",
-      "complementary": "色相環で正反対に位置し、互いを鮮やかに引き立て合います。",
+      "monochromatic": "同じ色相で、明度や彩度が繊細に響き合う洗練された調和です。",
       "analogous": "言葉にしなくても通じ合える、穏やかで心地よい調和です。",
+      "dyadic": "直角に位置する2色が、動的で活発なエネルギーを生み出します。",
       "triadic": "それぞれの個性が響き合い、バランスの取れた美しさを生み出します。",
-      "vibrant": "明るいコントラストが、新鮮な印象と活力を生み出します。",
-      "subtle": "似ているようで少し違う、繊細で優しい響き合いです。",
+      "split_complementary": "対比と調和が絶妙に混ざり合う、ドラマチックな関係です。",
+      "complementary": "色相環で正反対に位置し、互いを鮮やかに引き立て合います。",
+      "tonal": "明るさや鮮やかさが揃うことで、色が美しく共鳴する穏やかな調和です。",
+      "vibrant": "高いコントラストが、新鮮な印象と活力を生み出します。",
       "neutral": "それぞれの個性を保ちながら、自然に調和する関係です。"
     }
   },

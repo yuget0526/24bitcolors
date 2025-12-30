@@ -1,5 +1,4 @@
-import { toOklch, OklchColor, colorDistance } from "@/lib/oklch";
-import { getNearestPoeticName } from "@/lib/colorNaming";
+import { toOklch, colorDistance, circularHueDistance } from "@/lib/oklch";
 
 export interface ResonanceResult {
   score: number; // 0-100
@@ -10,11 +9,14 @@ export interface ResonanceResult {
 
 export type HarmonyType =
   | "identity" // Same color
-  | "complementary" // 180deg
+  | "monochromatic" // Same hue, different L/C
   | "analogous" // ~30deg
+  | "dyadic" // ~90deg
   | "triadic" // ~120deg
+  | "split_complementary" // ~150deg
+  | "complementary" // 180deg
+  | "tonal" // Same L/C, different hue
   | "vibrant" // High contrast/distance
-  | "subtle" // Close but not analogous
   | "neutral"; // No strong relation
 
 /**
@@ -32,78 +34,83 @@ export function calculateResonance(
     return {
       score: 0,
       harmonyType: "neutral",
-      description: "Unknown Relationship",
+      description: "neutral",
       blendHex: "#000000",
     };
   }
 
   // 1. Calculate basic metrics
-  const hueDiff = Math.abs((cA.hue || 0) - (cB.hue || 0));
-  const hueDist = Math.min(hueDiff, 360 - hueDiff); // Shortest arc on color wheel
-  const dist = colorDistance(cA, cB);
+  const hDist = circularHueDistance(cA.hue, cB.hue);
+  const lDist = Math.abs(cA.lightness - cB.lightness);
+  const cDist = Math.abs(cA.chroma - cB.chroma);
+  const totalDist = colorDistance(cA, cB);
 
   // 2. Determine Harmony Type & Score Base
   let type: HarmonyType = "neutral";
   let score = 50;
-  let descKey = "neutral";
 
   // Identity logic
-  if (dist < 0.02) {
+  if (totalDist < 0.01) {
     type = "identity";
     score = 100;
-    descKey = "identity";
   }
-  // Complementary logic (180deg +/- 20deg)
-  else if (hueDist > 160 && hueDist < 200) {
+  // Monochromatic (Same hue, different L or C)
+  else if (hDist < 5) {
+    type = "monochromatic";
+    score = 90 - lDist * 20 - cDist * 30;
+  }
+  // Complementary (180deg)
+  else if (Math.abs(hDist - 180) < 15) {
     type = "complementary";
-    score = 95; // High resonance
-    descKey = "complementary";
+    const dev = Math.abs(hDist - 180);
+    score = 98 - dev * 0.5;
   }
-  // Analogous logic (30deg +/- 15deg)
-  else if (hueDist < 45 && hueDist > 10) {
-    type = "analogous";
-    score = 85; // Pleasant harmony
-    descKey = "analogous";
+  // Split Complementary (150deg)
+  else if (Math.abs(hDist - 150) < 15) {
+    type = "split_complementary";
+    const dev = Math.abs(hDist - 150);
+    score = 92 - dev * 0.5;
   }
-  // Triadic logic (120deg +/- 15deg)
-  else if (Math.abs(hueDist - 120) < 15) {
+  // Triadic (120deg)
+  else if (Math.abs(hDist - 120) < 15) {
     type = "triadic";
-    score = 90; // Balanced
-    descKey = "triadic";
+    const dev = Math.abs(hDist - 120);
+    score = 88 - dev * 0.5;
+  }
+  // Dyadic (90deg)
+  else if (Math.abs(hDist - 90) < 15) {
+    type = "dyadic";
+    const dev = Math.abs(hDist - 90);
+    score = 85 - dev * 0.5;
+  }
+  // Analogous (30deg)
+  else if (hDist < 45) {
+    type = "analogous";
+    const ideal = 30;
+    const dev = Math.abs(hDist - ideal);
+    score = 90 - dev * 0.8;
+  }
+  // Tonal (Same L and C, different hue)
+  else if (lDist < 0.05 && cDist < 0.05) {
+    type = "tonal";
+    score = 82 - lDist * 100 - cDist * 200;
   }
   // High contrast/Vibrant
-  else if (dist > 0.3) {
+  else if (totalDist > 0.4) {
     type = "vibrant";
-    score = 80;
-    descKey = "vibrant";
-  }
-  // Subtle/Neutral
-  else if (dist < 0.1) {
-    type = "subtle";
-    score = 60;
-    descKey = "subtle";
+    score = 75 + Math.min(25, (totalDist - 0.4) * 50);
   } else {
-    // Calculate score based on distance for "neutral"
-    // Just a mapping of distance to some score
-    score = Math.min(100, Math.max(20, Math.round(dist * 200)));
+    // Neutral: Smooth interpolation based on distance and hue
+    score = 40 + Math.min(30, totalDist * 100);
   }
 
-  // 3. Normalize score (0-100 integer)
-  score = Math.round(score);
-
-  // 4. Determine blend color (simple average for now)
-  // In a real implementation, we might mix in OKLCH space
-  // Here we just use a placeholder mechanism or use the Oklch mix if feasible.
-  // We'll compute the "mix" in logic for visualization if needed,
-  // but for the return value, let's return a "Mix" name.
-  // Actually, let's just return the hex of the mix for UI usage if needed.
-  // For simplicity, we won't implement full color mixing here unless requested.
-  // We'll return #000000 properly later or valid hex logic.
+  // 3. Final score normalization
+  score = Math.round(Math.min(100, Math.max(0, score)));
 
   return {
     score,
     harmonyType: type,
-    description: descKey,
-    blendHex: hexA, // Placeholder, UI performs visual blending
+    description: type, // Using type as key for translations
+    blendHex: hexA, // UI handles visual blending
   };
 }
