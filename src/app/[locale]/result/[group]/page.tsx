@@ -6,7 +6,7 @@ import { toOklch } from "@/lib/colorNaming";
 import { AmbientBackground } from "@/components/AmbientBackground";
 import { getTranslations } from "next-intl/server";
 import { ColorInsightFetcher } from "@/components/ColorInsightFetcher";
-import { AdUnit } from "@/components/ads/AdUnit";
+// import { AdUnit } from "@/components/ads/AdUnit";
 
 // Force dynamic is NOT needed for the page itself anymore as we fetch client-side,
 // but keeping it 'auto' (default) is fine.
