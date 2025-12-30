@@ -43,7 +43,7 @@ export function ColorInsightSection({
               {t("aiPsychology")}
             </h3>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed font-serif opacity-80 group-hover:opacity-100 transition-opacity">
+          <p className="text-sm text-foreground/90 leading-relaxed font-serif transition-colors">
             {insight.psychology}
           </p>
         </div>
@@ -58,7 +58,7 @@ export function ColorInsightSection({
               {t("aiCulture")}
             </h3>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed font-serif opacity-80 group-hover:opacity-100 transition-opacity">
+          <p className="text-sm text-foreground/90 leading-relaxed font-serif transition-colors">
             {insight.culture}
           </p>
         </div>
@@ -73,7 +73,7 @@ export function ColorInsightSection({
               {t("aiStory")}
             </h3>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed font-serif italic opacity-80 group-hover:opacity-100 transition-opacity">
+          <p className="text-sm text-foreground/90 leading-relaxed font-serif italic transition-colors">
             &quot;{insight.story}&quot;
           </p>
         </div>
