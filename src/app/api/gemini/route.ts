@@ -29,31 +29,29 @@ export async function GET(request: NextRequest) {
     const safeHex = hex.startsWith("#") ? hex : `#${hex}`;
 
     // 1. Check Cache in Supabase
-    // We select 'data' column where HEX and locale match
-    // Reverting to HEX-based caching as 'name' column does not exist in DB yet.
+    // We select 'data' column where NAME and locale match.
+    // Use limit(1).maybeSingle() to handle potential duplicate rows gracefully.
     console.log(
-      `[Cache Lookup] Checking for hex: "${safeHex.toLowerCase()}", locale: "${locale}"`
+      `[Cache Lookup] Checking for name: "${name}", locale: "${locale}"`
     );
     const { data: cachedData, error: cacheError } = await supabase
       .from("ai_insights")
       .select("data")
-      .eq("hex", safeHex.toLowerCase())
+      .eq("name", name)
       .eq("locale", locale)
-      .single();
+      .limit(1)
+      .maybeSingle();
 
     if (cacheError) {
-      // PGRST116 is "The result contains 0 rows" (Not Found) - this is expected on cache miss
-      if (cacheError.code !== "PGRST116") {
-        console.log(
-          `[Cache Lookup Error] Code: ${cacheError.code}, Msg: ${cacheError.message}`
-        );
-      }
+      console.log(
+        `[Cache Lookup Error] Code: ${cacheError.code}, Msg: ${cacheError.message}`
+      );
     }
 
-    if (cachedData && !cacheError) {
+    if (cachedData) {
       // Cache Hit! Return immediately
       console.log(
-        `[Cache Hit] Returning cached insight for hex: "${safeHex}" (${locale})`
+        `[Cache Hit] Returning cached insight for name: "${name}" (${locale})`
       );
       return NextResponse.json(cachedData.data);
     }
@@ -74,9 +72,10 @@ export async function GET(request: NextRequest) {
     }
 
     // 3. Save to Cache (Async)
-    // Using hex as the key.
+    // We store 'name' so future lookups can find it by group
     const { error: saveError } = await supabase.from("ai_insights").insert({
-      hex: safeHex.toLowerCase(),
+      hex: safeHex,
+      name: name,
       locale,
       data: insight,
     });
@@ -84,7 +83,7 @@ export async function GET(request: NextRequest) {
     if (saveError) {
       console.error("[Cache Save Error]", saveError);
     } else {
-      console.log(`[Cache Saved] Insight for ${safeHex} stored successfully.`);
+      console.log(`[Cache Saved] Insight for ${name} stored successfully.`);
     }
 
     return NextResponse.json(insight);
