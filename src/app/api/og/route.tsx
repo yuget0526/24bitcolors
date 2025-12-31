@@ -11,12 +11,52 @@ export async function GET(request: NextRequest) {
     const title = searchParams.get("title") || "24bitColors";
     const subtitle = searchParams.get("subtitle") || "Find Your True Color";
 
-    // Font loading (Standard font)
+    // Font loading (Serif font for "Times New Roman" feel with Japanese support)
     const fontData = await fetch(
       new URL(
-        "https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/Japanese/NotoSansCJKjp-Bold.otf"
+        "https://github.com/googlefonts/noto-cjk/raw/main/Serif/OTF/Japanese/NotoSerifCJKjp-Bold.otf"
       )
     ).then((res) => res.arrayBuffer());
+
+    // Design System Colors (from icon.tsx)
+    const colors = [
+      {
+        base: "#ef4444",
+        light: "#f87171",
+        dark: "#dc2626",
+        lighter: "#fca5a5",
+      },
+      {
+        base: "#f59e0b",
+        light: "#fbbf24",
+        dark: "#d97706",
+        lighter: "#fcd34d",
+      },
+      {
+        base: "#84cc16",
+        light: "#a3e635",
+        dark: "#65a30d",
+        lighter: "#bef264",
+      },
+      {
+        base: "#06b6d4",
+        light: "#22d3ee",
+        dark: "#0891b2",
+        lighter: "#67e8f9",
+      },
+      {
+        base: "#3b82f6",
+        light: "#60a5fa",
+        dark: "#2563eb",
+        lighter: "#93c5fd",
+      },
+      {
+        base: "#8b5cf6",
+        light: "#a78bfa",
+        dark: "#7c3aed",
+        lighter: "#c4b5fd",
+      },
+    ];
 
     return new ImageResponse(
       (
@@ -28,39 +68,11 @@ export async function GET(request: NextRequest) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#f5f5f5", // neutral-100
-            fontFamily: '"NotoSansJP"',
+            backgroundColor: "#fcfcfc",
+            fontFamily: '"NotoSerifJP"',
             position: "relative",
           }}
         >
-          {/* Background decoration */}
-          <div
-            style={{
-              position: "absolute",
-              top: "-20%",
-              left: "-10%",
-              width: "600px",
-              height: "600px",
-              borderRadius: "50%",
-              background: "linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%)",
-              filter: "blur(120px)",
-              opacity: 0.3,
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              bottom: "-20%",
-              right: "-10%",
-              width: "500px",
-              height: "500px",
-              borderRadius: "50%",
-              background: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
-              filter: "blur(120px)",
-              opacity: 0.3,
-            }}
-          />
-
           {/* Content */}
           <div
             style={{
@@ -71,8 +83,21 @@ export async function GET(request: NextRequest) {
               zIndex: 10,
               padding: "40px",
               textAlign: "center",
+              marginBottom: "40px",
             }}
           >
+            <div
+              style={{
+                fontSize: "24px",
+                color: "#1a1a1a",
+                letterSpacing: "0.2em",
+                marginBottom: "20px",
+                opacity: 0.6,
+                textTransform: "uppercase",
+              }}
+            >
+              24bitColors
+            </div>
             {/* Title */}
             <h1
               style={{
@@ -80,11 +105,8 @@ export async function GET(request: NextRequest) {
                 fontWeight: 700,
                 margin: 0,
                 marginBottom: "24px",
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                background: "linear-gradient(to right, #171717, #525252)",
-                backgroundClip: "text",
-                color: "transparent",
+                lineHeight: 1.2,
+                color: "#1a1a1a",
               }}
             >
               {title}
@@ -97,7 +119,7 @@ export async function GET(request: NextRequest) {
                 fontWeight: 400,
                 color: "#525252",
                 margin: 0,
-                marginTop: "12px",
+                marginTop: "10px",
                 letterSpacing: "0.05em",
               }}
             >
@@ -105,68 +127,75 @@ export async function GET(request: NextRequest) {
             </p>
           </div>
 
-          {/* Logo Footer */}
+          {/* Decorative Color Bar (Brand Mark 2x2 * 6) */}
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              marginTop: "20px",
+              opacity: 0.9,
+            }}
+          >
+            {colors.map((group, groupIndex) => (
+              <div
+                key={groupIndex}
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  width: "64px",
+                  gap: "4px",
+                }}
+              >
+                {/* 2x2 Grid per color group, scaled down to 30px blocks */}
+                <div
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    backgroundColor: group.light,
+                    borderRadius: "4px",
+                  }}
+                />
+                <div
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    backgroundColor: group.base,
+                    borderRadius: "4px",
+                  }}
+                />
+                <div
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    backgroundColor: group.lighter,
+                    borderRadius: "4px",
+                  }}
+                />
+                <div
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    backgroundColor: group.dark,
+                    borderRadius: "4px",
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Footer Tagline */}
           <div
             style={{
               position: "absolute",
-              bottom: "50px",
-              display: "flex",
-              alignItems: "center",
+              bottom: 60,
+              fontSize: 16,
+              color: "#808080",
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
             }}
           >
-            <div
-              style={{
-                width: "24px",
-                height: "24px",
-                display: "flex",
-                flexWrap: "wrap",
-                marginRight: "12px",
-              }}
-            >
-              {/* Simple 24bitColors icon representation */}
-              <div
-                style={{
-                  width: "10px",
-                  height: "10px",
-                  background: "#f87171",
-                  margin: "1px",
-                }}
-              />
-              <div
-                style={{
-                  width: "10px",
-                  height: "10px",
-                  background: "#fbbf24",
-                  margin: "1px",
-                }}
-              />
-              <div
-                style={{
-                  width: "10px",
-                  height: "10px",
-                  background: "#34d399",
-                  margin: "1px",
-                }}
-              />
-              <div
-                style={{
-                  width: "10px",
-                  height: "10px",
-                  background: "#60a5fa",
-                  margin: "1px",
-                }}
-              />
-            </div>
-            <span
-              style={{
-                fontSize: "24px",
-                color: "#171717",
-                fontWeight: 600,
-                letterSpacing: "0.05em",
-              }}
-            >
-              24bitColors
-            </span>
+            Digital Color Museum
           </div>
         </div>
       ),
@@ -175,7 +204,7 @@ export async function GET(request: NextRequest) {
         height: 630,
         fonts: [
           {
-            name: "NotoSansJP",
+            name: "NotoSerifJP",
             data: fontData,
             style: "normal",
           },
